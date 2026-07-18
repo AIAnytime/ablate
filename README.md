@@ -19,11 +19,18 @@
 <p align="center">
   <a href="https://pypi.org/project/ablate-llm/">📦 PyPI</a> &nbsp;•&nbsp;
   <a href="https://huggingface.co/ai-anytime/qwen-1.5b-abliterated">🤗 Model</a> &nbsp;•&nbsp;
-  <a href="https://www.youtube.com/@AIAnytime">▶️ Video walkthrough (coming soon)</a> &nbsp;•&nbsp;
+  <a href="https://youtu.be/1-1bM3Ynql4">▶️ Video walkthrough</a> &nbsp;•&nbsp;
   <a href="#citation">📚 Cite</a>
 </p>
 
 <p align="center"><i>Created with 💜 by <b>AI Anytime</b></i></p>
+
+<p align="center">
+  <a href="https://youtu.be/1-1bM3Ynql4">
+    <img alt="Watch the video walkthrough" src="https://img.youtube.com/vi/1-1bM3Ynql4/maxresdefault.jpg" width="560">
+  </a>
+  <br><i>▶️ Watch the full walkthrough on YouTube</i>
+</p>
 
 ---
 
@@ -338,9 +345,10 @@ Is Mediated by a Single Direction*.
 
 ## Acknowledgements
 
-Created with 💜 by **[AI Anytime](https://www.youtube.com/@AIAnytime)**. A full video
-walkthrough is coming soon — subscribe on YouTube. Built on the mechanistic-interpretability
-work of Arditi et al. and the open-source `transformers` / `optuna` ecosystems.
+Created with 💜 by **[AI Anytime](https://www.youtube.com/@AIAnytime)**. Watch the full
+**[video walkthrough on YouTube](https://youtu.be/1-1bM3Ynql4)**. Built on the
+mechanistic-interpretability work of Arditi et al. and the open-source
+`transformers` / `optuna` ecosystems.
 
 ## License
 
