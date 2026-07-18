@@ -217,6 +217,10 @@ on a free T4.
 |----------|---------------|
 | [`examples/colab_quickstart.ipynb`](examples/colab_quickstart.ipynb) | The 10-minute tour: extract → search → subspace → generate → push. |
 | [`examples/colab_prodgrade.ipynb`](examples/colab_prodgrade.ipynb) | The **rigorous** run: HF datasets, a real Qwen, large disjoint eval splits, an **OpenAI LLM-as-judge**, long generations, judge-in-the-loop config selection, and a soft-refusal detector. |
+| [`examples/colab_prodgrade_demo.ipynb`](examples/colab_prodgrade_demo.ipynb) | The prod-grade notebook **with full Colab outputs** — browse the real results on GitHub without running anything. |
+
+📺 A step-by-step **[video explainer / script](docs/youtube_explainer.md)** (layman +
+technical, with diagrams) accompanies the tool.
 
 ## What we found (honest results)
 
