@@ -13,3 +13,7 @@ qwen-0.5b-ablated/
 .env.*
 *.key
 *.zip
+
+# internal / local only
+docs/
+scripts/
