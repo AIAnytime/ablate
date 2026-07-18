@@ -3,13 +3,13 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ablate"
+name = "ablate-llm"
 version = "0.2.0"
 description = "Directional ablation (abliteration) toolkit for open-source language models: extract, ablate, and optimize the removal of refusal / behavioral directions in the residual stream."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Ablate contributors" }]
+authors = [{ name = "AI Anytime" }]
 keywords = [
     "interpretability",
     "activation-engineering",
@@ -18,12 +18,25 @@ keywords = [
     "mechanistic-interpretability",
     "safety",
 ]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
     "torch>=2.1",
     "transformers>=4.40",
     "numpy>=1.24",
     "tqdm>=4.65",
 ]
+
+[project.urls]
+Homepage = "https://github.com/AIAnytime/ablate"
+Repository = "https://github.com/AIAnytime/ablate"
+Issues = "https://github.com/AIAnytime/ablate/issues"
+"Example model" = "https://huggingface.co/ai-anytime/qwen-1.5b-abliterated"
 
 [project.optional-dependencies]
 optimize = ["optuna>=3.4"]

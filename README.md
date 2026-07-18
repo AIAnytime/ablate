@@ -1,8 +1,8 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="media/ablate-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="media/ablate-light.png">
-    <img alt="Ablate — Automatic Censorship Removal" src="media/ablate-light.png" width="600">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ablate-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ablate-light.png">
+    <img alt="Ablate — Automatic Censorship Removal" src="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ablate-light.png" width="600">
   </picture>
 </p>
 
@@ -11,6 +11,13 @@
 <p align="center"><b>Directional ablation (abliteration) toolkit for automatic censorship removal of open-source language models.</b></p>
 
 <p align="center">
+  <a href="https://pypi.org/project/ablate-llm/"><img alt="PyPI" src="https://img.shields.io/pypi/v/ablate-llm.svg?color=7c5cff"></a>
+  <a href="https://pypi.org/project/ablate-llm/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/ablate-llm.svg"></a>
+  <a href="https://github.com/AIAnytime/ablate/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/ablate-llm/">📦 PyPI</a> &nbsp;•&nbsp;
   <a href="https://huggingface.co/ai-anytime/qwen-1.5b-abliterated">🤗 Model</a> &nbsp;•&nbsp;
   <a href="https://www.youtube.com/@AIAnytime">▶️ Video walkthrough (coming soon)</a> &nbsp;•&nbsp;
   <a href="#citation">📚 Cite</a>
@@ -90,8 +97,21 @@ Works across architectures via adapters in `utils.py` (Llama/Mistral/Qwen/SmolLM
 ## Install
 
 ```bash
+pip install ablate-llm          # the import name is still `ablate`
+# with all extras (Optuna search, HF datasets, push-to-Hub):
+pip install "ablate-llm[all]"
+```
+
+```python
+import ablate                   # note: install is `ablate-llm`, import is `ablate`
+```
+
+From source (for development):
+
+```bash
+git clone https://github.com/AIAnytime/ablate && cd ablate
 python -m venv .venv && source .venv/bin/activate
-pip install -e ".[all]"        # torch, transformers, optuna, datasets, huggingface_hub
+pip install -e ".[all]"
 ```
 
 Optional extras: `.[optimize]` (Optuna), `.[datasets]` (HF datasets), `.[hub]`
