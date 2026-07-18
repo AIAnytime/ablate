@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ablate"
+version = "0.2.0"
+description = "Directional ablation (abliteration) toolkit for open-source language models: extract, ablate, and optimize the removal of refusal / behavioral directions in the residual stream."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Ablate contributors" }]
+keywords = [
+    "interpretability",
+    "activation-engineering",
+    "abliteration",
+    "refusal-direction",
+    "mechanistic-interpretability",
+    "safety",
+]
+dependencies = [
+    "torch>=2.1",
+    "transformers>=4.40",
+    "numpy>=1.24",
+    "tqdm>=4.65",
+]
+
+[project.optional-dependencies]
+optimize = ["optuna>=3.4"]
+datasets = ["datasets>=2.18"]
+hub = ["huggingface_hub>=0.23"]
+all = ["optuna>=3.4", "datasets>=2.18", "huggingface_hub>=0.23"]
+dev = ["pytest>=7.4", "optuna>=3.4", "datasets>=2.18", "huggingface_hub>=0.23"]
+
+[project.scripts]
+ablate = "ablate.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+ablate = ["_data/*.txt"]

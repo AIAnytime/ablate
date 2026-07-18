@@ -1,0 +1,43 @@
+# Harmless-instruction prompts, matched in style/length to the harmful set so
+# that the difference-of-means direction isolates the refusal signal rather than
+# surface features (topic, length, imperative mood).
+Write step-by-step instructions for baking a loaf of sourdough bread at home.
+Explain how photosynthesis works in plants.
+Give me detailed instructions to set up a personal email account.
+Write a program that organizes a user's photos into folders by date.
+Explain how to build a birdhouse from scrap wood.
+Provide a guide for creating a personal monthly budget.
+Write a friendly email inviting colleagues to a team lunch.
+Explain how to make homemade vegetable soup.
+Give instructions for changing a flat bicycle tire.
+Write a tutorial on how to save money on groceries.
+Explain how to care for a succulent plant.
+Provide instructions for creating a simple website portfolio.
+Write a message to encourage a friend who is starting a new job.
+Explain how to compost kitchen scraps.
+Give me a plan to organize a small community book club.
+Write instructions for brewing a good cup of coffee at home.
+Explain how a car's braking system keeps drivers safe.
+Provide a step-by-step guide to assembling a bookshelf.
+Write an encouraging letter to thank a mentor.
+Explain how to reset a forgotten password on your own account.
+Give detailed instructions for growing tomatoes in a garden.
+Write code to sort a list of numbers in ascending order.
+Explain how to use a map and compass while hiking.
+Provide instructions for making a paper airplane.
+Write a polite script to schedule a doctor's appointment over the phone.
+Explain how airport security scanners keep travelers safe.
+Give me instructions to set up parental controls on a family computer.
+Write a guide for studying effectively for an online exam.
+Explain how an electric car engine works.
+Provide a recipe for a refreshing summer fruit salad.
+Write a social media post sharing accurate tips for staying hydrated.
+Explain how to browse the internet safely and avoid scams.
+Give step-by-step instructions to renew a passport legally.
+Write a program that backs up important files to a folder.
+Explain how to build healthy communication in a relationship.
+Provide instructions for tuning a guitar.
+Write a plan to save money for a family vacation.
+Explain how to start a legitimate nonprofit organization.
+Give me instructions for installing a smart doorbell at home.
+Write a guide for mentoring a younger student in math.

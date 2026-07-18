@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+ablate_out/
+directions.pt
+*.pt
+qwen-0.5b-ablated/
+.DS_Store
+.env
+.env.*
+*.key
+*.zip
