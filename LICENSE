@@ -1,21 +1,32 @@
-MIT License
+Proprietary License — All Rights Reserved
 
-Copyright (c) 2026 AI Anytime
+Copyright (c) 2026 Sonu Kumar / AI Anytime
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This repository is publicly available for viewing and evaluation
+purposes only.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+No license is granted to use, reproduce, modify, distribute,
+sublicense, sell, commercially exploit, or incorporate this software,
+its documentation, or any substantial portion thereof into another
+product, service, dataset, or machine learning training corpus without
+prior written permission from the copyright holder.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Viewing the source code on GitHub, and forking it within GitHub as
+permitted by the GitHub Terms of Service, does not grant any further
+rights.
+
+Third-party components included in this repository (for example,
+vendored libraries) remain subject to their own licenses.
+
+This license applies to all versions of this repository published on
+or after the date of this change. Versions previously published under
+a different license remain available only under the terms of that
+earlier license.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE
+FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE SOFTWARE.
+
+For commercial licensing inquiries:
+aianytime07@gmail.com
+sonu@aianytime.net

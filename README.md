@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://pypi.org/project/ablate-llm/"><img alt="PyPI" src="https://img.shields.io/pypi/v/ablate-llm.svg?color=7c5cff"></a>
   <a href="https://pypi.org/project/ablate-llm/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/ablate-llm.svg"></a>
-  <a href="https://github.com/AIAnytime/ablate/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
+  <a href="https://github.com/AIAnytime/ablate/blob/main/LICENSE"><img alt="License: Proprietary" src="https://img.shields.io/badge/license-Proprietary-red.svg"></a>
 </p>
 
 <p align="center">
@@ -352,4 +352,4 @@ mechanistic-interpretability work of Arditi et al. and the open-source
 
 ## License
 
-MIT © AI Anytime.
+Proprietary — all rights reserved. This code is published for viewing and evaluation only; no use, copying, modification, redistribution, commercial use, or use as AI/ML training data without written permission. See [LICENSE](LICENSE). Commercial licensing: aianytime07@gmail.com · sonu@aianytime.net.
