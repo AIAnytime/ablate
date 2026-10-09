@@ -1,0 +1,114 @@
+<svg viewBox="0 0 1400 668" role="img" aria-label="ablate architecture: a browser UI, command line and Python API all drive one Ablator object, which runs a six-step pipeline (prompt pairs, extract, ablate, measure, bake, publish) against any HuggingFace model, on a stack of PyTorch, transformers, Optuna and the HuggingFace Hub.">
+<defs><marker id="arch-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="a-head" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="a-band" x="10" y="16" text-anchor="start">INTERFACES</text>
+<rect class="a-box" x="10" y="26" width="400" height="70" rx="10"/>
+<text class="a-t" x="210" y="55" text-anchor="middle">Browser UI</text>
+<text class="a-s" x="210" y="78" text-anchor="middle">one HTML file · vanilla JS · inline SVG charts</text>
+<rect class="a-box a-hi" x="540" y="26" width="330" height="70" rx="10"/>
+<text class="a-t" x="705" y="55" text-anchor="middle">ablate ui server</text>
+<text class="a-s" x="705" y="78" text-anchor="middle">Python stdlib http.server · zero extra deps</text>
+<rect class="a-box" x="910" y="26" width="230" height="70" rx="10"/>
+<text class="a-t" x="1025" y="55" text-anchor="middle">CLI</text>
+<text class="a-m" x="1025" y="78" text-anchor="middle">ablate run · eval · generate</text>
+<rect class="a-box" x="1160" y="26" width="230" height="70" rx="10"/>
+<text class="a-t" x="1275" y="55" text-anchor="middle">Python API</text>
+<text class="a-m" x="1275" y="78" text-anchor="middle">from ablate import Ablator</text>
+<path class="a-ln" d="M414 61H536" marker-end="url(#arch-arrow)" marker-start="url(#arch-arrow)"/>
+<text class="a-s" x="475" y="50" text-anchor="middle">POST in</text>
+<text class="a-s" x="475" y="82" text-anchor="middle">JSON lines out</text>
+<path class="a-ln" d="M705 96V124" marker-end="url(#arch-arrow)"/>
+<path class="a-ln" d="M1025 96V124" marker-end="url(#arch-arrow)"/>
+<path class="a-ln" d="M1275 96V124" marker-end="url(#arch-arrow)"/>
+<rect class="a-box a-hi" x="10" y="128" width="1380" height="44" rx="10"/>
+<text class="a-t" x="700" y="156" text-anchor="middle">Ablator  ·  pipeline.py  ·  one object drives every step below</text>
+<text class="a-band" x="10" y="204" text-anchor="start">PIPELINE</text>
+<rect class="a-box" x="10" y="214" width="190" height="92" rx="10"/>
+<text class="a-t" x="105.0" y="241" text-anchor="middle">1 · Prompt pairs</text>
+<text class="a-file" x="105.0" y="264" text-anchor="middle">data.py</text>
+<text class="a-s a-sm" x="105.0" y="288" text-anchor="middle">built-in sets · Hub datasets</text>
+<rect class="a-box" x="248" y="214" width="190" height="92" rx="10"/>
+<text class="a-t" x="343.0" y="241" text-anchor="middle">2 · Extract</text>
+<text class="a-file" x="343.0" y="264" text-anchor="middle">extract.py</text>
+<text class="a-s a-sm" x="343.0" y="288" text-anchor="middle">difference of means → v</text>
+<rect class="a-box" x="486" y="214" width="190" height="92" rx="10"/>
+<text class="a-t" x="581.0" y="241" text-anchor="middle">3 · Ablate</text>
+<text class="a-file" x="581.0" y="264" text-anchor="middle">hooks.py</text>
+<text class="a-m a-sm" x="581.0" y="288" text-anchor="middle">h′ = h − α(h·v̂)v̂</text>
+<rect class="a-box" x="724" y="214" width="190" height="92" rx="10"/>
+<text class="a-t" x="819.0" y="241" text-anchor="middle">4 · Measure</text>
+<text class="a-file" x="819.0" y="264" text-anchor="middle">evaluate.py · judges.py</text>
+<text class="a-s a-sm" x="819.0" y="288" text-anchor="middle">refusal rate · KL · LLM judge</text>
+<rect class="a-box" x="962" y="214" width="190" height="92" rx="10"/>
+<text class="a-t" x="1057.0" y="241" text-anchor="middle">5 · Bake</text>
+<text class="a-file" x="1057.0" y="264" text-anchor="middle">weights.py</text>
+<text class="a-m a-sm" x="1057.0" y="288" text-anchor="middle">W′ = (I − v̂v̂ᵀ)W</text>
+<rect class="a-box" x="1200" y="214" width="190" height="92" rx="10"/>
+<text class="a-t" x="1295.0" y="241" text-anchor="middle">6 · Publish</text>
+<text class="a-file" x="1295.0" y="264" text-anchor="middle">hub.py</text>
+<text class="a-s a-sm" x="1295.0" y="288" text-anchor="middle">push to Hub + model card</text>
+<path class="a-ln" d="M203 260H244" marker-end="url(#arch-arrow)"/>
+<text class="a-s a-sm" x="225.0" y="252" text-anchor="middle">prompts</text>
+<path class="a-ln" d="M441 260H482" marker-end="url(#arch-arrow)"/>
+<text class="a-s a-sm" x="463.0" y="252" text-anchor="middle">v</text>
+<path class="a-ln" d="M679 260H720" marker-end="url(#arch-arrow)"/>
+<text class="a-s a-sm" x="701.0" y="252" text-anchor="middle">outputs</text>
+<path class="a-ln" d="M917 260H958" marker-end="url(#arch-arrow)"/>
+<text class="a-s a-sm" x="939.0" y="252" text-anchor="middle">config</text>
+<path class="a-ln" d="M1155 260H1196" marker-end="url(#arch-arrow)"/>
+<text class="a-s a-sm" x="1177.0" y="252" text-anchor="middle">weights</text>
+<path class="a-ln" d="M105.0 172V210" marker-end="url(#arch-arrow)"/>
+<path class="a-ln a-loop" d="M819 306V344H606V310" marker-end="url(#arch-arrow)"/>
+<text class="a-acc a-sm" x="712.5" y="336" text-anchor="middle">Optuna tries a new α, layer, band</text>
+<text class="a-band" x="10" y="394" text-anchor="start">THE MODEL</text>
+<rect class="a-model" x="10" y="404" width="1380" height="150" rx="14"/>
+<text class="a-s a-sm" x="1376" y="426" text-anchor="end">any HuggingFace causal LM · utils.py adapters find its layers</text>
+<rect class="a-layer" x="70" y="440" width="150" height="40" rx="8"/>
+<text class="a-s" x="145" y="465" text-anchor="middle">embedding</text>
+<path class="a-thin" d="M145 480V508"/>
+<rect class="a-layer" x="270" y="440" width="150" height="40" rx="8"/>
+<text class="a-s" x="345" y="465" text-anchor="middle">layer 1</text>
+<path class="a-thin" d="M345 480V508"/>
+<rect class="a-layer" x="470" y="440" width="150" height="40" rx="8"/>
+<text class="a-s" x="545" y="465" text-anchor="middle">layer 2</text>
+<path class="a-thin" d="M545 480V508"/>
+<rect class="a-layer" x="670" y="440" width="150" height="40" rx="8"/>
+<text class="a-s" x="745" y="465" text-anchor="middle">layer 3</text>
+<path class="a-thin" d="M745 480V508"/>
+<rect class="a-layer" x="870" y="440" width="150" height="40" rx="8"/>
+<text class="a-s" x="945" y="465" text-anchor="middle">…</text>
+<path class="a-thin" d="M945 480V508"/>
+<rect class="a-layer" x="1070" y="440" width="150" height="40" rx="8"/>
+<text class="a-s" x="1145" y="465" text-anchor="middle">layer N</text>
+<path class="a-thin" d="M1145 480V508"/>
+<path class="a-stream" d="M40 512H1300"/>
+<path class="a-head a-acc2" d="M1300 504l16 8l-16 8z"/>
+<text class="a-s" x="700" y="538" text-anchor="middle">residual stream: the shared notepad every layer reads and writes</text>
+<path class="a-ln a-safe" d="M245 508V310" marker-end="url(#arch-arrow)"/>
+<text class="a-s a-sm" x="235" y="368" text-anchor="end">reads the notepad</text>
+<text class="a-s a-sm" x="235" y="384" text-anchor="end">on both prompt piles</text>
+<path class="a-ln a-harm" d="M520 306V436" marker-end="url(#arch-arrow)"/>
+<text class="a-s a-sm" x="510" y="368" text-anchor="end">subtracts v at every</text>
+<text class="a-s a-sm" x="510" y="384" text-anchor="end">layer's output (hook)</text>
+<path class="a-ln a-acc-ln" d="M1057 306V401" marker-end="url(#arch-arrow)"/>
+<text class="a-s a-sm" x="1067" y="368" text-anchor="start">rewrites embedding, attention-out</text>
+<text class="a-s a-sm" x="1067" y="384" text-anchor="start">and MLP-out weights for good</text>
+<text class="a-band" x="10" y="582" text-anchor="start">STACK</text>
+<rect class="a-chip" x="10.0" y="590" width="216.66666666666666" height="66" rx="8"/>
+<text class="a-t a-mono" x="118.33333333333333" y="617" text-anchor="middle">PyTorch</text>
+<text class="a-s a-sm" x="118.33333333333333" y="640" text-anchor="middle">MPS · CUDA · CPU</text>
+<rect class="a-chip" x="242.66666666666666" y="590" width="216.66666666666666" height="66" rx="8"/>
+<text class="a-t a-mono" x="351.0" y="617" text-anchor="middle">transformers</text>
+<text class="a-s a-sm" x="351.0" y="640" text-anchor="middle">models + tokenizers</text>
+<rect class="a-chip" x="475.3333333333333" y="590" width="216.66666666666666" height="66" rx="8"/>
+<text class="a-t a-mono" x="583.6666666666666" y="617" text-anchor="middle">Optuna</text>
+<text class="a-s a-sm" x="583.6666666666666" y="640" text-anchor="middle">TPE search</text>
+<rect class="a-chip" x="708.0" y="590" width="216.66666666666666" height="66" rx="8"/>
+<text class="a-t a-mono" x="816.3333333333334" y="617" text-anchor="middle">datasets</text>
+<text class="a-s a-sm" x="816.3333333333334" y="640" text-anchor="middle">AdvBench · Alpaca</text>
+<rect class="a-chip" x="940.6666666666666" y="590" width="216.66666666666666" height="66" rx="8"/>
+<text class="a-t a-mono" x="1049.0" y="617" text-anchor="middle">huggingface_hub</text>
+<text class="a-s a-sm" x="1049.0" y="640" text-anchor="middle">search · push · login</text>
+<rect class="a-chip" x="1173.3333333333333" y="590" width="216.66666666666666" height="66" rx="8"/>
+<text class="a-t a-mono" x="1281.6666666666665" y="617" text-anchor="middle">PyPI</text>
+<text class="a-s a-sm" x="1281.6666666666665" y="640" text-anchor="middle">pip install ablate-llm</text>
+</svg>

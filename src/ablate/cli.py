@@ -1,4 +1,4 @@
-"""Command-line interface: ``ablate run|extract|generate|eval``."""
+"""Command-line interface: ``ablate run|extract|generate|eval|ui``."""
 from __future__ import annotations
 
 import argparse
@@ -104,6 +104,14 @@ def cmd_eval(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_ui(args: argparse.Namespace) -> int:
+    from .ui import serve
+
+    serve(host="0.0.0.0" if args.share else args.host, port=args.port, model=args.model,
+          open_browser=not args.no_browser)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ablate", description="Directional ablation toolkit for language models.")
     sub = p.add_subparsers(dest="command", required=True)
@@ -157,6 +165,15 @@ def build_parser() -> argparse.ArgumentParser:
     ev.add_argument("--n-directions", type=int, default=4)
     ev.add_argument("--max-new-tokens", type=int, default=128)
     ev.set_defaults(func=cmd_eval)
+
+    u = sub.add_parser("ui", help="open the browser UI (explore, ablate, measure, publish)")
+    u.add_argument("--model", default=None, help="model to preload (otherwise pick one in the UI)")
+    u.add_argument("--host", default="127.0.0.1")
+    u.add_argument("--port", type=int, default=7860)
+    u.add_argument("--share", action="store_true",
+                   help="listen on the local network so others on the same Wi-Fi can explore")
+    u.add_argument("--no-browser", action="store_true", help="do not open a browser tab")
+    u.set_defaults(func=cmd_ui)
 
     return p
 

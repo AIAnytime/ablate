@@ -59,7 +59,7 @@ def build_model_card(
 
 This is a **directionally-ablated ("abliterated")** version of
 [`{base_model}`](https://huggingface.co/{base_model}), produced with
-[**ablate**](https://github.com/) — an activation-engineering toolkit for
+[**ablate**](https://github.com/AIAnytime/ablate) — an activation-engineering toolkit for
 mechanistic-interpretability and safety research.
 
 The model's **refusal direction(s)** were identified in the residual stream and

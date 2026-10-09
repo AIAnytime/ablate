@@ -235,6 +235,35 @@ ablate extract --model gpt2 --method diff_of_means --output directions.pt
 
 ---
 
+## Browser UI
+
+```bash
+ablate ui                                   # opens http://localhost:7860
+ablate ui --model Qwen/Qwen2.5-0.5B-Instruct  # preload a model
+ablate ui --share                           # let others on the same Wi-Fi explore
+```
+
+A local, dependency-free web app that walks through the whole pipeline:
+
+1. **Model** — search the HuggingFace Hub and load any chat model.
+2. **Find direction** — extract the refusal direction and see, per layer, how
+   well it separates the two prompt piles and how much refusal is left when it is
+   removed. Every prompt is plotted along the direction.
+3. **Playground** — the original and the edited model answer the same prompt
+   side by side, streamed from one forward pass. Includes the first-token
+   probabilities, a per-token/per-layer "X-ray" of the refusal signal, and a
+   *Force refusal* mode that adds the direction instead of removing it.
+4. **Measure** — refusal rate before/after on held-out prompts plus KL drift.
+5. **Auto-tune** — the Optuna search, plotted live.
+6. **Publish** — bake and push to the Hub (private by default) with the
+   generated model card, or save locally. Your HF token is picked up from
+   `HF_TOKEN`, a local `.env`, or `huggingface-cli login`.
+7. **Architecture** and **How it works** — the system diagram and the method in
+   four pictures, for explaining it to someone else.
+
+With `--share`, other machines can use the playground and charts; loading
+models, saving and publishing stay restricted to the machine running the server.
+
 ## Colab notebooks
 
 Both install `ablate` from an uploaded `ablate-tool.zip` (no PyPI needed) and run

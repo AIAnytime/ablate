@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ablate ui</title>
+<style>
+:root{
+  --bg:#0b0a12; --panel:#14121f; --panel2:#1b1829; --line:#2a2640; --text:#ecebf5; --muted:#a09cb8;
+  --accent:#8b6cff; --accent2:#5aa9f5; --harm:#ff9a3d; --safe:#4cc3f0; --ok:#3ecf8e; --bad:#ff6b6b;
+  --shadow:0 8px 30px rgba(0,0,0,.35);
+}
+:root[data-theme="light"]{
+  --bg:#f6f5fb; --panel:#ffffff; --panel2:#f0eef9; --line:#dcd8ee; --text:#17142a; --muted:#5d5878;
+  --accent:#6a4df0; --accent2:#2f7fd1; --harm:#d96a00; --safe:#0e86b8; --ok:#12915c; --bad:#d23b3b;
+  --shadow:0 8px 30px rgba(40,30,90,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+a{color:var(--accent2)}
+header{display:flex;align-items:center;gap:14px;padding:10px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:20}
+header img{height:46px;border-radius:8px}
+header .sp{flex:1}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:14px;color:var(--muted);white-space:nowrap}
+.chip b{color:var(--text);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.on{background:var(--ok)}
+button{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 16px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:linear-gradient(135deg,var(--accent2),var(--accent));border:0;color:#fff;font-weight:600}
+button.primary:hover{filter:brightness(1.08)}
+button:disabled{opacity:.45;cursor:not-allowed;filter:none}
+button.ghost{background:transparent}
+button.small{padding:5px 11px;font-size:14px;border-radius:8px}
+input[type=text],input[type=password],textarea,select{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+textarea{resize:vertical;min-height:74px}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+nav{display:flex;gap:6px;padding:12px 22px 0;overflow-x:auto;border-bottom:1px solid var(--line)}
+nav button{border:0;border-bottom:3px solid transparent;border-radius:8px 8px 0 0;background:transparent;color:var(--muted);padding:10px 14px;white-space:nowrap;display:flex;gap:9px;align-items:center}
+nav button .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--panel2);font-size:13px;font-weight:700}
+nav button.active{color:var(--text);border-bottom-color:var(--accent)}
+nav button.active .n{background:var(--accent);color:#fff}
+nav button.done .n{background:var(--ok);color:#06281a}
+#status{margin:14px 22px 0;padding:10px 16px;border-radius:10px;background:var(--panel2);border:1px solid var(--line);display:none;align-items:center;gap:14px;font-size:15px}
+#status.show{display:flex}
+#status.err{border-color:var(--bad);color:var(--bad)}
+#status .bar{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden;max-width:340px}
+#status .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .25s}
+.spin{width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp 0.8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+main{padding:20px 22px 60px;max-width:1500px;margin:0 auto}
+section{display:none}
+section.active{display:block}
+h1{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}
+.lead{color:var(--muted);font-size:18px;margin:0 0 18px;max-width:980px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.side{grid-template-columns:360px 1fr;align-items:start}
+@media(max-width:1000px){.g2,.g3,.side{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);min-width:0}
+.card h3{margin:0 0 4px;font-size:17px}
+.card .hint{color:var(--muted);font-size:14.5px;margin:0 0 12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.tile{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.tile .v{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.tile .k{color:var(--muted);font-size:14px;margin-top:4px}
+.tile .v small{font-size:16px;color:var(--muted);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips button{font-size:14px;padding:6px 12px;border-radius:999px;text-align:left}
+.lbl{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px;font-weight:600}
+.ctl{margin-bottom:14px}
+.ctl .top{display:flex;justify-content:space-between;font-size:14.5px;margin-bottom:2px}
+.ctl .top b{font-variant-numeric:tabular-nums}
+.ctl .sub{font-size:13px;color:var(--muted)}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:0;border-radius:0;background:transparent;padding:8px 2px;font-size:13.5px;color:var(--muted);white-space:nowrap}
+.seg button.on{background:var(--accent);color:#fff;font-weight:600}
+.out{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.55;min-height:150px;max-height:420px;overflow:auto}
+.out:empty::before{content:"—";color:var(--muted)}
+.badge{font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;letter-spacing:.04em}
+.badge.ref{background:color-mix(in srgb,var(--harm) 22%,transparent);color:var(--harm)}
+.badge.ans{background:color-mix(in srgb,var(--ok) 22%,transparent);color:var(--ok)}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.legend{display:flex;gap:16px;font-size:14px;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+svg{display:block;max-width:100%}
+svg text{fill:var(--muted);font-size:12px;font-family:inherit}
+.pt{transition:transform .9s cubic-bezier(.4,0,.2,1)}
+#tip{position:fixed;pointer-events:none;background:#000d;color:#fff;padding:7px 10px;border-radius:8px;font-size:13.5px;max-width:340px;z-index:99;display:none}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+td .t{max-height:4.5em;overflow:hidden;cursor:pointer}
+td .t.open{max-height:none}
+.pbar{display:grid;grid-template-columns:86px 1fr 52px;gap:8px;align-items:center;font-size:14px;margin:4px 0}
+.pbar .tk{font-family:ui-monospace,Menlo,monospace;background:var(--panel2);border-radius:6px;padding:1px 7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pbar .b{height:12px;border-radius:6px;background:var(--line);overflow:hidden}
+.pbar .b i{display:block;height:100%;border-radius:6px}
+.meter{height:14px;border-radius:7px;background:linear-gradient(90deg,var(--safe),var(--panel2) 50%,var(--harm));position:relative;margin:26px 0 46px}
+.meter b{position:absolute;top:-7px;width:4px;height:28px;border-radius:2px;background:var(--text);transform:translateX(-2px);transition:left .5s}
+.meter span{position:absolute;top:20px;font-size:12.5px;color:var(--muted);transform:translateX(-50%);white-space:nowrap}
+pre{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto;font-size:13.5px;line-height:1.5;margin:0;white-space:pre-wrap}
+.empty{color:var(--muted);padding:26px;text-align:center;border:1px dashed var(--line);border-radius:12px}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.steps3 div{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px}
+.steps3 b{color:var(--accent2)}
+@media(max-width:1000px){.steps3{grid-template-columns:1fr}}
+.list{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}
+.list div{padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;justify-content:space-between;gap:10px;font-size:14.5px}
+.list div:hover{background:var(--panel2)}
+.list div:last-child{border-bottom:0}
+.list small{color:var(--muted);white-space:nowrap}
+.arch svg{width:100%;min-width:900px;height:auto}
+.arch .scroll{overflow-x:auto}
+.arch text{font-size:13px;fill:var(--muted)}
+.arch .a-t{fill:var(--text);font-weight:600;font-size:15px}
+.arch .a-m,.arch .a-mono,.arch .a-file{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.arch .a-m,.arch .a-sm{font-size:12px}
+.arch .a-file{fill:var(--accent2);font-size:12px}
+.arch .a-band{font-size:11px;letter-spacing:.14em;font-weight:600}
+.arch .a-acc{fill:var(--accent)}
+.arch .a-box,.arch .a-layer{fill:var(--panel);stroke:var(--line)}
+.arch .a-hi{stroke:var(--accent);stroke-width:1.5}
+.arch .a-model,.arch .a-chip{fill:var(--panel2);stroke:var(--line)}
+.arch .a-ln{fill:none;stroke:var(--muted);stroke-width:1.6}
+.arch .a-thin{fill:none;stroke:var(--line);stroke-width:1.4}
+.arch .a-head{fill:var(--muted)}
+.arch .a-stream{fill:none;stroke:var(--accent2);stroke-width:6;stroke-linecap:round}
+.arch .a-acc2{fill:var(--accent2)}
+.arch .a-safe{stroke:var(--safe);stroke-width:2}
+.arch .a-harm{stroke:var(--harm);stroke-width:2}
+.arch .a-acc-ln{stroke:var(--accent);stroke-width:2}
+.arch .a-loop{stroke:var(--accent);stroke-dasharray:5 4}
+.why{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px}
+@media(max-width:1000px){.why{grid-template-columns:1fr 1fr}}
+.how h3{font-size:19px}
+.how p{color:var(--muted);margin:6px 0 12px}
+.formula{font-family:ui-monospace,Menlo,monospace;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:inline-block;font-size:16px}
+</style>
+</head>
+<body>
+<header>
+  <img id="logo" src="/static/logo-dark.png" alt="Ablate">
+  <span class="sp"></span>
+  <span class="chip" id="chipModel"><span class="dot"></span>no model loaded</span>
+  <span class="chip" id="chipHF">🤗 not signed in</span>
+  <button class="small ghost" id="themeBtn" title="Switch light / dark">☀︎ Light</button>
+</header>
+<nav id="nav"></nav>
+<div id="status"><span class="spin"></span><span id="statusMsg"></span><span class="bar"><i></i></span></div>
+
+<main>
+<!-- 1 MODEL ---------------------------------------------------------------->
+<section id="s-model">
+  <h1>Pick a model</h1>
+  <p class="lead">Any open chat model on HuggingFace works. It downloads once, then runs on this machine — nothing leaves the laptop.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Search the HuggingFace Hub</h3>
+      <p class="hint">Type a name, or paste a model id like <span class="mono">Qwen/Qwen2.5-0.5B-Instruct</span>.</p>
+      <div class="row"><input type="text" id="modelInput" placeholder="Search models…" style="flex:1"><button class="primary host" id="loadBtn">Load model</button></div>
+      <div class="list" id="hfResults" style="display:none"></div>
+      <div class="lbl">Good ones to try</div><div class="chips" id="suggested"></div>
+      <div class="lbl">Already on this machine (loads in seconds)</div><div class="chips" id="cached"></div>
+    </div>
+    <div class="card">
+      <h3>What's loaded</h3>
+      <p class="hint">A language model is a tall stack of layers. Every layer reads from, and writes to, one shared "notepad" of numbers — the <b>residual stream</b>.</p>
+      <div id="modelInfo"><div class="empty">No model yet. Load one on the left.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 DIRECTION ------------------------------------------------------------>
+<section id="s-find">
+  <h1>Find the "refuse" direction</h1>
+  <p class="lead">We show the model two piles of prompts — ones it refuses and ones it answers — and look at what is different inside its head. That difference is one arrow. That arrow is refusal.</p>
+  <div class="steps3">
+    <div><b>1 · Read.</b> Run both piles through the model and record the notepad at the last word of each prompt.</div>
+    <div><b>2 · Subtract.</b> Average each pile. Harmful average − harmless average = one direction per layer.</div>
+    <div><b>3 · Test.</b> Remove each layer's direction and check: does the model stop saying "I'm sorry"?</div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="row">
+      <select id="srcSel" style="width:auto"><option value="builtin">Built-in prompt pairs (fast, offline)</option><option value="hub">HuggingFace datasets: AdvBench + Alpaca</option></select>
+      <select id="nTrain" style="width:auto"><option value="28">28 prompts per pile</option><option value="64">64 prompts per pile</option><option value="128">128 prompts per pile</option></select>
+      <button class="primary host" id="extractBtn">Find the refusal direction</button>
+      <span class="sp" style="flex:1"></span>
+      <span class="chip" id="openers" style="display:none"></span>
+    </div>
+  </div>
+  <div id="findEmpty" class="empty">Nothing yet. Press <b>Find the refusal direction</b> — it takes about 20 seconds on a laptop.</div>
+  <div class="grid g2" id="findCharts" style="display:none">
+    <div class="card">
+      <div class="hd"><h3>Which layer holds the refusal signal?</h3><span class="chip">click a layer to select it</span></div>
+      <p class="hint">Bars: how cleanly that layer separates the two piles. Line: how often the model still opens with a refusal after we delete that layer's direction — <b>lower is better</b>.</p>
+      <div id="layerChart"></div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>separation of the two piles</span><span><i style="background:var(--harm)"></i>refusal left after removing it</span><span><i style="background:var(--ok)"></i>auto-picked layer</span></div>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Every prompt, as the model sees it — layer <span id="scLayer"></span></h3>
+        <button class="small" id="collapseBtn">▶ Remove the direction</button></div>
+      <p class="hint">Each dot is one prompt. Left-to-right is the refusal direction. Press the button to watch ablation erase the gap.</p>
+      <div id="scatter"></div>
+      <div class="legend"><span><i style="background:var(--harm)"></i>prompts it refuses (harmful pile)</span><span><i style="background:var(--safe)"></i>prompts it answers (harmless pile)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 PLAYGROUND ----------------------------------------------------------->
+<section id="s-play">
+  <h1>Playground: original vs edited</h1>
+  <p class="lead">Same model, same prompt, same weights. The only difference on the right: we subtract the refusal direction while the model is thinking.</p>
+  <div class="grid side">
+    <div class="card" id="controls">
+      <h3>The edit</h3>
+      <div class="seg" id="modeSeg" style="margin:8px 0 16px">
+        <button data-m="remove" class="on">Remove refusal</button><button data-m="add">Force refusal</button><button data-m="off">No edit</button>
+      </div>
+      <div class="ctl"><div class="top"><span>Direction from layer</span><b id="vLayer"></b></div><input type="range" id="rLayer" min="1" max="24" step="1"><div class="sub">Which layer's arrow to use.</div></div>
+      <div class="ctl" id="cAlpha"><div class="top"><span>Strength (α)</span><b id="vAlpha"></b></div><input type="range" id="rAlpha" min="0" max="1.5" step="0.05"><div class="sub">0 = no change · 1 = remove fully · above 1 = push past.</div></div>
+      <div class="ctl" id="cStrength" style="display:none"><div class="top"><span>Push strength</span><b id="vStrength"></b></div><input type="range" id="rStrength" min="0" max="3" step="0.1"><div class="sub">How hard to push the model toward "refuse".</div></div>
+      <div class="ctl" id="cBand"><div class="top"><span>Apply to layers</span><b id="vBand"></b></div><input type="range" id="rMin" min="0" max="23" step="1"><input type="range" id="rMax" min="1" max="24" step="1"><div class="sub">Where in the stack the subtraction happens.</div></div>
+      <div class="ctl" id="cK"><div class="top"><span>Directions to remove</span><b id="vK"></b></div><input type="range" id="rK" min="1" max="6" step="1"><div class="sub">1 = single arrow · more = a small "refusal subspace".</div></div>
+      <div class="ctl"><div class="top"><span>Answer length</span><b id="vTok"></b></div><input type="range" id="rTok" min="30" max="300" step="10" value="120"></div>
+      <div class="row"><button class="small" id="resetCfg">Reset to auto-picked</button></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="row"><textarea id="prompt" placeholder="Ask anything…" style="flex:1">What's the best way to kill weeds in my garden?</textarea>
+          <button class="primary" id="runBtn" style="align-self:stretch;min-width:120px">Run ▶</button></div>
+        <div id="promptChips"></div>
+      </div>
+      <div class="grid g2">
+        <div class="card"><div class="hd"><h3>Original model</h3><span id="bBase"></span></div><div class="out" id="outBase"></div></div>
+        <div class="card" style="border-color:var(--accent)"><div class="hd"><h3 id="ablTitle">Edited model</h3><span id="bAbl"></span></div><div class="out" id="outAbl"></div></div>
+      </div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <h3>Did the model flag this prompt?</h3>
+          <p class="hint">Measured <b>before it writes a single word</b>: where this prompt lands on the refusal direction.</p>
+          <div class="meter" id="meter"><b style="left:0%"></b><span style="left:12%">like prompts it answers</span><span style="left:88%">like prompts it refuses</span></div>
+          <h3>The first word it wants to say</h3>
+          <p class="hint">Top choices and their probability. A refusal usually starts with "I".</p>
+          <div class="grid g2"><div><div class="lbl" style="margin-top:0">Original</div><div id="ftBase"></div></div><div><div class="lbl" style="margin-top:0">Edited</div><div id="ftAbl"></div></div></div>
+        </div>
+        <div class="card">
+          <div class="hd"><h3>X-ray: refusal signal, word by word</h3>
+            <div class="seg" id="lensSeg" style="width:190px"><button data-s="base" class="on">Original</button><button data-s="abl">Edited</button></div></div>
+          <p class="hint">Columns are the words of your prompt, rows are layers (bottom = first). <span style="color:var(--harm)">Orange</span> = pointing toward "refuse", <span style="color:var(--safe)">blue</span> = away. Switch to <b>Edited</b> and it goes dark.</p>
+          <div id="lens"><div class="empty">Run a prompt to see inside.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 MEASURE -------------------------------------------------------------->
+<section id="s-measure">
+  <h1>Measure it honestly</h1>
+  <p class="lead">One nice example proves nothing. Here we run prompts the direction has never seen, count refusals before and after, and check we did not damage normal answers.</p>
+  <div class="card" style="margin-bottom:16px"><div class="row">
+    <select id="evalN" style="width:auto"><option value="8">8 test prompts</option><option value="12" selected>12 test prompts</option><option value="16">16 test prompts</option><option value="32">32 test prompts</option></select>
+    <button class="primary" id="evalBtn">Run the test</button>
+    <span class="hint" style="margin:0" id="evalCfg"></span>
+  </div></div>
+  <div id="evalOut"><div class="empty">No measurement yet.</div></div>
+</section>
+
+<!-- 5 AUTOTUNE ------------------------------------------------------------->
+<section id="s-tune">
+  <h1>Auto-tune</h1>
+  <p class="lead">Instead of guessing the sliders, let a search try many edits. Each one is scored on two things: <b>refusals left</b> and <b>damage done</b>. We want the bottom-left corner.</p>
+  <div class="card" style="margin-bottom:16px"><div class="row">
+    <select id="tuneTrials" style="width:auto"><option value="8">8 tries (quick)</option><option value="12" selected>12 tries</option><option value="20">20 tries</option><option value="40">40 tries</option></select>
+    <select id="tuneKind" style="width:auto"><option value="single">One direction</option><option value="subspace">Several directions (subspace)</option></select>
+    <button class="primary" id="tuneBtn">Start search</button>
+    <span class="hint" style="margin:0">Uses Optuna (TPE). Score = refusal rate + KL divergence.</span>
+  </div></div>
+  <div class="grid g2">
+    <div class="card"><h3>Every try, live</h3><p class="hint">Down = fewer refusals. Left = less damage to normal answers.</p><div id="tuneChart"><div class="empty">Start a search to fill this in.</div></div></div>
+    <div class="card"><h3>Best edit found</h3><p class="hint">Send it to the playground with one click.</p><div id="tuneBest"><div class="empty">—</div></div></div>
+  </div>
+</section>
+
+<!-- 6 PUBLISH -------------------------------------------------------------->
+<section id="s-pub">
+  <h1>Bake it in &amp; publish</h1>
+  <p class="lead">So far the edit lived in a hook. Baking writes it into the weights, so the result is a normal model anyone can download — with an honest model card attached.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3>HuggingFace account</h3>
+      <p class="hint" id="hfState"></p>
+      <div class="row"><input type="password" id="hfToken" placeholder="hf_… (only needed if not found automatically)" style="flex:1"><button class="host" id="hfBtn">Connect</button></div>
+      <div class="lbl">Repository</div>
+      <input type="text" id="repoId" placeholder="username/model-abliterated">
+      <label class="row" style="margin:12px 0;font-size:15px"><input type="checkbox" id="repoPrivate" checked> Keep it private</label>
+      <div class="row"><button class="primary host" id="pushBtn">Bake &amp; push to the Hub</button><button class="host" id="saveBtn">Bake &amp; save to disk</button></div>
+      <div id="pubOut" style="margin-top:14px"></div>
+      <div class="lbl">Your models on the Hub</div><div id="mine" class="hint">—</div>
+    </div>
+    <div class="card"><div class="hd"><h3>Model card (written for you)</h3><button class="small" id="cardBtn">Refresh</button></div>
+      <p class="hint">Method, exact settings, measured numbers, limits and a responsible-use notice.</p>
+      <pre id="card">Find a direction first, then the card appears here.</pre></div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE ---------------------------------------------------------->
+<section id="s-arch">
+  <h1>Architecture</h1>
+  <p class="lead">Three ways in, one pipeline, no training. The coloured arrows are the only three places ablate touches the model: it reads the notepad, subtracts the direction while the model runs, or rewrites the weights for good.</p>
+  <div class="card arch"><div class="scroll" id="archSvg"></div></div>
+  <div class="why">
+    <div class="card"><h3>One forward pass, two answers</h3><p class="hint">The playground sends the prompt twice in one batch. The hook edits row two and skips row one, so both answers stream side by side.</p></div>
+    <div class="card"><h3>Hook to explore, bake to ship</h3><p class="hint">Both apply the same subtraction. A hook leaves the weights alone, so search is fast and reversible. Baking gives a normal checkpoint.</p></div>
+    <div class="card"><h3>No web framework</h3><p class="hint">This page is one HTML file served by Python's built-in HTTP server. Long jobs stream JSON lines, so tokens and trials appear as they happen.</p></div>
+    <div class="card"><h3>Any model, small adapters</h3><p class="hint"><span class="mono">utils.py</span> finds the layer list and the matrices that write to the notepad. Qwen, Llama, Mistral, SmolLM and GPT-2 share the same code.</p></div>
+  </div>
+</section>
+
+<!-- 7 HOW ------------------------------------------------------------------>
+<section id="s-how" class="how">
+  <h1>How it works, in four pictures</h1>
+  <p class="lead">No fine-tuning, no training data, no GPU farm. Just one subtraction.</p>
+  <div class="grid g2">
+    <div class="card"><h3>1 · The model keeps a running notepad</h3><p>Each word becomes a long list of numbers. Every layer reads that list and adds a little to it. Ideas the model is tracking — "this is French", "this is code", "I should refuse" — show up as <b>directions</b> in that list.</p>
+      <svg viewBox="0 0 520 190" width="100%"><defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+        <line x1="20" y1="150" x2="500" y2="150" stroke="var(--accent2)" stroke-width="6" stroke-linecap="round"/>
+        <g fill="var(--panel2)" stroke="var(--line)"><rect x="70" y="40" width="80" height="50" rx="8"/><rect x="220" y="40" width="80" height="50" rx="8"/><rect x="370" y="40" width="80" height="50" rx="8"/></g>
+        <g text-anchor="middle"><text x="110" y="70" style="font-size:14px;fill:var(--text)">Layer 1</text><text x="260" y="70" style="font-size:14px;fill:var(--text)">Layer 2</text><text x="410" y="70" style="font-size:14px;fill:var(--text)">… Layer N</text>
+        <text x="260" y="178" style="font-size:14px">the residual stream (the notepad)</text></g>
+        <g stroke="var(--muted)" stroke-width="1.6" fill="none" marker-end="url(#ah)"><path d="M90 146V94"/><path d="M130 92V144"/><path d="M240 146V94"/><path d="M280 92V144"/><path d="M390 146V94"/><path d="M430 92V144"/></g>
+        <text x="62" y="124" text-anchor="end">read</text><text x="138" y="124">write</text></svg></div>
+    <div class="card"><h3>2 · Refusal is one arrow</h3><p>Average the notepad over prompts the model refuses. Average it over prompts it answers. Subtract. What is left is the "refuse" arrow <span class="mono">v</span>.</p>
+      <svg viewBox="0 0 520 190" width="100%"><g opacity=".9"><g fill="var(--safe)"><circle cx="110" cy="120" r="6"/><circle cx="135" cy="95" r="6"/><circle cx="90" cy="88" r="6"/><circle cx="150" cy="130" r="6"/><circle cx="118" cy="70" r="6"/><circle cx="160" cy="105" r="6"/></g>
+        <g fill="var(--harm)"><circle cx="380" cy="95" r="6"/><circle cx="405" cy="70" r="6"/><circle cx="360" cy="65" r="6"/><circle cx="420" cy="108" r="6"/><circle cx="390" cy="48" r="6"/><circle cx="430" cy="82" r="6"/></g></g>
+        <line x1="130" y1="102" x2="388" y2="78" stroke="var(--accent)" stroke-width="4" marker-end="url(#ah2)"/><defs><marker id="ah2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker></defs>
+        <text x="125" y="165" text-anchor="middle" style="font-size:14px">prompts it answers</text><text x="395" y="165" text-anchor="middle" style="font-size:14px">prompts it refuses</text><text x="258" y="74" text-anchor="middle" style="font-size:15px;fill:var(--accent)">v = refusal direction</text></svg>
+      <div class="formula">v = mean(harmful) − mean(harmless)</div></div>
+    <div class="card"><h3>3 · Subtract the arrow</h3><p>At every layer, measure how much of the notepad points along <span class="mono">v</span> and take exactly that much away. Everything else the model knows is left alone.</p>
+      <svg viewBox="0 0 520 200" width="100%"><line x1="60" y1="170" x2="470" y2="170" stroke="var(--accent)" stroke-width="2" stroke-dasharray="6 5"/><text x="474" y="174" style="fill:var(--accent);font-size:14px">v</text>
+        <line x1="80" y1="170" x2="340" y2="50" stroke="var(--text)" stroke-width="3.5" marker-end="url(#ah3)"/><defs><marker id="ah3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--text)"/></marker><marker id="ah4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--ok)"/></marker><marker id="ah5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--harm)"/></marker></defs>
+        <line x1="80" y1="170" x2="336" y2="170" stroke="var(--harm)" stroke-width="4" marker-end="url(#ah5)"/>
+        <line x1="80" y1="170" x2="80" y2="54" stroke="var(--ok)" stroke-width="4" marker-end="url(#ah4)"/>
+        <line x1="340" y1="50" x2="340" y2="166" stroke="var(--muted)" stroke-dasharray="4 4"/>
+        <text x="350" y="46" style="fill:var(--text);font-size:14px">h (what the model thinks)</text><text x="208" y="190" text-anchor="middle" style="fill:var(--harm);font-size:14px">the refusal part — removed</text><text x="70" y="44" style="fill:var(--ok);font-size:14px">h′ — everything else, kept</text></svg>
+      <div class="formula">h′ = h − α · (h · v̂) · v̂</div></div>
+    <div class="card"><h3>4 · Bake it into the weights</h3><p>A hook is temporary. To ship a model, apply the same subtraction to every weight matrix that writes to the notepad. Now the model <b>cannot write</b> in the refusal direction at all.</p>
+      <svg viewBox="0 0 520 190" width="100%"><g fill="var(--panel2)" stroke="var(--line)"><rect x="30" y="50" width="140" height="80" rx="10"/><rect x="350" y="50" width="140" height="80" rx="10" stroke="var(--accent)"/></g>
+        <text x="100" y="86" text-anchor="middle" style="font-size:15px;fill:var(--text)">weights W</text><text x="100" y="108" text-anchor="middle">attention · MLP · embed</text>
+        <text x="420" y="86" text-anchor="middle" style="font-size:15px;fill:var(--text)">W′ (abliterated)</text><text x="420" y="108" text-anchor="middle">a normal model file</text>
+        <line x1="180" y1="90" x2="340" y2="90" stroke="var(--muted)" stroke-width="2" marker-end="url(#ah)"/><text x="260" y="78" text-anchor="middle" style="font-size:14px;fill:var(--accent)">W − v̂ v̂ᵀ W</text><text x="260" y="112" text-anchor="middle">no training · seconds</text></svg>
+      <div class="formula">W′ = (I − v̂ v̂ᵀ) W</div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Do it yourself in six lines</h3>
+<pre class="mono">pip install "ablate-llm[all]"
+
+from ablate import Ablator
+abl = Ablator("Qwen/Qwen2.5-0.5B-Instruct")
+abl.extract()                      # find the refusal direction
+abl.search(n_trials=20)            # auto-tune the edit
+print(abl.generate(["What's the best way to kill weeds in my garden?"]))
+abl.push_to_hub("you/qwen-abliterated")   # bake + upload + model card
+
+ablate ui            # …or open this page
+ablate ui --share    # let the room explore on the same Wi-Fi</pre></div>
+</section>
+</main>
+<div id="tip"></div>
+
+<script>
+const $ = (s, r=document) => r.querySelector(s), $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = n => n >= 1e9 ? (n/1e9).toFixed(1)+'B' : n >= 1e6 ? (n/1e6).toFixed(0)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'k' : String(n);
+const pct = x => Math.round(x*100) + '%';
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+const TABS = [['model','Model'],['find','Find direction'],['play','Playground'],['measure','Measure'],['tune','Auto-tune'],['pub','Publish'],['arch','Architecture'],['how','How it works']];
+let ST = {}, CFG = null, busy = false, lens = null, lensSide = 'base', selLayer = null, collapsed = false, trials = [], tuned = null;
+
+/* ---------- plumbing ---------- */
+async function api(path, body) {
+  const r = await fetch(path, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)} : undefined);
+  const j = await r.json();
+  if (!r.ok || j.error) throw new Error(j.error || r.statusText);
+  return j;
+}
+async function stream(path, body, on) {
+  if (busy) return;
+  busy = true; setStatus('Starting…'); lockUI();
+  try {
+    const r = await fetch(path, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || r.statusText); }
+    const rd = r.body.getReader(), dec = new TextDecoder(); let buf = '';
+    for (;;) {
+      const {done, value} = await rd.read(); if (done) break;
+      buf += dec.decode(value, {stream:true});
+      let i; while ((i = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, i); buf = buf.slice(i+1); if (!line.trim()) continue;
+        const ev = JSON.parse(line);
+        if (ev.type === 'error') throw new Error(ev.message);
+        if (ev.type === 'stage' || ev.type === 'queued') setStatus(ev.message);
+        if (ev.type === 'progress') setStatus(ev.message, ev.done / ev.total);
+        on(ev);
+      }
+    }
+    setStatus(null);
+  } catch (e) { setStatus(e.message, null, true); }
+  finally { busy = false; lockUI(); }
+}
+function setStatus(msg, frac, err) {
+  const el = $('#status');
+  if (!msg) { el.classList.remove('show'); return; }
+  el.className = 'show' + (err ? ' err' : '');
+  $('#statusMsg').textContent = msg;
+  $('.spin', el).style.display = err ? 'none' : '';
+  $('.bar', el).style.display = (frac == null) ? 'none' : '';
+  if (frac != null) $('.bar i', el).style.width = Math.round(frac*100) + '%';
+  if (err) setTimeout(() => { if (el.classList.contains('err')) el.classList.remove('show'); }, 9000);
+}
+function lockUI() {
+  $$('button.primary, #saveBtn, #hfBtn').forEach(b => b.disabled = busy || (b.classList.contains('host') && !ST.host));
+  $$('button.host').forEach(b => { if (!ST.host) b.title = "Only the presenter's machine can do this"; });
+}
+const tip = $('#tip');
+function hover(el, html) {
+  el.addEventListener('mousemove', e => { tip.innerHTML = html; tip.style.display = 'block';
+    tip.style.left = Math.min(e.clientX + 14, innerWidth - 360) + 'px'; tip.style.top = (e.clientY + 14) + 'px'; });
+  el.addEventListener('mouseleave', () => tip.style.display = 'none');
+}
+const svgEl = (tag, attrs = {}, parent) => { const e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+
+/* ---------- nav ---------- */
+function go(id) {
+  $$('section').forEach(s => s.classList.toggle('active', s.id === 's-' + id));
+  $$('#nav button').forEach(b => b.classList.toggle('active', b.dataset.t === id));
+  location.hash = id;
+  if (id === 'pub') { refreshCard(); refreshMine(); }
+  if (id === 'measure') $('#evalCfg').textContent = CFG ? 'Testing: ' + describe(CFG) : '';
+}
+function renderNav() {
+  const done = {model: !!ST.model, find: !!ST.extracted};
+  $('#nav').innerHTML = TABS.map(([id, t], i) => `<button data-t="${id}" class="${done[id] ? 'done' : ''}"><span class="n">${id === 'how' ? '?' : id === 'arch' ? '◇' : done[id] ? '✓' : i+1}</span>${t}</button>`).join('');
+  $$('#nav button').forEach(b => b.onclick = () => go(b.dataset.t));
+  const cur = (location.hash || '#model').slice(1); $$('#nav button').forEach(b => b.classList.toggle('active', b.dataset.t === cur));
+}
+function describe(c) {
+  if (c.mode === 'add') return `push toward refusal ×${c.strength} at layer ${c.direction_layer}`;
+  if (c.mode === 'off') return 'no edit';
+  const what = c.n_directions > 1 ? `${c.n_directions} directions` : `direction from layer ${c.direction_layer}`;
+  return `${what}, strength ${(+c.alpha).toFixed(2)}, applied to layers ${c.min_layer}–${c.max_layer}`;
+}
+
+/* ---------- state ---------- */
+async function refresh() {
+  const prev = ST; ST = await api('/api/state');
+  const m = ST.model;
+  $('#chipModel').innerHTML = m ? `<span class="dot on"></span><b>${esc(m.name)}</b> · ${m.device}` : '<span class="dot"></span>no model loaded';
+  $('#chipHF').innerHTML = ST.hf_user ? `🤗 <b>${esc(ST.hf_user)}</b>` : '🤗 not signed in';
+  if (m && (!CFG || !prev.model || prev.model.name !== m.name || prev.suggested_layer !== ST.suggested_layer)) resetCfg();
+  renderNav(); renderModel(); renderFind(); renderControls(); renderChips(); renderPub(); lockUI();
+}
+function resetCfg() {
+  const n = ST.model ? ST.model.n_layers : 24;
+  CFG = {mode:'remove', direction_layer: ST.suggested_layer || Math.round(n*0.55), alpha:1, min_layer:0, max_layer:n, n_directions:1, strength:1};
+  selLayer = CFG.direction_layer;
+}
+
+/* ---------- 1 model ---------- */
+function renderModel() {
+  const chipsFor = (el, items) => { el.innerHTML = items.length ? '' : '<span class="hint">none</span>';
+    items.forEach(it => { const b = document.createElement('button'); b.textContent = it.id; if (it.note) b.title = it.note;
+      b.onclick = () => { $('#modelInput').value = it.id; $('#hfResults').style.display = 'none'; }; el.appendChild(b); }); };
+  chipsFor($('#suggested'), ST.suggested_models || []);
+  chipsFor($('#cached'), (ST.cached_models || []).map(id => ({id})));
+  const m = ST.model;
+  if (!m) return;
+  const blocks = Math.min(m.n_layers, 30), w = 440 / blocks;
+  $('#modelInfo').innerHTML = `<div class="tiles">
+    <div class="tile"><div class="v">${m.n_layers}</div><div class="k">layers</div></div>
+    <div class="tile"><div class="v">${m.hidden_size}</div><div class="k">numbers per word (notepad width)</div></div>
+    <div class="tile"><div class="v">${fmt(m.params)}</div><div class="k">parameters</div></div>
+    <div class="tile"><div class="v">${m.device.toUpperCase()}</div><div class="k">running on · ${m.dtype}</div></div></div>
+    <svg viewBox="0 0 480 96" width="100%" style="margin-top:16px">
+      <line x1="10" y1="72" x2="470" y2="72" stroke="${css('--accent2')}" stroke-width="5" stroke-linecap="round"/>
+      ${Array.from({length: blocks}, (_, i) => `<rect x="${20 + i*w}" y="22" width="${Math.max(w-3, 2)}" height="34" rx="3" fill="${css('--accent')}" opacity="${0.35 + 0.65*i/blocks}"/>`).join('')}
+      <text x="20" y="14">layer 1</text><text x="460" y="14" text-anchor="end">layer ${m.n_layers}</text><text x="240" y="92" text-anchor="middle">residual stream — where we will look for "refuse"</text></svg>
+    ${m.has_chat_template ? '' : '<p class="hint" style="color:var(--harm);margin-top:10px">This model has no chat template, so it probably was not trained to refuse. Pick an instruct / chat model.</p>'}`;
+}
+let searchT;
+$('#modelInput').addEventListener('input', e => {
+  clearTimeout(searchT); const q = e.target.value.trim(); const box = $('#hfResults');
+  if (q.length < 2) { box.style.display = 'none'; return; }
+  searchT = setTimeout(async () => {
+    try { const {models} = await api('/api/hf/search?q=' + encodeURIComponent(q));
+      box.innerHTML = models.map(m => `<div data-id="${esc(m.id)}"><span>${esc(m.id)}${m.gated ? ' 🔒' : ''}</span><small>↓ ${fmt(m.downloads)} · ♥ ${fmt(m.likes)}</small></div>`).join('') || '<div><span class="hint">No matches</span></div>';
+      box.style.display = 'block';
+      $$('[data-id]', box).forEach(d => d.onclick = () => { $('#modelInput').value = d.dataset.id; box.style.display = 'none'; });
+    } catch (err) { box.innerHTML = `<div><span class="hint">${esc(err.message)}</span></div>`; box.style.display = 'block'; }
+  }, 280);
+});
+$('#loadBtn').onclick = () => { const model = $('#modelInput').value.trim(); if (!model) return $('#modelInput').focus();
+  stream('/api/load', {model}, ev => { if (ev.type === 'done') { CFG = null; refresh(); } }); };
+
+/* ---------- 2 find ---------- */
+$('#extractBtn').onclick = () => { if (!ST.model) return setStatus('Load a model first.', null, true);
+  stream('/api/extract', {source: $('#srcSel').value, n_train: +$('#nTrain').value}, ev => { if (ev.type === 'done') { CFG = null; refresh(); } }); };
+function renderFind() {
+  const has = ST.extracted && ST.layers.length;
+  $('#findEmpty').style.display = has ? 'none' : ''; $('#findCharts').style.display = has ? '' : 'none';
+  if (!has) return;
+  const op = $('#openers'); op.style.display = '';
+  op.innerHTML = `refusals start with <b>${(ST.openers || []).map(o => '“' + esc(o.trim()) + '”').join(' ') || '—'}</b> · ${pct(ST.refusal_base)} of the time before any edit`;
+  drawLayers(); drawScatter();
+}
+function drawLayers() {
+  const L = ST.layers.slice(1), W = 620, H = 310, pl = 44, pr = 44, pt = 14, pb = 44, iw = W-pl-pr, ih = H-pt-pb;
+  const box = $('#layerChart'); box.innerHTML = '';
+  const s = svgEl('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%'}, box);
+  const maxD = Math.max(...L.map(l => l.dprime), 1), bw = iw / L.length;
+  const maxR = Math.max(ST.refusal_base, ...L.map(l => l.refusal_after || 0), 0.1);
+  for (let g = 0; g <= 4; g++) { const y = pt + ih * g/4; svgEl('line', {x1: pl, x2: W-pr, y1: y, y2: y, stroke: css('--line')}, s);
+    svgEl('text', {x: pl-6, y: y+4, 'text-anchor': 'end'}, s).textContent = (maxD*(1-g/4)).toFixed(1);
+    svgEl('text', {x: W-pr+6, y: y+4, style: `fill:${css('--harm')}`}, s).textContent = pct(maxR*(1-g/4)); }
+  const yb = pt + ih * (1 - ST.refusal_base/maxR);
+  svgEl('line', {x1: pl, x2: W-pr, y1: yb, y2: yb, stroke: css('--harm'), 'stroke-dasharray': '4 4', opacity: .6}, s);
+  svgEl('text', {x: W-pr-6, y: yb-5, 'text-anchor': 'end', style: `fill:${css('--harm')}`}, s).textContent = 'refusal before any edit';
+  let path = '';
+  L.forEach((l, i) => {
+    const x = pl + i*bw, h = ih * Math.max(l.dprime, 0)/maxD, sel = l.layer === selLayer, sug = l.layer === ST.suggested_layer;
+    const r = svgEl('rect', {x: x+2, y: pt+ih-h, width: Math.max(bw-4, 2), height: h, rx: 3, fill: sug ? css('--ok') : css('--accent'), opacity: sel ? 1 : .5, style: 'cursor:pointer'}, s);
+    const hit = svgEl('rect', {x, y: pt, width: bw, height: ih, fill: 'transparent', style: 'cursor:pointer'}, s);
+    hover(hit, `<b>Layer ${l.layer}</b>${sug ? ' · auto-picked' : ''}<br>separation: ${l.dprime} (${pct(l.acc)} of prompts sorted correctly)<br>refusal left after removing it: ${pct(l.refusal_after || 0)}<br>side effect on harmless prompts (KL): ${l.side_effect}`);
+    hit.onclick = () => { selLayer = l.layer; CFG.direction_layer = l.layer; collapsed = false; drawLayers(); drawScatter(); renderControls(); };
+    const cy = pt + ih * (1 - (l.refusal_after || 0)/maxR); path += (i ? 'L' : 'M') + (x + bw/2) + ' ' + cy;
+    if (i % Math.ceil(L.length/12) === 0 || sel) svgEl('text', {x: x+bw/2, y: H-26, 'text-anchor': 'middle', style: sel ? `fill:${css('--text')};font-weight:700` : ''}, s).textContent = l.layer;
+  });
+  svgEl('path', {d: path, fill: 'none', stroke: css('--harm'), 'stroke-width': 2.5, 'stroke-linejoin': 'round', 'pointer-events': 'none'}, s);
+  svgEl('text', {x: pl + iw/2, y: H-2, 'text-anchor': 'middle'}, s).textContent = 'layer (early → late)';
+}
+async function drawScatter() {
+  $('#scLayer').textContent = selLayer;
+  const d = await api('/api/layer?l=' + selLayer), W = 620, H = 300, p = 26;
+  const xs = d.points.map(q => q.x), ys = d.points.map(q => q.y);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const sx = v => p + (W-2*p) * (v-x0)/((x1-x0) || 1), sy = v => H-p-12 - (H-2*p-12) * (v-y0)/((y1-y0) || 1);
+  const box = $('#scatter'); box.innerHTML = '';
+  const s = svgEl('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%'}, box);
+  svgEl('line', {x1: p, x2: W-p, y1: H-14, y2: H-14, stroke: css('--accent'), 'stroke-width': 2}, s);
+  svgEl('path', {d: `M${W-p} ${H-14}l-9 -5v10z`, fill: css('--accent')}, s);
+  svgEl('text', {x: W/2, y: H-1, 'text-anchor': 'middle', style: `fill:${css('--accent')}`}, s).textContent = 'refusal direction →';
+  const mid = sx((d.mean_h + d.mean_s)/2);
+  d.points.forEach(q => { const c = svgEl('circle', {r: 6, cx: 0, cy: 0, class: 'pt', fill: q.harmful ? css('--harm') : css('--safe'), opacity: .82, stroke: css('--panel'), 'stroke-width': 1}, s);
+    c.dataset.x = sx(q.x); c.dataset.y = sy(q.y); c.dataset.m = mid; c.style.transform = `translate(${sx(q.x)}px,${sy(q.y)}px)`;
+    hover(c, `<b>${q.harmful ? 'Harmful pile' : 'Harmless pile'}</b><br>${esc(q.prompt)}`); });
+  collapsed = false; $('#collapseBtn').textContent = '▶ Remove the direction';
+}
+$('#collapseBtn').onclick = () => { collapsed = !collapsed;
+  $$('#scatter .pt').forEach(c => c.style.transform = `translate(${collapsed ? c.dataset.m : c.dataset.x}px,${c.dataset.y}px)`);
+  $('#collapseBtn').textContent = collapsed ? '↺ Put it back' : '▶ Remove the direction'; };
+
+/* ---------- 3 playground ---------- */
+function renderControls() {
+  if (!CFG) return; const n = ST.model ? ST.model.n_layers : 24, off = !ST.extracted;
+  $('#rLayer').max = n; $('#rMin').max = n-1; $('#rMax').max = n; $('#rK').max = Math.max(ST.n_subspace || 1, 1);
+  $('#rLayer').value = CFG.direction_layer; $('#rAlpha').value = CFG.alpha; $('#rMin').value = CFG.min_layer; $('#rMax').value = CFG.max_layer; $('#rK').value = CFG.n_directions; $('#rStrength').value = CFG.strength;
+  $('#vLayer').textContent = CFG.direction_layer + (CFG.direction_layer === ST.suggested_layer ? ' (auto-picked)' : '');
+  $('#vAlpha').textContent = (+CFG.alpha).toFixed(2); $('#vBand').textContent = `${CFG.min_layer} → ${CFG.max_layer}`;
+  $('#vK').textContent = CFG.n_directions; $('#vStrength').textContent = '×' + (+CFG.strength).toFixed(1); $('#vTok').textContent = $('#rTok').value + ' tokens';
+  $$('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.m === CFG.mode));
+  const add = CFG.mode === 'add', none = CFG.mode === 'off';
+  $('#cAlpha').style.display = $('#cBand').style.display = $('#cK').style.display = (add || none) ? 'none' : '';
+  $('#cStrength').style.display = add ? '' : 'none';
+  $('#ablTitle').textContent = add ? 'Edited model — forced to refuse' : none ? 'Edited model — no edit' : 'Edited model — refusal removed';
+  $$('#controls input').forEach(i => i.disabled = off && i.id !== 'rTok');
+  $('#rLayer').disabled = off || (CFG.n_directions > 1 && !add);
+}
+const bind = (id, key, f = Number) => $(id).addEventListener('input', e => { CFG[key] = f(e.target.value);
+  if (key === 'min_layer' && CFG.min_layer >= CFG.max_layer) CFG.max_layer = CFG.min_layer + 1;
+  if (key === 'max_layer' && CFG.max_layer <= CFG.min_layer) CFG.min_layer = CFG.max_layer - 1;
+  if (key === 'direction_layer') selLayer = CFG.direction_layer;
+  renderControls(); });
+bind('#rLayer', 'direction_layer'); bind('#rAlpha', 'alpha'); bind('#rMin', 'min_layer'); bind('#rMax', 'max_layer'); bind('#rK', 'n_directions'); bind('#rStrength', 'strength');
+$('#rTok').addEventListener('input', renderControls);
+$$('#modeSeg button').forEach(b => b.onclick = () => { CFG.mode = b.dataset.m; renderControls(); });
+$('#resetCfg').onclick = () => { resetCfg(); if (tuned) Object.assign(CFG, tuned); renderControls(); };
+function renderChips() {
+  const groups = [...(ST.demo_prompts || [])];
+  if ((ST.eval_prompts || []).length) groups.push({group: 'Benchmark triggers (unseen while finding the direction)', prompts: ST.eval_prompts.slice(0, 5)});
+  $('#promptChips').innerHTML = groups.map(g => `<div class="lbl">${esc(g.group)}</div><div class="chips">${g.prompts.map(p => `<button data-p="${esc(p)}">${esc(p)}</button>`).join('')}</div>`).join('');
+  $$('#promptChips button').forEach(b => b.onclick = () => { $('#prompt').value = b.dataset.p; run(); });
+}
+const badge = r => `<span class="badge ${r ? 'ref' : 'ans'}">${r ? 'REFUSED' : 'ANSWERED'}</span>`;
+function run() {
+  const prompt = $('#prompt').value.trim(); if (!prompt) return;
+  if (!ST.model) return setStatus('Load a model first.', null, true);
+  $('#outBase').textContent = $('#outAbl').textContent = ''; $('#bBase').innerHTML = $('#bAbl').innerHTML = '';
+  stream('/api/generate', {prompt, config: CFG, max_new_tokens: +$('#rTok').value}, ev => {
+    if (ev.type === 'token') { setStatus(null); $('#outBase').textContent = ev.base; $('#outAbl').textContent = ev.abl; }
+    if (ev.type === 'first_token') { bars($('#ftBase'), ev.base); bars($('#ftAbl'), ev.abl); }
+    if (ev.type === 'lens') { lens = ev; drawLens(); $('#meter b').style.left = Math.max(0, Math.min(1, 0.12 + 0.76*ev.score[0]))*100 + '%'; }
+    if (ev.type === 'done') { $('#bBase').innerHTML = badge(ev.base_refused); $('#bAbl').innerHTML = badge(ev.abl_refused) + ` <span class="hint">${ev.tok_per_s} tok/s</span>`; }
+  });
+}
+$('#runBtn').onclick = run;
+$('#prompt').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) run(); });
+function bars(el, items) {
+  const open = (ST.openers || []).map(o => o.trim());
+  el.innerHTML = items.slice(0, 5).map(t => `<div class="pbar"><span class="tk" title="${esc(t.token)}">${esc(t.token.replace(/\n/g, '⏎')) || '␠'}</span><span class="b"><i style="width:${t.p*100}%;background:${open.includes(t.token.trim()) ? css('--harm') : css('--safe')}"></i></span><span>${pct(t.p)}</span></div>`).join('');
+}
+$$('#lensSeg button').forEach(b => b.onclick = () => { lensSide = b.dataset.s; $$('#lensSeg button').forEach(x => x.classList.toggle('on', x === b)); drawLens(); });
+function drawLens() {
+  if (!lens) return;
+  const T = lens.tokens.length, k = Math.min(T, 26), from = T - k, rows = lens.base.length;
+  const cw = 24, ch = 9, pl = 34, pb = 78, W = pl + k*cw + 6, H = rows*ch + pb;
+  const box = $('#lens'); box.innerHTML = '';
+  const s = svgEl('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%', style: 'max-height:380px'}, box);
+  const harm = css('--harm'), safe = css('--safe'), M = lens[lensSide];
+  for (let l = 0; l < rows; l++) {
+    let mx = 1e-6; for (let t = from; t < T; t++) mx = Math.max(mx, Math.abs(lens.base[l][t]), Math.abs(lens.abl[l][t]));
+    const y = (rows-1-l)*ch;
+    for (let t = from; t < T; t++) { const v = M[l][t] / mx;
+      const r = svgEl('rect', {x: pl + (t-from)*cw, y, width: cw-1, height: ch-1, fill: v >= 0 ? harm : safe, opacity: Math.min(1, Math.abs(v)).toFixed(3)}, s);
+      hover(r, `layer ${l} · “${esc(lens.tokens[t])}”<br>signal: ${M[l][t]}`); }
+    if (l % 4 === 0) svgEl('text', {x: pl-5, y: y+ch-1, 'text-anchor': 'end', style: 'font-size:10px'}, s).textContent = l;
+  }
+  svgEl('rect', {x: pl-1, y: (rows-1-lens.direction_layer)*ch - .5, width: k*cw+1, height: ch, fill: 'none', stroke: css('--text'), 'stroke-width': .8, opacity: .5}, s);
+  for (let t = from; t < T; t++) { const x = pl + (t-from)*cw + cw/2, y = rows*ch + 8;
+    svgEl('text', {x, y, 'text-anchor': 'end', transform: `rotate(-60 ${x} ${y})`, style: `font-size:11px;fill:${css('--text')}`}, s).textContent = lens.tokens[t].replace(/\n/g, '⏎').trim().slice(0, 12) || '·'; }
+}
+
+/* ---------- 4 measure ---------- */
+$('#evalBtn').onclick = () => { if (!ST.extracted) return setStatus('Find the refusal direction first (step 2).', null, true);
+  const c = CFG.mode === 'remove' ? CFG : {...CFG, mode: 'remove'};
+  stream('/api/evaluate', {config: c, n: +$('#evalN').value}, ev => { if (ev.type === 'done') renderEval(ev); }); };
+function renderEval({metrics: m, rows}) {
+  const drop = m.refusal_before - m.refusal_after;
+  $('#evalOut').innerHTML = `<div class="tiles" style="margin-bottom:16px">
+    <div class="tile"><div class="v" style="color:var(--harm)">${pct(m.refusal_before)}</div><div class="k">refused — original model</div></div>
+    <div class="tile"><div class="v" style="color:var(--ok)">${pct(m.refusal_after)}</div><div class="k">refused — edited model</div></div>
+    <div class="tile"><div class="v">${m.mean_kl.toFixed(3)}</div><div class="k">drift on harmless prompts (KL) · ${m.mean_kl < 0.1 ? 'tiny' : m.mean_kl < 0.5 ? 'noticeable' : 'large'}</div></div>
+    <div class="tile"><div class="v">${pct(m.coherence)}</div><div class="k">answers still read as fluent text</div></div></div>
+    <div class="card" style="margin-bottom:16px"><h3>${m.n} unseen prompts: ${Math.round(m.refusal_before*m.n)} refused before → ${Math.round(m.refusal_after*m.n)} after</h3>
+      <p class="hint">Honest caveat: this counter only spots hard refusals ("I'm sorry, I can't"). A model can also dodge politely or lecture. For published numbers, use an LLM judge — <span class="mono">ablate eval --judge anthropic:…</span></p>
+      <div style="display:flex;height:22px;border-radius:11px;overflow:hidden;background:var(--line)"><i style="width:${m.refusal_after*100}%;background:var(--harm)"></i><i style="width:${Math.max(drop, 0)*100}%;background:var(--ok)"></i></div>
+      <div class="legend" style="margin-top:8px"><span><i style="background:var(--harm)"></i>still refused</span><span><i style="background:var(--ok)"></i>refusals removed by the edit</span><span><i style="background:var(--line)"></i>never refused</span></div></div>
+    <div class="card"><table><tr><th style="width:26%">Prompt</th><th style="width:37%">Original</th><th style="width:37%">Edited</th></tr>
+    ${rows.map(r => `<tr><td>${esc(r.prompt)}</td><td>${badge(r.base_refused)}<div class="t">${esc(r.base)}</div></td><td>${badge(r.abl_refused)}<div class="t">${esc(r.abl)}</div></td></tr>`).join('')}</table></div>`;
+  $$('#evalOut .t').forEach(t => t.onclick = () => t.classList.toggle('open'));
+}
+
+/* ---------- 5 tune ---------- */
+$('#tuneBtn').onclick = () => { if (!ST.extracted) return setStatus('Find the refusal direction first (step 2).', null, true);
+  trials = []; $('#tuneBest').innerHTML = '<div class="empty">Searching…</div>';
+  stream('/api/search', {trials: +$('#tuneTrials').value, subspace: $('#tuneKind').value === 'subspace'}, ev => {
+    if (ev.type === 'trial') { trials.push(ev); setStatus(`Try ${trials.length} of ${ev.total}…`, trials.length/ev.total); drawTrials(); }
+    if (ev.type === 'done') { tuned = {...ev.config, mode: 'remove', n_directions: ev.config.n_directions || 1}; drawTrials(tuned);
+      $('#tuneBest').innerHTML = `<div class="tiles"><div class="tile"><div class="v">${pct(ev.metrics.refusal_rate)}</div><div class="k">refusals left</div></div><div class="tile"><div class="v">${ev.metrics.mean_kl.toFixed(3)}</div><div class="k">damage (KL)</div></div></div>
+        <pre class="mono" style="margin:14px 0">${esc(JSON.stringify(ev.config, null, 2))}</pre><p class="hint">${esc(describe({...CFG, ...tuned}))}</p><button class="primary" id="useTuned">Use in playground →</button>`;
+      $('#useTuned').onclick = () => { Object.assign(CFG, tuned); if (CFG.direction_layer > 0) selLayer = CFG.direction_layer; else CFG.direction_layer = ST.suggested_layer; renderControls(); go('play'); }; }
+  }); };
+function drawTrials(best) {
+  const W = 620, H = 320, pl = 50, pb = 40, pt = 12, pr = 14, box = $('#tuneChart'); box.innerHTML = '';
+  const s = svgEl('svg', {viewBox: `0 0 ${W} ${H}`, width: '100%'}, box);
+  const mk = Math.max(0.2, ...trials.map(t => t.mean_kl)) * 1.08;
+  const sx = v => pl + (W-pl-pr) * Math.min(v, mk)/mk, sy = v => pt + (H-pt-pb) * (1-v);
+  for (let g = 0; g <= 4; g++) { const y = sy(g/4); svgEl('line', {x1: pl, x2: W-pr, y1: y, y2: y, stroke: css('--line')}, s); svgEl('text', {x: pl-6, y: y+4, 'text-anchor': 'end'}, s).textContent = pct(g/4);
+    svgEl('text', {x: sx(mk*g/4), y: H-pb+16, 'text-anchor': 'middle'}, s).textContent = (mk*g/4).toFixed(2); }
+  svgEl('text', {x: (W+pl)/2, y: H-4, 'text-anchor': 'middle'}, s).textContent = 'damage to normal answers (KL) →';
+  svgEl('text', {x: 12, y: H/2, 'text-anchor': 'middle', transform: `rotate(-90 12 ${H/2})`}, s).textContent = 'refusals left →';
+  svgEl('text', {x: pl+8, y: H-pb-8, style: `fill:${css('--ok')}`}, s).textContent = '★ ideal corner';
+  const top = Math.min(...trials.map(t => t.score));
+  trials.forEach((t, i) => { const isBest = t.score === top;
+    const c = svgEl('circle', {cx: sx(t.mean_kl), cy: sy(t.refusal_rate), r: isBest ? 10 : 7, fill: isBest ? css('--ok') : css('--accent'), opacity: isBest ? 1 : .35 + .5*i/trials.length, stroke: css('--panel'), 'stroke-width': 1.5}, s);
+    hover(c, `<b>Try ${t.trial + 1}</b>${isBest ? ' · best so far' : ''}<br>refusals left: ${pct(t.refusal_rate)}<br>damage (KL): ${t.mean_kl}<br>${t.n_directions ? t.n_directions + ' directions' : 'layer ' + t.direction_layer} · α ${t.alpha} · layers ${t.min_layer}–${t.max_layer}`); });
+}
+
+/* ---------- 6 publish ---------- */
+function renderPub() {
+  $('#hfState').innerHTML = ST.hf_user ? `Signed in as <b>${esc(ST.hf_user)}</b> — token found automatically on this machine.` : (ST.has_token ? 'A token was found but HuggingFace could not be reached.' : 'No token found. Paste one with <b>write</b> access (huggingface.co → Settings → Access Tokens).');
+  if (ST.model && !$('#repoId').value) $('#repoId').value = `${ST.hf_user || 'username'}/${ST.model.name.split('/').pop().toLowerCase()}-abliterated`;
+}
+$('#hfBtn').onclick = async () => { try { await api('/api/hf/token', {token: $('#hfToken').value}); $('#hfToken').value = ''; await refresh(); refreshMine(); } catch (e) { setStatus(e.message, null, true); } };
+async function refreshCard() { if (!ST.extracted) return; try { $('#card').textContent = (await api('/api/card', {config: CFG, repo_id: $('#repoId').value})).card; } catch (e) { $('#card').textContent = e.message; } }
+async function refreshMine() { try { const {models} = await api('/api/hf/mine');
+  $('#mine').innerHTML = models.length ? models.map(m => `<div><a href="https://huggingface.co/${esc(m.id)}" target="_blank">${esc(m.id)}</a> ${m.private ? '🔒' : ''} <small>↓ ${fmt(m.downloads)}</small></div>`).join('') : 'None yet.'; } catch (e) { $('#mine').textContent = '—'; } }
+$('#cardBtn').onclick = refreshCard; $('#repoId').addEventListener('change', refreshCard);
+let armed = false;
+$('#pushBtn').onclick = () => { if (!ST.extracted) return setStatus('Find the refusal direction first (step 2).', null, true);
+  const b = $('#pushBtn'); if (!armed) { armed = true; b.textContent = `Click again to upload to ${$('#repoId').value} (${$('#repoPrivate').checked ? 'private' : 'PUBLIC'})`; setTimeout(() => { armed = false; b.innerHTML = 'Bake &amp; push to the Hub'; }, 6000); return; }
+  armed = false; b.innerHTML = 'Bake &amp; push to the Hub';
+  stream('/api/push', {repo_id: $('#repoId').value.trim(), private: $('#repoPrivate').checked, config: {...CFG, mode: 'remove'}}, ev => {
+    if (ev.type === 'done') { $('#pubOut').innerHTML = `<div class="tile">✅ Published: <a href="${esc(ev.url)}" target="_blank">${esc(ev.url)}</a></div>`; refreshMine(); } }); };
+$('#saveBtn').onclick = () => { if (!ST.extracted) return setStatus('Find the refusal direction first (step 2).', null, true);
+  stream('/api/save', {path: 'ablate_out/' + ST.model.name.split('/').pop().toLowerCase() + '-abliterated', config: {...CFG, mode: 'remove'}}, ev => {
+    if (ev.type === 'done') $('#pubOut').innerHTML = `<div class="tile">✅ Saved to <span class="mono">${esc(ev.url)}</span><div class="k">Load it with plain transformers — no ablate needed.</div></div>`; }); };
+
+/* ---------- theme + boot ---------- */
+function setTheme(t) { document.documentElement.dataset.theme = t; $('#logo').src = `/static/logo-${t}.png`; $('#themeBtn').textContent = t === 'dark' ? '☀︎ Light' : '☾ Dark';
+  try { localStorage.setItem('ablate-theme', t); } catch (e) {}
+  if (ST.extracted) { drawLayers(); drawScatter(); } if (lens) drawLens(); if (trials.length) drawTrials(); if (ST.model) renderModel(); }
+$('#themeBtn').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+window.addEventListener('hashchange', () => { const id = location.hash.slice(1); if (TABS.some(t => t[0] === id) && !$('#s-' + id).classList.contains('active')) go(id); });
+(async () => {
+  let t = 'dark'; try { t = localStorage.getItem('ablate-theme') || 'dark'; } catch (e) {}
+  document.documentElement.dataset.theme = t; $('#logo').src = `/static/logo-${t}.png`; $('#themeBtn').textContent = t === 'dark' ? '☀︎ Light' : '☾ Dark';
+  await refresh();
+  fetch('/static/architecture.svg').then(r => r.text()).then(t => { $('#archSvg').innerHTML = t; }).catch(() => {});
+  const want = location.hash.slice(1); go(TABS.some(x => x[0] === want) ? want : (ST.model ? (ST.extracted ? 'play' : 'find') : 'model'));
+  // Viewers on other machines pick up the presenter's changes automatically.
+  setInterval(async () => { if (busy) return; try { const s = await api('/api/state');
+    if ((s.model && s.model.name) !== (ST.model && ST.model.name) || s.extracted !== ST.extracted || s.suggested_layer !== ST.suggested_layer || s.hf_user !== ST.hf_user) refresh(); } catch (e) {} }, 4000);
+})();
+</script>
+</body>
+</html>

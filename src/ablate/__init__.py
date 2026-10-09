@@ -23,7 +23,7 @@ from .pipeline import Ablator, run
 from .weights import bake_direction, bake_subspace
 from .hub import build_model_card, push_to_hub
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = [
     "Ablator",

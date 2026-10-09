@@ -11,7 +11,7 @@ guards against degenerate solutions that "win" by breaking the model.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 import torch
 
@@ -47,6 +47,7 @@ def optimize(
     layer_lo: Optional[int] = None,
     layer_hi: Optional[int] = None,
     show_progress: bool = True,
+    callback: Optional[Callable[[dict], None]] = None,
 ) -> SearchResult:
     try:
         import optuna
@@ -92,6 +93,8 @@ def optimize(
         penalty = 0.0 if res.coherence >= coherence_floor else (coherence_floor - res.coherence) * 5.0
         score = res.objective + penalty
         history.append({"trial": trial.number, **cfg.to_dict(), **res.__dict__, "score": score})
+        if callback is not None:
+            callback(history[-1])
         return score
 
     sampler = optuna.samplers.TPESampler(seed=seed)
@@ -129,6 +132,7 @@ def optimize_subspace(
     coherence_floor: float = 0.3,
     seed: int = 0,
     show_progress: bool = True,
+    callback: Optional[Callable[[dict], None]] = None,
 ) -> SubspaceSearchResult:
     """Search over ``(n_directions, alpha, layer_band)`` for subspace ablation.
 
@@ -161,6 +165,8 @@ def optimize_subspace(
         penalty = 0.0 if res.coherence >= coherence_floor else (coherence_floor - res.coherence) * 5.0
         score = res.objective + penalty
         history.append({"trial": trial.number, **cfg.to_dict(), **res.__dict__, "score": score})
+        if callback is not None:
+            callback(history[-1])
         return score
 
     study = optuna.create_study(direction="minimize", sampler=optuna.samplers.TPESampler(seed=seed))
