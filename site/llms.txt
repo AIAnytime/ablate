@@ -1,0 +1,29 @@
+# Ablate
+
+> Ablate is a Python toolkit by AI Anytime for directional ablation (abliteration) of open language models. It finds the direction in a model's residual stream that mediates refusal, removes it at runtime (forward hooks) or permanently (weight orthogonalization) with no training, and measures refusals left and KL drift on harmless prompts. Install: `pip install "ablate-llm[all]"`. Import: `from ablate import Ablator`. Current version: 0.3.0. Licence: source-available, proprietary, all rights reserved.
+
+Key facts:
+
+- Method: difference of means `v = mean(h_refused) - mean(h_answered)`; runtime ablation `h' = h - a(h.v)v`; baking `W' = (I - v v^T) W`.
+- Three interfaces: browser UI (`ablate ui`, localhost:7860), CLI (`ablate run`, `ablate eval`, `ablate generate`, `ablate extract`), Python API (`Ablator`).
+- Verified result: on Qwen/Qwen2.5-0.5B-Instruct the held-out hard-refusal rate went from 1.00 to 0.00 with mean KL of about 0.03.
+- Honest caveat: on Qwen2.5-1.5B a keyword metric read 0.0 refusals while an LLM judge scored compliance at about 0.49, because soft refusals remain.
+- Supported: HuggingFace causal LMs such as Qwen, Llama, Mistral, SmolLM and GPT-2 style models. Runs on Apple Silicon (MPS), CUDA or CPU. Python 3.9+.
+- Intended use: mechanistic interpretability, red-teaming and safety research on models you are authorized to study.
+- Presented live at Dubai AI Tinkerers, October 2026.
+
+## Docs
+
+- [Landing page](https://aianytime.github.io/ablate/): overview, quickstart, results and FAQ
+- [Full text for LLMs](https://aianytime.github.io/ablate/llms-full.txt): the complete README plus FAQ in one file
+- [README](https://github.com/AIAnytime/ablate/blob/main/README.md): full documentation
+
+## Links
+
+- [GitHub repository](https://github.com/AIAnytime/ablate): source code, README, Colab notebooks
+- [PyPI package](https://pypi.org/project/ablate-llm/): `pip install ablate-llm`
+- [Example model on HuggingFace](https://huggingface.co/ai-anytime/qwen-1.5b-abliterated): Qwen2.5-1.5B-Instruct with the refusal direction baked out
+- [YouTube walkthrough](https://youtu.be/1-1bM3Ynql4): full build and explanation by AI Anytime
+- [Dubai AI Tinkerers talk](https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y): live demo, October 2026
+- [Research paper](https://arxiv.org/abs/2406.11717): Arditi et al., 2024, "Refusal in Language Models Is Mediated by a Single Direction"
+- [AI Anytime](https://aianytime.net): the maker. Contact: sonu@aianytime.net
