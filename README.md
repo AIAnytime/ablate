@@ -20,6 +20,7 @@
   <a href="https://pypi.org/project/ablate-llm/">📦 PyPI</a> &nbsp;•&nbsp;
   <a href="https://huggingface.co/ai-anytime/qwen-1.5b-abliterated">🤗 Model</a> &nbsp;•&nbsp;
   <a href="https://youtu.be/1-1bM3Ynql4">▶️ Video walkthrough</a> &nbsp;•&nbsp;
+  <a href="https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y">🎤 Dubai AI Tinkerers talk</a> &nbsp;•&nbsp;
   <a href="#citation">📚 Cite</a>
 </p>
 
@@ -50,6 +51,23 @@ iterate on locally on a laptop, or on a free Colab T4.
 > `src/ablate/_data/` are short triggers used only to *locate* the refusal
 > direction, not requests to fulfill. Use it on models and in contexts you're
 > authorized to.
+
+> **🎤 Presented at Dubai AI Tinkerers (October 2026).** Ablate was demoed live,
+> no slides, using the browser UI shown below:
+> [dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y](https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y)
+
+## Architecture
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ui-architecture.png"><img alt="Ablate architecture: three interfaces, one pipeline, and the three places it touches the model" src="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ui-architecture.png" width="900"></a>
+</p>
+
+Three ways in (browser UI, CLI, Python API), one `Ablator` pipeline, no training.
+The coloured arrows are the only three places `ablate` touches the model: it
+**reads** the residual stream on two piles of prompts, **subtracts** the refusal
+direction at every layer's output while the model runs (a hook), or **rewrites**
+the weights for good (bake). A one-page printable version is in
+[`media/ablate-architecture.pdf`](media/ablate-architecture.pdf).
 
 ## 🤗 Released model
 
@@ -242,6 +260,16 @@ ablate ui                                   # opens http://localhost:7860
 ablate ui --model Qwen/Qwen2.5-0.5B-Instruct  # preload a model
 ablate ui --share                           # let others on the same Wi-Fi explore
 ```
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ui-playground.png"><img alt="Playground: the original model refuses a gardening question, the edited model answers it" src="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ui-playground.png" width="900"></a>
+  <br><i>Playground: same prompt, same weights. The original refuses, the edited model answers.</i>
+</p>
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ui-find-direction.png"><img alt="Find direction: per-layer separation chart and every prompt plotted along the refusal direction" src="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/ui-find-direction.png" width="900"></a>
+  <br><i>Find direction: which layer holds the refusal signal, and every prompt plotted along it.</i>
+</p>
 
 A local, dependency-free web app that walks through the whole pipeline:
 
