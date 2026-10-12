@@ -8,7 +8,7 @@
 
 <h1 align="center">Ablate</h1>
 
-<p align="center"><b>Directional ablation (abliteration) toolkit for automatic censorship removal of open-source language models.</b></p>
+<p align="center"><b>Directional ablation (abliteration) toolkit for automatic censorship removal of open-source language models (SLMs/LLMs).</b></p>
 
 <p align="center">
   <a href="https://pypi.org/project/ablate-llm/"><img alt="PyPI" src="https://img.shields.io/pypi/v/ablate-llm.svg?color=7c5cff"></a>
