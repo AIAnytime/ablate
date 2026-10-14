@@ -28,14 +28,14 @@
 <p align="center"><i>Created with 💜 by <b>AI Anytime</b></i></p>
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=1-1bM3Ynql4">
+  <a href="https://youtu.be/_pLKCRgzu6A">
     <img
-      src="https://img.youtube.com/vi/1-1bM3Ynql4/maxresdefault.jpg"
+      src="https://img.youtube.com/vi/_pLKCRgzu6A/maxresdefault.jpg"
       alt="Ablate — Full YouTube Walkthrough"
       width="800"
-    >
+    />
   </a>
-  <br>
+  <br />
   <i>▶️ Watch the full walkthrough on YouTube</i>
 </p>
 
