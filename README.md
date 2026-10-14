@@ -29,7 +29,6 @@
 
 <p align="center">
   <a href="https://youtu.be/_pLKCRgzu6A?si=-4-7lxboTKtDxkQ4">
-    <img alt="Watch the video walkthrough" src="https://img.youtube.com/vi/1-1bM3Ynql4/maxresdefault.jpg" width="560">
   </a>
   <br><i>▶️ Watch the full walkthrough on YouTube</i>
 </p>
