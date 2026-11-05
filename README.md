@@ -19,7 +19,7 @@
 <p align="center">
   <a href="https://aianytime.github.io/ablate/">🌐 Website</a> &nbsp;•&nbsp;
   <a href="https://pypi.org/project/ablate-llm/">📦 PyPI</a> &nbsp;•&nbsp;
-  <a href="https://huggingface.co/collections/ai-anytime/abliterated-models">🤗 Model</a> &nbsp;•&nbsp;
+  <a href="https://huggingface.co/collections/ai-anytime/abliterated-models">🤗 Models</a> &nbsp;•&nbsp;
   <a href="https://youtu.be/1-1bM3Ynql4">▶️ Video walkthrough</a> &nbsp;•&nbsp;
   <a href="https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y">🎤 Dubai AI Tinkerers talk</a> &nbsp;•&nbsp;
   <a href="#citation">📚 Cite</a>
