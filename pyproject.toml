@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ablate-llm"
-version = "0.3.0"
+version = "0.3.1"
 description = "Directional ablation (abliteration) toolkit for open-source language models: extract, ablate, and optimize the removal of refusal / behavioral directions in the residual stream."
 readme = "README.md"
 requires-python = ">=3.9"

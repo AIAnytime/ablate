@@ -47,7 +47,7 @@ goes into that terminal.
 ```bash
 nvidia-smi --query-gpu=name,memory.total --format=csv
 cd /root
-pip install -q -U "ablate-llm[all] @ git+https://github.com/AIAnytime/ablate.git"
+pip install -q -U "ablate-llm[all]>=0.3.1"
 python -c "import ablate, torch; print('ablate', ablate.__version__, '| cuda', torch.cuda.is_available())"
 ```
 
