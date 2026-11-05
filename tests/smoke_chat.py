@@ -43,4 +43,26 @@ check("search finds chat", store.search_chats("zebra")[0]["role"] == "user")
 check("settings clamp to known keys", "bogus" not in store.save_settings({"temperature": 0.2, "bogus": 1}))
 store.delete_chat(c["id"])
 check("chat deleted", not store.list_chats())
+names = lambda m: [x["function"]["name"] for x in tools.pick(m, False)]
+check("routing: creative prompt gets no tools", names("Write a chilling monologue for my villain") == [])
+check("routing: maths gets the calculator", names("What is 18% of 2,450?") == ["calculator"])
+check("routing: date gets the clock", names("what's the date today?") == ["current_time"])
+check("routing: web fetch stays off without network", names("summarise https://example.com") == [])
+store.update_profile(avatar="data:image/png;base64,AAAA")
+check("avatar saved", store.public_profile()["avatar"].startswith("data:image/png"))
+store.save_settings({"theme": "light"})
+check("theme persisted", store.settings()["theme"] == "light")
+
+# one-time import from the 0.4.0 JSON layout
+import importlib, json as _json, pathlib
+old = tempfile.mkdtemp(prefix="ablate-chat-legacy-")
+home = pathlib.Path(old) / "chat"; (home / "chats").mkdir(parents=True)
+(home / "profile.json").write_text(_json.dumps({"name": "Legacy", "salt": "00" * 16, "pass_hash": "", "accepted_terms_at": 1.0, "api_key": "k"}))
+(home / "chats" / "abc.json").write_text(_json.dumps({"id": "abc", "title": "Old chat", "created": 1, "updated": 2,
+    "messages": [{"role": "user", "content": "hello from json"}, {"role": "assistant", "content": "hi", "stats": {"tokens": 1}}]}))
+os.environ["ABLATE_HOME"] = old
+legacy = importlib.reload(store)
+check("legacy profile imported", legacy.public_profile()["name"] == "Legacy")
+check("legacy chat imported", legacy.get_chat("abc")["messages"][1]["stats"]["tokens"] == 1)
+check("legacy chat searchable", legacy.search_chats("from json")[0]["id"] == "abc")
 print("\nALL CHAT CHECKS PASSED")

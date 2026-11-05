@@ -74,8 +74,8 @@ ablate chat            # opens http://localhost:7861
 </p>
 
 A private chat app for the AI Anytime **unrestricted small language models**. Models download once from
-HuggingFace, then everything runs offline on your CPU or GPU. Chats, memories and your profile are JSON
-files in `~/.ablate/chat`. No telemetry, no account, no server of ours.
+HuggingFace, then everything runs offline on your CPU or GPU. Chats, memories, settings and your profile
+(with avatar) live in one local SQLite file, `~/.ablate/chat/ablate.db`. No telemetry, no account, no server of ours.
 
 | Model | Params | Refusals before → after | Download | RAM | Licence |
 |---|---|---|---|---|---|
@@ -85,12 +85,12 @@ files in `~/.ablate/chat`. No telemetry, no account, no server of ours.
 
 Refusal rates are on held-out harmful prompts with a keyword judge, from each model's card.
 
-- **Chat history**: saved locally, with search, pin, rename, delete and Markdown export.
+- **Chat history**: saved locally, with ChatGPT-style search (⌘K) across titles and messages, pin, rename, delete and Markdown export.
 - **Context window you set**, with a usage meter; the oldest turns are dropped first. Follow-ups see the whole conversation.
 - **Memory**: saved facts added to every chat.
 - **Agentic tools**: calculator, date and time, search past chats. Web fetch exists but is off by default.
 - **Copy** answers and code blocks, **edit** and resend, **regenerate**, **stop**, attach text and code files.
-- **Local sign-in** with an optional passcode and an 18+ terms gate. `ablate chat --share` lets devices on your Wi-Fi sign in with that passcode; model management stays on the host.
+- **Local profile** with a photo, an optional passcode (`ablate chat --reset-passcode` if you forget it) and an 18+ terms gate. `ablate chat --share` lets devices on your Wi-Fi sign in with that passcode; model management stays on the host.
 - **OpenAI-compatible API** with streaming at `http://localhost:7861/v1`:
 
 ```python

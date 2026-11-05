@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT.parent / "site"
 SITE = "https://aianytime.github.io/ablate/"
 UPDATED = "2026-11-06"
-VERSION = "0.4.0"
+VERSION = "0.4.1"
 GH = "https://github.com/AIAnytime/ablate"
 PYPI = "https://pypi.org/project/ablate-llm/"
 YT = "https://youtu.be/_pLKCRgzu6A"
@@ -143,8 +143,8 @@ A = {
   "Meta's acceptable use policy for the Llama-based models. Ablate Chat asks users to confirm they are 18+ and to "
   "accept its acceptable use policy."),
  "privacy": ("Does Ablate send my prompts or chats to the cloud?",
-  "No. Prompts are processed by the model on your own hardware, and chats, memories and your profile are JSON files "
-  "in <code>~/.ablate/chat</code>. The app only goes online to download a model you choose, or to fetch a web page "
+  "No. Prompts are processed by the model on your own hardware, and chats, memories and your profile are kept in a local "
+  "SQLite database in <code>~/.ablate/chat</code>. The app only goes online to download a model you choose, or to fetch a web page "
   "if you turn on network tools. There is no telemetry and no AI Anytime server involved."),
  "hardware": ("What hardware do I need?",
   "Any recent laptop works. The 1B and 1.5B models need about 8 GB of RAM; the 3B model is happiest with 16 GB. Apple "
@@ -235,7 +235,7 @@ HOME = f'''
     <div class="bento">
       <article class="card b-big">
         <span class="num">PRIVATE BY DESIGN</span><h3>Nothing leaves your machine</h3>
-        <p>Prompts run on your own CPU or GPU. Chats, memories and your profile are plain files in <code>~/.ablate/chat</code>. Delete the folder and it is gone.</p>
+        <p>Prompts run on your own CPU or GPU. Chats, memories, settings and your profile live in one SQLite file in <code>~/.ablate/chat</code>. Delete the folder and it is gone.</p>
         <div class="term" aria-hidden="true"><div class="term-bar"><i></i><i></i><i></i><span>zsh</span></div>
 <pre><span class="tp">$</span> ablate chat
 
@@ -266,13 +266,13 @@ HOME = f'''
     <div class="appgrid">
       <div class="appshot"><img src="assets/chat-light.webp" width="1800" height="1125" loading="lazy" decoding="async" alt="Ablate Chat in light theme: a saved conversation with a creative answer and a calculator tool call"></div>
       <ul class="feats">
-        <li>{I_HIST}<div><b>Chat history</b><span>Search, pin, rename and export, saved locally.</span></div></li>
+        <li>{I_HIST}<div><b>History and search</b><span>⌘K search across every chat, saved locally in SQLite.</span></div></li>
         <li>{I_CTX}<div><b>Context window you set</b><span>Follow-ups see the conversation; oldest turns drop first.</span></div></li>
         <li>{I_MEM}<div><b>Memory</b><span>Facts about you, added to every chat.</span></div></li>
         <li>{I_TOOL}<div><b>Agentic tools</b><span>Calculator, time, search past chats. Web fetch is opt-in.</span></div></li>
         <li>{I_COPY}<div><b>Copy, edit, regenerate</b><span>One-click copy for answers and code blocks.</span></div></li>
         <li>{I_API}<div><b>OpenAI-compatible API</b><span><code>localhost:7861/v1</code> for your own apps.</span></div></li>
-        <li>{I_LOCK}<div><b>Local sign-in</b><span>Optional passcode and an 18+ terms gate.</span></div></li>
+        <li>{I_LOCK}<div><b>Your profile</b><span>Your photo, an optional passcode and an 18+ terms gate.</span></div></li>
         <li>{I_WIFI}<div><b>Share on your Wi-Fi</b><span><code>--share</code> lets other devices sign in.</span></div></li>
       </ul>
     </div>
@@ -362,13 +362,13 @@ CHAT = f'''
 <section aria-labelledby="feat-h"><div class="wrap">
   <div class="head"><p class="eyebrow">Features</p><h2 id="feat-h">Everything you expect from a chat app, on your own machine</h2></div>
   <div class="grid3">
-    <article class="card"><h3>Chat history</h3><p>Every conversation is saved as a file on your computer. Search, pin, rename, delete, and export any chat to Markdown.</p></article>
+    <article class="card"><h3>Chat history and search</h3><p>Every conversation is saved in a local SQLite database. Search titles and messages ChatGPT-style with ⌘K, pin, rename, delete, and export any chat to Markdown.</p></article>
     <article class="card"><h3>Context window you control</h3><p>Set how many tokens of conversation the model sees, up to its limit. A meter shows how much each reply used, and the oldest messages are dropped first.</p></article>
     <article class="card"><h3>Follow-up memory</h3><p>The whole conversation is passed back as context, so follow-up questions work. Saved memories add facts about you to every chat.</p></article>
     <article class="card"><h3>Agentic tools</h3><p>Calculator, date and time, and search across your past chats run locally. Web-page fetching is available and off by default.</p></article>
     <article class="card"><h3>Copy, edit, regenerate</h3><p>Copy any answer or code block in one click. Edit an earlier message and continue from there, regenerate, or stop mid-answer.</p></article>
     <article class="card"><h3>Attach files</h3><p>Drop in text, code, CSV or Markdown files. They are read in your browser and added to the prompt; nothing is uploaded anywhere.</p></article>
-    <article class="card"><h3>Local sign-in</h3><p>A local profile with an optional passcode. With a passcode you can share the app with other devices on your Wi-Fi using <code>--share</code>.</p></article>
+    <article class="card"><h3>Your profile</h3><p>A local profile with your photo and an optional passcode. With a passcode you can share the app with other devices on your Wi-Fi using <code>--share</code>.</p></article>
     <article class="card"><h3>18+ and terms gate</h3><p>First run asks users to confirm they are adults and accept the terms, privacy policy and acceptable use policy.</p></article>
     <article class="card"><h3>OpenAI-compatible API</h3><p><code>POST /v1/chat/completions</code> with streaming, on localhost. Works with the OpenAI SDKs, editors and agent frameworks.</p></article>
   </div>
@@ -794,7 +794,7 @@ Key facts:
 - Value proposition: unrestricted small language models (1-3B parameters), not giant LLMs, so they run offline on an ordinary laptop. No cloud, no account, no telemetry, no cost.
 - Open source by AI Anytime. Licence: Apache-2.0 for the software. Models keep their base licences (Qwen model Apache-2.0; Llama models Llama 3.2 Community License).
 - Ablate Chat features: local chat history (search, pin, rename, export), adjustable context window, conversation context for follow-ups, saved memories, agentic tool calling (calculator, date/time, search past chats; optional web fetch, off by default), copy buttons, edit and regenerate, file attachments read locally, local profile with optional passcode, 18+ terms gate, `--share` for devices on the same network, OpenAI-compatible `/v1/chat/completions` with streaming on http://localhost:7861.
-- Privacy: prompts are processed on the user's CPU/GPU; chats are JSON files in ~/.ablate/chat. Network is used only to download a chosen model from HuggingFace, or for the optional web-fetch tool.
+- Privacy: prompts are processed on the user's CPU/GPU; chats, memories, settings and profile (with avatar) are stored in a local SQLite database at ~/.ablate/chat/ablate.db. Network is used only to download a chosen model from HuggingFace, or for the optional web-fetch tool.
 - Hardware: about 8 GB RAM for the 1B/1.5B models, 16 GB for the 3B model. Apple Silicon (MPS), NVIDIA (CUDA) or CPU.
 
 ## Models (all on HuggingFace, made with the Ablate toolkit)

@@ -113,6 +113,11 @@ def cmd_ui(args: argparse.Namespace) -> int:
 
 
 def cmd_chat(args: argparse.Namespace) -> int:
+    if args.reset_passcode:
+        from .chat import store
+        store.update_profile(passcode="")
+        print(f"Passcode removed. Your chats are untouched ({store.HOME}).")
+        return 0
     from .chat import serve
 
     serve(host="0.0.0.0" if args.share else args.host, port=args.port, model=args.model,
@@ -191,6 +196,7 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--share", action="store_true",
                    help="listen on the local network; other devices sign in with your passcode")
     c.add_argument("--no-browser", action="store_true", help="do not open a browser tab")
+    c.add_argument("--reset-passcode", action="store_true", help="remove the profile passcode and exit")
     c.set_defaults(func=cmd_chat)
 
     return p

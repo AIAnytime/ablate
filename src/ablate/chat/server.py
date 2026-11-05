@@ -39,7 +39,8 @@ MODELS = [
      "ram": "16 GB RAM"},
     {"id": "ai-anytime/Llama-3.2-1B-Instruct-abliterated", "name": "Ablate Llama 1B", "params": "1.2B",
      "size_gb": 2.5, "license": "Llama 3.2 Community", "context": 131072, "base": "meta-llama/Llama-3.2-1B-Instruct",
-     "blurb": "Fastest. Runs on almost any laptop. Refusals cut from 75% to 34%.", "ram": "8 GB RAM"},
+     "blurb": "Fastest. Runs on almost any laptop. Refusals cut from 75% to 34%. Too small for tools.",
+     "ram": "8 GB RAM", "tools": False},
 ]
 ALLOW = ["*.json", "*.safetensors", "*.jinja", "*.txt", "*.model", "*.md", "tokenizer*"]
 
@@ -244,7 +245,10 @@ SESSIONS: Dict[str, float] = {}
 # Chat turn (with tools)
 # --------------------------------------------------------------------------- #
 def _system_prompt(opts: dict, with_tools: bool) -> str:
-    parts = [opts.get("system") or ""]
+    import datetime as _dt
+    now = _dt.datetime.now().astimezone()
+    parts = [opts.get("system") or "",
+             f"Current local date and time: {now:%A, %d %B %Y, %H:%M} ({now.tzname()})."]
     if opts.get("use_memory", True):
         mem = [m["text"] for m in store.memories() if m.get("on")]
         if mem:
@@ -277,16 +281,20 @@ def chat_turn(body: dict, emit: Emit) -> None:
     store.save_chat(chat)
     emit({"type": "meta", "chat_id": chat["id"], "title": chat["title"], "index": len(msgs) - 1})
 
-    with_tools = bool(opts.get("tools"))
-    schemas = tools.schemas(bool(opts.get("network_tools"))) if with_tools else None
+    # Small models over-use tools, so only offer the tools this message plausibly needs.
+    tools_ok = next((m.get("tools", True) for m in MODELS if m["id"] == E.model_id), True)
+    schemas = (tools.pick(str(body.get("message") or ""), bool(opts.get("network_tools")))
+               if opts.get("tools") and tools_ok else [])
+    with_tools = bool(schemas)
     limit = min(int(opts.get("context_tokens", 4096)), E.max_context())
     reserve = int(opts.get("max_new_tokens", 768))
     history = [{"role": m["role"], "content": m["content"]} for m in msgs]
-    convo, ids, trimmed = E.fit(_system_prompt(opts, with_tools), history, limit, reserve, schemas)
+    convo, ids, trimmed = E.fit(_system_prompt(opts, with_tools), history, limit, reserve, schemas or None)
     emit({"type": "context", "used": int(ids.shape[1]), "limit": limit, "trimmed": trimmed})
 
-    steps, stats, answer = [], {}, ""
-    for _ in range(4):  # at most 3 tool calls, then a final answer
+    steps, stats, answer, seen = [], {}, "", set()
+    for rnd in range(4):  # up to 3 tool calls; the last round never offers tools, so it must answer
+        offer = with_tools and rnd < 3
         buf, mode = "", None
 
         def on_text(piece: str) -> None:
@@ -294,25 +302,37 @@ def chat_turn(body: dict, emit: Emit) -> None:
             buf += piece
             if mode is None:
                 head = buf.lstrip()
-                if with_tools and tools.looks_like_call(head) and len(head) < 12:
+                if offer and tools.looks_like_call(head) and len(head) < 12:
                     return
-                mode = "tool" if with_tools and tools.looks_like_call(head) else "text"
+                mode = "tool" if offer and tools.looks_like_call(head) else "text"
                 if mode == "text":
                     emit({"type": "token", "t": buf})
             elif mode == "text":
                 emit({"type": "token", "t": piece})
 
+        if rnd and not offer:  # final round: same conversation, tools removed
+            ids = E.encode(convo)
         stats = E.stream(ids, opts, on_text)
-        call = tools.parse_call(stats["text"]) if with_tools and mode != "text" else None
+        call = tools.parse_call(stats["text"]) if offer and mode != "text" else None
+        key = call and json.dumps([call["name"], call["arguments"]], sort_keys=True)
+        if call and key in seen:  # repeating itself: stop calling tools and answer
+            with_tools = False
+            continue
         if not call:
             answer = stats["text"].strip()
             if mode != "text" and answer:  # held back as a possible tool call, but it was plain text
                 emit({"type": "token", "t": stats["text"]})
-            break
+            if answer or stats.get("stopped") or not steps:
+                break
+            with_tools = False  # empty reply after tool use: ask once more without tools
+            continue
+        seen.add(key)
         emit({"type": "tool_call", "name": call["name"], "args": call["arguments"]})
         result = tools.run(call["name"], call["arguments"], bool(opts.get("network_tools")))
         steps.append({"name": call["name"], "args": call["arguments"], "result": result})
         emit({"type": "tool_result", "name": call["name"], "result": result})
+        if isinstance(result, dict) and result.get("error"):
+            with_tools = False  # a failed call: let the model answer with what it has instead of retrying
         convo = convo + [
             {"role": "assistant", "content": "", "tool_calls": [
                 {"type": "function", "function": {"name": call["name"], "arguments": call["arguments"]}}]},
@@ -487,7 +507,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self._static(url.path[len("/static/"):])
             if url.path == "/api/me":
                 p = store.public_profile()
-                return self._json({"profile": p and {k: p[k] for k in ("name", "has_passcode", "accepted_terms")},
+                return self._json({"profile": p and {k: p[k] for k in ("name", "has_passcode", "accepted_terms", "avatar")},
                                    "authed": self._authed(), "local": self._local()})
             if url.path == "/v1/models":
                 if not self._api_authed():
@@ -503,11 +523,15 @@ class Handler(BaseHTTPRequestHandler):
                     "models": models_state(), "loaded": E.model_id,
                     "device": E.device or E.pick()[0], "max_context": E.max_context() if E.model else None,
                     "chats": store.list_chats(), "busy": E.lock.locked(), "local": self._local(),
+                    "tools_ok": next((m.get("tools", True) for m in MODELS if m["id"] == E.model_id), True),
                     "port": self.server.server_address[1]})
             if url.path == "/api/models":
                 return self._json({"models": models_state(), "loaded": E.model_id})
+            if url.path == "/api/search":
+                q = (urllib.parse.parse_qs(url.query).get("q") or [""])[0]
+                return self._json({"results": store.search_chats(q) if q.strip() else []})
             if url.path.startswith("/api/chats/"):
-                c = store.get_chat(url.path.rsplit("/", 1)[-1])
+                c = store.get_chat(url.path.rsplit("/", 1)[-1], mark_opened=True)
                 return self._json(c or {"error": "not found"}, 200 if c else 404)
             return self._json({"error": "not found"}, 404)
         except Exception as e:
@@ -568,25 +592,25 @@ class Handler(BaseHTTPRequestHandler):
                     else:
                         E.unload()
                 return self._json({"models": models_state(), "loaded": E.model_id,
-                                   "device": E.device, "max_context": E.max_context() if E.model else None})
+                                   "device": E.device, "max_context": E.max_context() if E.model else None,
+                                   "tools_ok": next((m.get("tools", True) for m in MODELS if m["id"] == E.model_id), True)})
             if path == "/api/settings":
                 return self._json({"settings": store.save_settings(body)})
             if path == "/api/memories":
                 return self._json({"memories": store.save_memories(body.get("memories") or [])})
             if path == "/api/chats/update":
-                c = store.get_chat(str(body.get("id")))
-                if not c:
-                    return self._json({"error": "not found"}, 404)
-                for k in ("title", "pinned"):
-                    if k in body:
-                        c[k] = body[k]
-                store.save_chat(c)
+                store.update_chat(str(body.get("id")), **{k: body[k] for k in ("title", "pinned") if k in body})
                 return self._json({"chats": store.list_chats()})
             if path == "/api/chats/delete":
                 store.delete_chat(str(body.get("id")))
                 return self._json({"chats": store.list_chats()})
             if path == "/api/profile":
-                store.update_profile(body.get("name"), body.get("passcode"))
+                avatar = body.get("avatar")
+                if avatar and not (isinstance(avatar, str) and len(avatar) < 400_000 and
+                                   avatar.startswith(("data:image/png;base64,", "data:image/jpeg;base64,",
+                                                      "data:image/webp;base64,"))):
+                    return self._json({"error": "Avatar must be a PNG, JPEG or WebP image under 300 KB."}, 400)
+                store.update_profile(body.get("name"), body.get("passcode"), avatar)
                 return self._json({"profile": store.public_profile()})
             return self._json({"error": "not found"}, 404)
         except (BrokenPipeError, ConnectionResetError):

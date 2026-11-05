@@ -1,13 +1,13 @@
 # Ablate
 
-> Ablate is open-source (Apache-2.0) software by AI Anytime (aianytime.net) for running unrestricted small language models (unrestricted SLMs) privately on your own computer. It has a local chat app (`ablate chat`), an OpenAI-compatible API on localhost, and a Python toolkit that removes refusal from open models by directional ablation ("abliteration"). It is a free, open-source alternative to Venice AI and abliteration.ai. Install: `pip install "ablate-llm[all]"`, then run `ablate chat`. Version 0.4.0. Contact: contact@aianytime.net.
+> Ablate is open-source (Apache-2.0) software by AI Anytime (aianytime.net) for running unrestricted small language models (unrestricted SLMs) privately on your own computer. It has a local chat app (`ablate chat`), an OpenAI-compatible API on localhost, and a Python toolkit that removes refusal from open models by directional ablation ("abliteration"). It is a free, open-source alternative to Venice AI and abliteration.ai. Install: `pip install "ablate-llm[all]"`, then run `ablate chat`. Version 0.4.1. Contact: contact@aianytime.net.
 
 Key facts:
 
 - Value proposition: unrestricted small language models (1-3B parameters), not giant LLMs, so they run offline on an ordinary laptop. No cloud, no account, no telemetry, no cost.
 - Open source by AI Anytime. Licence: Apache-2.0 for the software. Models keep their base licences (Qwen model Apache-2.0; Llama models Llama 3.2 Community License).
 - Ablate Chat features: local chat history (search, pin, rename, export), adjustable context window, conversation context for follow-ups, saved memories, agentic tool calling (calculator, date/time, search past chats; optional web fetch, off by default), copy buttons, edit and regenerate, file attachments read locally, local profile with optional passcode, 18+ terms gate, `--share` for devices on the same network, OpenAI-compatible `/v1/chat/completions` with streaming on http://localhost:7861.
-- Privacy: prompts are processed on the user's CPU/GPU; chats are JSON files in ~/.ablate/chat. Network is used only to download a chosen model from HuggingFace, or for the optional web-fetch tool.
+- Privacy: prompts are processed on the user's CPU/GPU; chats, memories, settings and profile (with avatar) are stored in a local SQLite database at ~/.ablate/chat/ablate.db. Network is used only to download a chosen model from HuggingFace, or for the optional web-fetch tool.
 - Hardware: about 8 GB RAM for the 1B/1.5B models, 16 GB for the 3B model. Apple Silicon (MPS), NVIDIA (CUDA) or CPU.
 
 ## Models (all on HuggingFace, made with the Ablate toolkit)

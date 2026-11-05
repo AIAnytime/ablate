@@ -46,7 +46,7 @@ nav{display:flex;gap:16px;flex-wrap:wrap;margin:18px 0 0}
   <h2 id="privacy">Privacy Policy</h2>
   <p><strong>We collect nothing.</strong> Ablate Chat has no accounts on our servers, no analytics and no telemetry.</p>
   <ul>
-    <li><strong>Your profile, chats, memories and settings</strong> are JSON files in <code>~/.ablate/chat</code> on your computer. Delete that folder to erase them.</li>
+    <li><strong>Your profile, chats, memories and settings</strong> are stored in a local SQLite database, <code>~/.ablate/chat/ablate.db</code>, on your computer. Delete that folder to erase them.</li>
     <li><strong>Prompts and answers</strong> are processed by the model on your own CPU or GPU. They are never sent to AI Anytime or anyone else.</li>
     <li><strong>Network use:</strong> the app goes online only to download a model from the HuggingFace Hub when you click Download, and to fetch a web page if you turn on network tools and the model calls them. HuggingFace's own privacy policy applies to downloads.</li>
     <li><strong>Sharing on your network:</strong> if you start the app with <code>--share</code>, other devices on your network can sign in with your passcode. Their chats are stored on your computer.</li>

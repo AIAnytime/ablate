@@ -130,6 +130,26 @@ TOOLS: Dict[str, Tuple[Callable, dict, bool]] = {
 }
 
 
+_ROUTES = {
+    "calculator": re.compile(r"\d\s*[-+*/x×÷^%]\s*\d|\d\s*%|\bcalculat|\bcompute|\bhow (?:much|many)\b|\bpercent"
+                             r"|\bsqrt|\bsquare root|\bmultipl|\bdivid|\bsum of\b|\btotal\b", re.I),
+    "current_time": re.compile(r"\b(?:time|date|today|tomorrow|yesterday|weekday|what day|this year|timezone)\b", re.I),
+    "search_chats": re.compile(r"\b(?:earlier|previous|past|last)\s+(?:chat|conversation|message)s?|"
+                               r"\bwe (?:talked|discussed|spoke)|\bremember when|\bsearch (?:my )?(?:chats|history)", re.I),
+    "fetch_url": re.compile(r"https?://|\bwww\.|\b(?:fetch|open|read|summari[sz]e) (?:this |the )?(?:page|url|link|website|site)\b", re.I),
+}
+
+
+def pick(message: str, network: bool) -> List[dict]:
+    """Schemas for only the tools this message plausibly needs (often none).
+
+    Small models call whatever tools they are shown, even for a poem, so the
+    app routes first and offers tools only when the message asks for them.
+    """
+    return [TOOLS[name][1] for name, rx in _ROUTES.items()
+            if rx.search(message or "") and (network or not TOOLS[name][2])]
+
+
 def schemas(network: bool) -> List[dict]:
     return [schema for _, schema, net in TOOLS.values() if network or not net]
 
