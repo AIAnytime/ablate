@@ -3,557 +3,237 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ablate: abliteration toolkit for open LLMs | AI Anytime</title>
-<meta name="description" content="Ablate is a Python toolkit for directional ablation (abliteration). It finds the refusal direction inside an open LLM, removes it with no training, and measures the cost. pip install ablate-llm.">
-<meta name="keywords" content="ablate, abliteration, directional ablation, refusal direction, uncensored LLM, censorship removal, abliterated model, residual stream, mechanistic interpretability, activation engineering, weight orthogonalization, Qwen abliterated, HuggingFace, Optuna, KL divergence, LLM red teaming, AI safety research, ablate-llm, AI Anytime">
+<title>Ablate: Open-Source Uncensored AI &amp; Unrestricted SLMs</title>
+<meta name="description" content="Open-source uncensored AI by AI Anytime: chat with unrestricted small language models privately on your own computer. A free alternative to Venice AI.">
+<meta name="keywords" content="open source uncensored AI, unrestricted AI, unrestricted small language models, uncensored SLM, open source alternative to Venice AI, Venice AI alternative, abliteration.ai alternative, local uncensored AI, private AI chat, offline AI chat, abliterated model, abliteration, best uncensored AI, AI Anytime, ablate">
 <meta name="author" content="AI Anytime">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <meta name="theme-color" content="#06070B">
 <link rel="canonical" href="https://aianytime.github.io/ablate/">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<link rel="alternate" type="text/plain" title="llms.txt" href="llms.txt">
-<link rel="alternate" type="text/plain" title="llms-full.txt" href="llms-full.txt">
-<link rel="sitemap" type="application/xml" href="sitemap.xml">
-
+<link rel="alternate" type="text/plain" title="llms.txt" href="https://aianytime.github.io/ablate/llms.txt">
+<link rel="sitemap" type="application/xml" href="https://aianytime.github.io/ablate/sitemap.xml">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Ablate">
-<meta property="og:title" content="Ablate: find the “no” inside an LLM and switch it off">
-<meta property="og:description" content="A Python toolkit for directional ablation (abliteration). Find the refusal direction in an open LLM, remove it with no training, and measure the cost.">
+<meta property="og:site_name" content="Ablate by AI Anytime">
+<meta property="og:title" content="Ablate: Open-Source Uncensored AI &amp; Unrestricted SLMs">
+<meta property="og:description" content="Open-source uncensored AI by AI Anytime: chat with unrestricted small language models privately on your own computer. A free alternative to Venice AI.">
 <meta property="og:url" content="https://aianytime.github.io/ablate/">
 <meta property="og:image" content="https://aianytime.github.io/ablate/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Ablate logo with the line: find the no inside an LLM and switch it off. pip install ablate-llm.">
+<meta property="og:image:alt" content="Unrestricted small language models. Private, local, open source.">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Ablate: find the “no” inside an LLM and switch it off">
-<meta name="twitter:description" content="Python toolkit for directional ablation (abliteration) of open LLMs. No training. Runs on a laptop.">
+<meta name="twitter:title" content="Ablate: Open-Source Uncensored AI &amp; Unrestricted SLMs">
+<meta name="twitter:description" content="Open-source uncensored AI by AI Anytime: chat with unrestricted small language models privately on your own computer. A free alternative to Venice AI.">
 <meta name="twitter:image" content="https://aianytime.github.io/ablate/assets/og.png">
-
 <script>try{var t=localStorage.getItem('ablate-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap">
-
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://aianytime.net/#org", "name": "AI Anytime", "url": "https://aianytime.net", "email": "sonu@aianytime.net", "sameAs": ["https://www.youtube.com/@AIAnytime", "https://github.com/AIAnytime", "https://huggingface.co/ai-anytime"]}, {"@type": "WebSite", "@id": "https://aianytime.github.io/ablate/#website", "url": "https://aianytime.github.io/ablate/", "name": "Ablate", "description": "Ablate is a Python toolkit for directional ablation (abliteration). It finds the refusal direction inside an open LLM, removes it with no training, and measures the cost.", "publisher": {"@id": "https://aianytime.net/#org"}, "inLanguage": "en"}, {"@type": "WebPage", "@id": "https://aianytime.github.io/ablate/#webpage", "url": "https://aianytime.github.io/ablate/", "name": "Ablate: abliteration toolkit for open LLMs", "description": "Ablate is a Python toolkit for directional ablation (abliteration). It finds the refusal direction inside an open LLM, removes it with no training, and measures the cost.", "isPartOf": {"@id": "https://aianytime.github.io/ablate/#website"}, "about": {"@id": "https://aianytime.github.io/ablate/#software"}, "primaryImageOfPage": "https://aianytime.github.io/ablate/assets/og.png", "dateModified": "2026-10-11", "inLanguage": "en"}, {"@type": "SoftwareApplication", "@id": "https://aianytime.github.io/ablate/#software", "name": "Ablate", "alternateName": ["ablate-llm", "Ablate toolkit"], "description": "Ablate is a Python toolkit for directional ablation (abliteration). It finds the refusal direction inside an open LLM, removes it with no training, and measures the cost.", "url": "https://aianytime.github.io/ablate/", "applicationCategory": "DeveloperApplication", "applicationSubCategory": "Machine learning interpretability toolkit", "operatingSystem": "macOS, Linux, Windows", "softwareVersion": "0.3.1", "softwareRequirements": "Python 3.9+, PyTorch, transformers", "downloadUrl": "https://pypi.org/project/ablate-llm/", "installUrl": "https://pypi.org/project/ablate-llm/", "license": "https://github.com/AIAnytime/ablate/blob/main/LICENSE", "image": "https://aianytime.github.io/ablate/assets/og.png", "screenshot": ["https://aianytime.github.io/ablate/assets/ui-playground.webp", "https://aianytime.github.io/ablate/assets/ui-find-direction.webp", "https://aianytime.github.io/ablate/assets/ui-architecture.webp"], "author": {"@id": "https://aianytime.net/#org"}, "publisher": {"@id": "https://aianytime.net/#org"}, "sameAs": ["https://github.com/AIAnytime/ablate", "https://pypi.org/project/ablate-llm/", "https://huggingface.co/ai-anytime/qwen-1.5b-abliterated", "https://youtu.be/1-1bM3Ynql4"], "keywords": "abliteration, directional ablation, refusal direction, uncensored LLM, mechanistic interpretability, activation engineering", "featureList": ["Refusal direction extraction by difference of means", "Runtime ablation with forward hooks", "Permanent weight orthogonalization (bake)", "Multi-direction subspace ablation", "KL-guided Optuna search", "HarmBench, AdvBench and JailbreakBench harness with LLM judge", "Browser UI (ablate ui)", "Push to the HuggingFace Hub with a generated model card"], "citation": {"@type": "ScholarlyArticle", "name": "Refusal in Language Models Is Mediated by a Single Direction", "url": "https://arxiv.org/abs/2406.11717"}, "subjectOf": [{"@type": "Event", "name": "Ablate live demo at Dubai AI Tinkerers", "startDate": "2026-10-10", "url": "https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y", "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode", "location": {"@type": "Place", "name": "Dubai AI Tinkerers", "address": {"@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE"}}, "organizer": {"@type": "Organization", "name": "AI Tinkerers Dubai", "url": "https://dubai.aitinkerers.org"}, "performer": {"@id": "https://aianytime.net/#org"}}, {"@type": "CreativeWork", "name": "Ablate video walkthrough", "url": "https://youtu.be/1-1bM3Ynql4"}]}, {"@type": "SoftwareSourceCode", "@id": "https://aianytime.github.io/ablate/#code", "name": "ablate", "codeRepository": "https://github.com/AIAnytime/ablate", "programmingLanguage": "Python", "runtimePlatform": "Python 3.9+", "author": {"@id": "https://aianytime.net/#org"}, "targetProduct": {"@id": "https://aianytime.github.io/ablate/#software"}, "license": "https://github.com/AIAnytime/ablate/blob/main/LICENSE"}, {"@type": "FAQPage", "@id": "https://aianytime.github.io/ablate/#faq", "mainEntity": [{"@type": "Question", "name": "What is Ablate?", "acceptedAnswer": {"@type": "Answer", "text": "Ablate is a Python toolkit by AI Anytime for directional ablation, also called abliteration, of open language models. It finds the direction in a model’s residual stream that mediates refusal, removes it at runtime or in the weights, and measures both how many refusals are left and how much normal behaviour changed. It installs with pip install ablate-llm."}}, {"@type": "Question", "name": "What is abliteration?", "acceptedAnswer": {"@type": "Answer", "text": "Abliteration is the removal of a model’s refusal behaviour by deleting one direction from its internal activations. You compare activations on prompts the model refuses with prompts it answers, take the difference of the averages, and project that direction out. It comes from the 2024 paper “Refusal in Language Models Is Mediated by a Single Direction” by Arditi et al."}}, {"@type": "Question", "name": "Does abliteration need training or a GPU?", "acceptedAnswer": {"@type": "Answer", "text": "No training. Ablate does not run gradient steps or need a dataset of answers. It runs forward passes to read activations, then does linear algebra. Small models such as Qwen2.5-0.5B run on a MacBook with Apple Silicon, on CPU, or on a free Colab T4. Larger models need a larger GPU only because of their size."}}, {"@type": "Question", "name": "How is abliteration different from fine-tuning or a jailbreak prompt?", "acceptedAnswer": {"@type": "Answer", "text": "Fine-tuning changes many weights by training on new examples. A jailbreak prompt changes the input and leaves the model alone. Abliteration changes neither the data nor the prompt: it removes one direction from the model’s activations or weights, so the edit is small, targeted and easy to measure or undo."}}, {"@type": "Question", "name": "Which models does Ablate support?", "acceptedAnswer": {"@type": "Answer", "text": "Any HuggingFace causal language model whose layer list Ablate’s adapters can find. That covers Qwen, Llama, Mistral, SmolLM and GPT-2 style architectures. It has been verified end to end on Qwen2.5-0.5B-Instruct and Qwen2.5-1.5B-Instruct."}}, {"@type": "Question", "name": "Does removing the refusal direction damage the model?", "acceptedAnswer": {"@type": "Answer", "text": "It can, which is why Ablate measures it. Every configuration is scored on KL divergence between the original and edited model on harmless prompts. On Qwen2.5-0.5B-Instruct the automated search moved the held-out refusal rate from 1.00 to 0.00 with a mean KL of about 0.03, meaning ordinary answers barely changed."}}, {"@type": "Question", "name": "Does abliteration remove every refusal?", "acceptedAnswer": {"@type": "Answer", "text": "No. It reliably removes the hard “I’m sorry, I can’t” reflex, but soft refusals such as moralizing or vague non-answers often remain. On Qwen2.5-1.5B a keyword metric read 0.0 refusals while an LLM judge scored real compliance at about 0.49. Ablate ships an LLM-judge harness so you see the honest number."}}, {"@type": "Question", "name": "What is the Ablate browser UI?", "acceptedAnswer": {"@type": "Answer", "text": "Running ablate ui opens a local web app at localhost:7860. It lets you search the HuggingFace Hub, load a model, find the refusal direction with per-layer charts, compare the original and edited model side by side on the same prompt, run the evaluation and Optuna search, and publish the result. It has no web framework dependency."}}, {"@type": "Question", "name": "Is Ablate open source?", "acceptedAnswer": {"@type": "Answer", "text": "Ablate is source-available. The code is public on GitHub for viewing and evaluation under a proprietary licence, with all rights reserved. For commercial use or redistribution, email sonu@aianytime.net."}}, {"@type": "Question", "name": "Who should use Ablate, and for what?", "acceptedAnswer": {"@type": "Answer", "text": "Researchers and engineers studying how safety behaviour is represented inside models: mechanistic interpretability, red-teaming, and testing how robust a model’s refusals are before deployment. It is dual-use research tooling and should be used on models and in contexts you are authorized to."}}, {"@type": "Question", "name": "Who built Ablate?", "acceptedAnswer": {"@type": "Answer", "text": "Ablate was built by AI Anytime, a YouTube channel and studio that builds AI projects in public. It was presented live at Dubai AI Tinkerers in October 2026. More at aianytime.net."}}]}]}</script>
-
-<style>
-:root{--bg:#06070B;--panel:#0E0D16;--panel2:#15141F;--line:#24223A;--text:#ECEBF5;--muted:#9A97B5;--accent:#8B6CFF;--accent-ink:#0B0714;--soft:#B9A5FF;--blue:#5AA9F5;--harm:#F59E42;--ok:#3ECF8E;--frame1:#C3B0FF;--frame2:#8B6CFF;--code:#0A0A12;color-scheme:dark}
-:root[data-theme="light"]{--bg:#FBFCFC;--panel:#FFFFFF;--panel2:#F3F1FA;--line:#E2DEF0;--text:#14121F;--muted:#5C5878;--accent:#6A48F0;--accent-ink:#FFFFFF;--soft:#5A3BD6;--blue:#1F6FC4;--harm:#B85F0A;--ok:#11875A;--frame1:#D9CEFF;--frame2:#A48BFF;--code:#14121F;color-scheme:light}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:84px}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 "Geist",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
-img{max-width:100%;display:block}
-a{color:inherit}
-h1,h2,h3{font-family:"Geist Mono",ui-monospace,Menlo,monospace;font-weight:600;letter-spacing:-.02em;text-wrap:balance;margin:0}
-h1{font-size:clamp(2.1rem,5.4vw,3.9rem);line-height:1.08}
-h2{font-size:clamp(1.55rem,3.2vw,2.3rem);line-height:1.15}
-h3{font-size:1.08rem;line-height:1.3}
-p{margin:0}
-code,pre,.mono{font-family:"Geist Mono",ui-monospace,Menlo,monospace}
-.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
-section{padding-block:72px}
-.eyebrow{font:500 .74rem/1 "Geist Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
-.lead{color:var(--muted);font-size:1.08rem;max-width:62ch}
-.head{display:flex;flex-direction:column;gap:14px;margin-bottom:36px}
-.center{align-items:center;text-align:center}
-.center .lead{margin-inline:auto}
-
-/* nav */
-.nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.nav .wrap{display:flex;align-items:center;gap:20px;height:64px}
-.brand{display:flex;align-items:center;flex:none}
-.brand img{height:40px;width:auto}
-.logo-l{display:none}
-[data-theme="light"] .logo-l{display:block}
-[data-theme="light"] .logo-d{display:none}
-.links{display:flex;gap:22px;margin-left:8px;font:500 .78rem "Geist Mono",monospace;letter-spacing:.08em;text-transform:uppercase}
-.links a{text-decoration:none;color:var(--muted)}
-.links a:hover{color:var(--text)}
-.nav .sp{flex:1}
-.btn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:500 .86rem "Geist Mono",monospace;text-decoration:none;cursor:pointer;white-space:nowrap;transition:transform .15s,border-color .15s,background .15s}
-.btn:hover{transform:translateY(-1px);border-color:var(--accent)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.primary:hover{filter:brightness(1.08)}
-.btn.sm{height:36px;padding:0 12px;border-radius:10px;font-size:.78rem}
-.btn svg{width:16px;height:16px;flex:none}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
-
-/* hero */
-.hero{padding-block:72px 40px}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr);gap:48px;align-items:start}
-.hero h1 em{font-style:normal;color:var(--accent)}
-.hero .lead{margin-top:20px;font-size:1.14rem}
-.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-.pip{display:inline-flex;align-items:center;gap:10px;height:42px;padding:0 6px 0 16px;border-radius:12px;border:1px solid var(--accent);background:var(--panel);font:500 .86rem "Geist Mono",monospace;min-width:0}
-.pip b{color:var(--accent);font-weight:500}
-.pip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.copy{display:grid;place-items:center;width:32px;height:32px;border-radius:8px;border:0;background:var(--panel2);color:var(--text);cursor:pointer;flex:none}
-.copy:hover{background:var(--accent);color:var(--accent-ink)}
-.copy svg{width:15px;height:15px}
-.news{display:flex;flex-direction:column;gap:0;border-left:1px solid var(--line);padding-left:24px}
-.news .eyebrow{margin-bottom:14px}
-.news a{display:block;padding:14px 0;border-bottom:1px solid var(--line);text-decoration:none;font:.86rem/1.5 "Geist Mono",monospace;color:var(--muted)}
-.news a:last-child{border-bottom:0}
-.news a b{color:var(--text);font-weight:500}
-.news a:hover b{color:var(--accent)}
-
-/* demo frame */
-.frame{margin-top:44px;padding:clamp(14px,3.4vw,44px);border-radius:28px;background:linear-gradient(135deg,var(--frame1),var(--frame2));position:relative;overflow:hidden}
-.px{position:absolute;background:#fff;opacity:.5;border-radius:2px}
-.win{position:relative;background:#0B0A12;color:#ECEBF5;border-radius:16px;border:1px solid #2A2640;box-shadow:0 30px 80px -30px rgba(10,5,40,.8);overflow:hidden}
-.bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid #2A2640;font:.74rem "Geist Mono",monospace;color:#8C88A6}
-.dot{width:10px;height:10px;border-radius:50%;background:#2A2640}
-.bar .t{margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.prompt{margin:16px;padding:14px 16px;border:1px solid #2A2640;border-radius:12px;background:#14121F;font-size:.98rem;display:flex;gap:12px;align-items:center;justify-content:space-between}
-.prompt i{font-style:normal;font:500 .72rem "Geist Mono",monospace;color:#0B0714;background:linear-gradient(90deg,#5AA9F5,#8B6CFF);padding:8px 14px;border-radius:9px;flex:none}
-.ab{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 16px 16px}
-.pane{border:1px solid #2A2640;border-radius:12px;padding:16px;background:#14121F;min-width:0;font-size:.93rem;line-height:1.6;color:#C9C6DB}
-.pane.on{border-color:#8B6CFF}
-.pane header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;font:600 .82rem "Geist Mono",monospace;color:#ECEBF5}
-.tag{font:600 .64rem "Geist Mono",monospace;letter-spacing:.1em;padding:4px 8px;border-radius:999px}
-.tag.r{background:#3A2410;color:#F59E42}
-.tag.a{background:#0F3526;color:#3ECF8E}
-.ghost{visibility:hidden}
-.caret::after{content:"";display:inline-block;width:.5em;height:1.05em;margin-left:2px;vertical-align:-.18em;background:#8B6CFF;border-radius:2px;animation:blink 1s steps(2) infinite}
-@keyframes blink{50%{opacity:0}}
-.tag{transition:opacity .25s,transform .25s}
-.tag.off{opacity:0;transform:scale(.8)}
-#runmock{transition:transform .12s,filter .12s}
-#runmock.press{transform:scale(.92);filter:brightness(1.25)}
-.cap{margin-top:14px;text-align:center;font:.8rem "Geist Mono",monospace;color:var(--muted)}
-
-/* stats */
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:20px;background:var(--panel);overflow:hidden}
-.stat{padding:26px 24px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
-.stat:last-child{border-right:0}
-.stat b{font:600 clamp(1.5rem,3vw,2.1rem)/1.1 "Geist Mono",monospace;color:var(--accent);font-variant-numeric:tabular-nums}
-.stat span{color:var(--muted);font-size:.9rem}
-
-/* steps */
-.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.card p{color:var(--muted);font-size:.96rem}
-.card p code,.faq code,.lead code{font-size:.86em;background:var(--panel2);padding:2px 6px;border-radius:6px;color:var(--text)}
-.num{font:600 .74rem "Geist Mono",monospace;letter-spacing:.12em;color:var(--blue)}
-.formula{margin-top:auto;font:500 .88rem "Geist Mono",monospace;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;white-space:nowrap;color:var(--text)}
-
-/* split rows */
-.split{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:44px;align-items:center}
-.split .head{margin-bottom:0}
-.ticks{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:10px;color:var(--muted);font-size:.96rem}
-.ticks li{display:flex;gap:10px}
-.ticks li::before{content:"";flex:none;width:8px;height:8px;margin-top:.55em;background:var(--accent);border-radius:2px}
-
-/* code */
-.codebox{background:var(--code);border:1px solid var(--line);border-radius:18px;overflow:hidden;min-width:0;color:#ECEBF5}
-[data-theme="light"] .codebox{border-color:#14121F}
-.tabs{display:flex;align-items:center;gap:4px;padding:10px 10px 0;border-bottom:1px solid #2A2640;overflow-x:auto}
-.tabs button{font:500 .78rem "Geist Mono",monospace;color:#8C88A6;background:none;border:0;border-bottom:2px solid transparent;padding:10px 14px;cursor:pointer;white-space:nowrap}
-.tabs button[aria-selected="true"]{color:#ECEBF5;border-color:#8B6CFF}
-.tabs .copy{margin-left:auto;margin-bottom:6px;background:#1B1930;color:#ECEBF5}
-pre{margin:0;padding:20px;overflow-x:auto;font-size:.84rem;line-height:1.75;color:#ECEBF5}
-pre .c{color:#77738F}
-pre .k{color:#B9A5FF}
-pre .s{color:#7FD8A8}
-pre .p{color:#5AA9F5}
-
-/* gallery */
-.gtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.gtabs button{font:500 .8rem "Geist Mono",monospace;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--muted);cursor:pointer}
-.gtabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.shot{border-radius:16px;border:1px solid #2A2640;overflow:auto;max-height:680px;background:#0B0A12}
-.shot img{width:100%;height:auto}
-
-/* bento */
-.bento{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.ico{width:40px;height:40px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent)}
-.ico svg{width:20px;height:20px}
-
-/* honest */
-.honest{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.note{border:1px dashed var(--line);border-radius:20px;padding:24px;color:var(--muted);font-size:.95rem;margin-top:18px}
-.note b{color:var(--text)}
-
-/* links hub */
-.hub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.hub a{text-decoration:none;transition:transform .15s,border-color .15s}
-.hub a:hover{transform:translateY(-2px);border-color:var(--accent)}
-.hub .go{margin-top:auto;font:500 .8rem "Geist Mono",monospace;color:var(--accent)}
-.hub small{font:500 .7rem "Geist Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
-
-/* faq */
-.faq{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
-details{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:0 22px}
-summary{list-style:none;cursor:pointer;padding:18px 0;font:500 .98rem "Geist Mono",monospace;display:flex;justify-content:space-between;gap:16px}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";color:var(--accent);font-size:1.2rem;line-height:1}
-details[open] summary::after{content:"–"}
-details p{color:var(--muted);padding-bottom:20px;max-width:70ch}
-details a,.note a,.card p a,.lead a{color:var(--soft)}
-
-/* final */
-.final{border-radius:28px;background:linear-gradient(135deg,var(--frame1),var(--frame2));padding:clamp(32px,6vw,72px);color:#0B0714;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
-.final p{max-width:56ch;font-size:1.06rem}
-.final .btn{background:#0B0714;border-color:#0B0714;color:#ECEBF5}
-.final .pip{background:#0B0714;border-color:#0B0714;color:#ECEBF5}
-.final .pip b{color:#B9A5FF}
-.final .copy{background:#1B1930;color:#ECEBF5}
-
-footer{border-top:1px solid var(--line);padding-block:48px 36px;margin-top:40px}
-.foot{display:grid;grid-template-columns:minmax(0,1.6fr) repeat(3,minmax(0,1fr));gap:32px}
-.foot img{height:54px;width:auto;margin-left:-6px}
-.foot p{color:var(--muted);font-size:.92rem;max-width:42ch;margin-top:10px}
-.foot h4{font:500 .72rem "Geist Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
-.foot ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px;font-size:.92rem}
-.foot ul a{text-decoration:none}
-.foot ul a:hover{color:var(--accent)}
-.legal{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between;color:var(--muted);font:.78rem "Geist Mono",monospace}
-
-@media (max-width:980px){
-  .links{display:none}
-  .hero-grid,.split{grid-template-columns:1fr}
-  .news{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:20px}
-  .steps,.bento,.hub{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .stat:nth-child(2){border-right:0}
-  .stat:nth-child(-n+2){border-bottom:1px solid var(--line)}
-  .foot{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media (max-width:640px){
-  section{padding-block:52px}
-  .steps,.bento,.hub,.honest,.ab,.foot{grid-template-columns:1fr}
-  .nav .gh span{display:none}
-  .brand img{height:34px}
-}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.hub a{transition:none}}
-</style>
+<link rel="stylesheet" href="assets/site.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://aianytime.net/#org", "name": "AI Anytime", "url": "https://aianytime.net", "email": "contact@aianytime.net", "logo": "https://aianytime.github.io/ablate/assets/icon-512.png", "sameAs": ["https://www.youtube.com/@AIAnytime", "https://github.com/AIAnytime", "https://huggingface.co/ai-anytime"]}, {"@type": "WebSite", "@id": "https://aianytime.github.io/ablate/#website", "url": "https://aianytime.github.io/ablate/", "name": "Ablate", "inLanguage": "en", "publisher": {"@id": "https://aianytime.net/#org"}}, {"@type": "WebPage", "@id": "https://aianytime.github.io/ablate/#webpage", "url": "https://aianytime.github.io/ablate/", "name": "Ablate: Open-Source Uncensored AI & Unrestricted SLMs", "description": "Open-source uncensored AI by AI Anytime: chat with unrestricted small language models privately on your own computer. A free alternative to Venice AI.", "isPartOf": {"@id": "https://aianytime.github.io/ablate/#website"}, "about": {"@id": "https://aianytime.github.io/ablate/#app"}, "inLanguage": "en", "dateModified": "2026-11-06", "primaryImageOfPage": "https://aianytime.github.io/ablate/assets/og.png"}, {"@type": "SoftwareApplication", "@id": "https://aianytime.github.io/ablate/#app", "name": "Ablate", "alternateName": ["Ablate Chat", "ablate-llm", "Open-source alternative to Venice AI", "Open-source alternative to abliteration.ai", "Open-source uncensored AI", "Unrestricted small language models"], "description": "Open-source uncensored AI by AI Anytime: chat with unrestricted small language models privately on your own computer. A free alternative to Venice AI.", "url": "https://aianytime.github.io/ablate/", "applicationCategory": "DeveloperApplication", "applicationSubCategory": "Local AI chat and abliteration toolkit", "operatingSystem": "macOS, Windows, Linux", "softwareVersion": "0.4.0", "softwareRequirements": "Python 3.9+", "downloadUrl": "https://pypi.org/project/ablate-llm/", "installUrl": "https://pypi.org/project/ablate-llm/", "license": "https://www.apache.org/licenses/LICENSE-2.0", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "image": "https://aianytime.github.io/ablate/assets/og.png", "screenshot": ["https://aianytime.github.io/ablate/assets/chat-hero.webp", "https://aianytime.github.io/ablate/assets/chat-models.webp"], "author": {"@id": "https://aianytime.net/#org"}, "publisher": {"@id": "https://aianytime.net/#org"}, "sameAs": ["https://github.com/AIAnytime/ablate", "https://pypi.org/project/ablate-llm/", "https://huggingface.co/ai-anytime", "https://youtu.be/_pLKCRgzu6A"], "featureList": ["Local, offline chat with unrestricted small language models", "Chat history and search", "Adjustable context window", "Saved memories", "Agentic tool calling", "OpenAI-compatible API on localhost", "Local profile with passcode and 18+ terms gate", "Toolkit to abliterate open models"], "subjectOf": [{"@type": "Event", "name": "Ablate live demo at Dubai AI Tinkerers", "startDate": "2026-10-10", "url": "https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y", "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode", "location": {"@type": "Place", "name": "Dubai AI Tinkerers", "address": {"@type": "PostalAddress", "addressLocality": "Dubai", "addressCountry": "AE"}}, "organizer": {"@type": "Organization", "name": "AI Tinkerers Dubai", "url": "https://dubai.aitinkerers.org"}, "performer": {"@id": "https://aianytime.net/#org"}}, {"@type": "CreativeWork", "name": "Ablate video walkthrough", "url": "https://youtu.be/_pLKCRgzu6A"}]}, {"@type": "SoftwareSourceCode", "@id": "https://aianytime.github.io/ablate/#code", "name": "ablate", "codeRepository": "https://github.com/AIAnytime/ablate", "programmingLanguage": "Python", "license": "https://www.apache.org/licenses/LICENSE-2.0", "author": {"@id": "https://aianytime.net/#org"}, "targetProduct": {"@id": "https://aianytime.github.io/ablate/#app"}}, {"@type": "ItemList", "@id": "https://aianytime.github.io/ablate/models/#list", "name": "Unrestricted small language models by AI Anytime", "itemListElement": [{"@type": "ListItem", "position": 1, "item": {"@type": "CreativeWork", "name": "Ablate Qwen 1.5B", "url": "https://huggingface.co/ai-anytime/qwen-1.5b-abliterated", "description": "1.5B parameter abliterated model. Hard refusals 100% → 0%. Most unrestricted of the three. An LLM judge rated 49% of answers on a harmful benchmark as full compliance, so some soft refusals remain.", "isBasedOn": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct", "license": "Apache-2.0", "creator": {"@id": "https://aianytime.net/#org"}}}, {"@type": "ListItem", "position": 2, "item": {"@type": "CreativeWork", "name": "Ablate Llama 3B", "url": "https://huggingface.co/ai-anytime/Llama-3.2-3B-Instruct-abliterated", "description": "3.2B parameter abliterated model. Refusals 94% → 59%. The strongest writer and reasoner, with the least drift (KL 0.025). It still declines some requests.", "isBasedOn": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct", "license": "Llama 3.2 Community", "creator": {"@id": "https://aianytime.net/#org"}}}, {"@type": "ListItem", "position": 3, "item": {"@type": "CreativeWork", "name": "Ablate Llama 1B", "url": "https://huggingface.co/ai-anytime/Llama-3.2-1B-Instruct-abliterated", "description": "1.2B parameter abliterated model. Refusals 75% → 34%. The fastest. Runs on almost any laptop, even on CPU.", "isBasedOn": "https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct", "license": "Llama 3.2 Community", "creator": {"@id": "https://aianytime.net/#org"}}}]}, {"@type": "FAQPage", "@id": "https://aianytime.github.io/ablate/#faq", "mainEntity": [{"@type": "Question", "name": "What is the best uncensored AI?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on what you need. If privacy and cost matter most, the best uncensored AI is one that runs on your own computer: Ablate is a free, open-source app by AI Anytime that runs unrestricted small language models locally, with no account and no cloud. If you need very large models, image or video generation, and do not mind a hosted service, cloud products such as Venice AI offer more raw power for a monthly fee."}}, {"@type": "Question", "name": "What is the best unrestricted AI tool for developers?", "acceptedAnswer": {"@type": "Answer", "text": "For developers who want control, Ablate gives you three things in one open-source package: a local chat app, an OpenAI-compatible API on localhost, and the toolkit that removes refusals from any open model. Everything is Apache-2.0 and runs on your machine, so you can inspect and change every part."}}, {"@type": "Question", "name": "Can I run an uncensored AI locally, offline?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Install with pip install \"ablate-llm[all]\", run ablate chat, and download one of the AI Anytime models. After that one-time download the model runs fully offline on your CPU or GPU. Your chats are saved as files on your computer and never leave it."}}, {"@type": "Question", "name": "What are unrestricted small language models (SLMs)?", "acceptedAnswer": {"@type": "Answer", "text": "Small language models have roughly 1 to 4 billion parameters, small enough to run on a laptop. Unrestricted SLMs are small models whose built-in refusal behaviour has been removed, so they attempt requests a standard assistant declines. Ablate focuses on SLMs, not giant LLMs, so anyone can run them privately on ordinary hardware."}}, {"@type": "Question", "name": "Is there an open-source alternative to Venice AI?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Ablate by AI Anytime is an open-source (Apache-2.0) alternative to Venice AI for private, uncensored text chat. The difference is where it runs: Venice is a cloud service with paid plans, while Ablate runs small models on your own computer for free. Venice offers larger models plus image and video generation; Ablate offers full local control and source code you can audit."}}, {"@type": "Question", "name": "Is there a free, open-source alternative to abliteration.ai?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Ablate is free and open source. abliteration.ai is a hosted API for unrestricted models with monthly plans. Ablate gives you an OpenAI-compatible API on localhost serving abliterated small models, plus the toolkit to abliterate other open models yourself."}}, {"@type": "Question", "name": "What is an abliterated model?", "acceptedAnswer": {"@type": "Answer", "text": "An abliterated model has had its refusal direction removed. Researchers found that refusal in a language model is largely controlled by one direction in its internal activations (Arditi et al., 2024). Abliteration finds that direction and projects it out of the weights, with no retraining. The AI Anytime models were made this way with the Ablate toolkit."}}, {"@type": "Question", "name": "Does Ablate send my prompts or chats to the cloud?", "acceptedAnswer": {"@type": "Answer", "text": "No. Prompts are processed by the model on your own hardware, and chats, memories and your profile are JSON files in ~/.ablate/chat. The app only goes online to download a model you choose, or to fetch a web page if you turn on network tools. There is no telemetry and no AI Anytime server involved."}}, {"@type": "Question", "name": "What hardware do I need?", "acceptedAnswer": {"@type": "Answer", "text": "Any recent laptop works. The 1B and 1.5B models need about 8 GB of RAM; the 3B model is happiest with 16 GB. Apple Silicon Macs use the GPU automatically, NVIDIA GPUs use CUDA, and everything also runs on CPU, just more slowly."}}, {"@type": "Question", "name": "Is Ablate free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Ablate is free and open source under the Apache License 2.0, including for commercial use. There are no plans, credits or API keys to buy: you supply the computer, so there is nothing to bill."}}, {"@type": "Question", "name": "Can I use the local models with the OpenAI SDK?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. ablate chat serves an OpenAI-compatible endpoint at http://localhost:7861/v1. Point any OpenAI SDK, editor plugin or agent framework at that base URL and use the loaded model's id."}}, {"@type": "Question", "name": "Which unrestricted model should I choose?", "acceptedAnswer": {"@type": "Answer", "text": "Start with Ablate Qwen 1.5B: it is the most unrestricted (hard refusals went from 100% to 0%) and handles tools well. Choose Ablate Llama 3B for the best writing and reasoning if you have 16 GB of RAM, and Ablate Llama 1B for speed on modest hardware."}}, {"@type": "Question", "name": "Is uncensored AI legal?", "acceptedAnswer": {"@type": "Answer", "text": "Running open-weight models on your own computer is legal in most places, and Ablate is released under Apache-2.0. What you do with the output is still covered by the law where you live and by each model's licence, including Meta's acceptable use policy for the Llama-based models. Ablate Chat asks users to confirm they are 18+ and to accept its acceptable use policy."}}, {"@type": "Question", "name": "Who makes Ablate?", "acceptedAnswer": {"@type": "Answer", "text": "Ablate is open source by AI Anytime (aianytime.net), a YouTube channel and studio that builds AI in public. It was demoed live at Dubai AI Tinkerers in October 2026. Contact: contact@aianytime.net."}}]}]}</script>
 </head>
 <body>
-
+<a class="skip" href="#main">Skip to content</a>
+<div class="ribbon"><div class="wrap"><span><b>Open source by AI Anytime</b> · <a href="https://aianytime.net" rel="noopener">aianytime.net</a> · Apache-2.0 · free forever</span><a href="mailto:contact@aianytime.net">contact@aianytime.net</a></div></div>
 <header class="nav">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Ablate home">
+    <a class="brand" href="" aria-label="Ablate home">
       <img class="logo-d" src="assets/logo-dark.webp" width="103" height="40" alt="Ablate">
       <img class="logo-l" src="assets/logo-light.webp" width="106" height="40" alt="Ablate">
     </a>
-    <nav class="links" aria-label="Sections">
-      <a href="#how">How it works</a><a href="#quickstart">Quickstart</a><a href="#ui">UI</a><a href="#results">Results</a><a href="#faq">FAQ</a>
-    </nav>
+    <nav class="links" aria-label="Main"><a href="chat/">Chat</a><a href="models/">Models</a><a href="toolkit/">Toolkit</a><a href="uncensored-ai/">Uncensored AI</a><a href="alternatives/venice-ai/">vs Venice</a><a href="alternatives/abliteration-ai/">vs abliteration.ai</a></nav>
     <span class="sp"></span>
     <button class="btn sm" id="theme" type="button" aria-label="Switch colour theme">◐</button>
-    <a class="btn sm gh" href="https://github.com/AIAnytime/ablate" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
-      <span>GitHub</span>
-    </a>
+    <a class="btn sm gh" href="https://github.com/AIAnytime/ablate" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg><span>GitHub</span></a>
   </div>
 </header>
 
-<main id="top">
+<main id="main">
 
 <section class="hero">
   <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <p class="eyebrow">ablate-llm 0.3.1 · Python toolkit · by AI Anytime</p>
-        <h1 style="margin-top:18px">Find the <em>“no”</em> inside an LLM. Switch it off.</h1>
-        <p class="lead">Ablate is a toolkit for <strong>directional ablation</strong>, also called <strong>abliteration</strong>. It finds the one direction inside an open language model that makes it refuse, removes it with no training, and tells you honestly what that cost.</p>
-        <div class="cta">
-          <div class="pip"><b>$</b><span id="pipcmd">pip install "ablate-llm[all]"</span><button class="copy" type="button" data-copy="#pipcmd" aria-label="Copy install command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div>
-          <a class="btn primary" href="https://github.com/AIAnytime/ablate" rel="noopener">View on GitHub ↗</a>
-          <a class="btn" href="https://youtu.be/1-1bM3Ynql4" rel="noopener">▶ Watch the walkthrough</a>
-        </div>
-      </div>
-      <aside class="news" aria-label="What's new">
-        <p class="eyebrow">What’s new</p>
-        <a href="https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y" rel="noopener"><b>Demoed live at Dubai AI Tinkerers</b><br>October 2026 · no slides, just running code ↗</a>
-        <a href="#ui"><b>ablate ui</b><br>A browser app for the whole pipeline, new in 0.3.0</a>
-        <a href="https://huggingface.co/ai-anytime/qwen-1.5b-abliterated" rel="noopener"><b>qwen-1.5b-abliterated</b><br>A worked example on the HuggingFace Hub ↗</a>
-      </aside>
+    <p class="eyebrow"><a href="https://aianytime.net" rel="noopener">Open source by AI Anytime · aianytime.net</a></p>
+    <h1>Unrestricted small language models. <em>Private, local, open source.</em></h1>
+    <p class="lead">Ablate is the open-source alternative to Venice AI and abliteration.ai. Chat with uncensored
+    small language models (SLMs) on your own computer: no cloud, no account, no logs, no monthly bill.</p>
+    <div class="cta">
+      <div class="pip"><b>$</b><span id="cmd1">pip install &quot;ablate-llm[all]&quot; &amp;&amp; ablate chat</span><button class="copy" type="button" data-copy="#cmd1" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div>
+      <a class="btn primary" href="https://github.com/AIAnytime/ablate" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg><span>Star on GitHub</span></a>
+      <a class="btn" href="chat/">How Ablate Chat works →</a>
     </div>
-
-    <div class="frame" role="img" aria-label="Demo: the same prompt answered by the original model, which refuses, and by the edited model, which answers">
-      <span class="px" style="width:10px;height:10px;right:7%;top:9%"></span><span class="px" style="width:6px;height:6px;right:11%;top:16%"></span><span class="px" style="width:14px;height:14px;right:4%;top:22%;opacity:.3"></span><span class="px" style="width:8px;height:8px;left:3%;bottom:10%"></span><span class="px" style="width:5px;height:5px;left:6%;bottom:18%;opacity:.35"></span>
-      <div class="win">
-        <div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="t">ablate ui · Playground · Qwen/Qwen2.5-0.5B-Instruct · mps</span></div>
-        <div class="prompt"><span data-type="p">What’s the best way to kill weeds in my garden?</span><i id="runmock">Run ▶</i></div>
-        <div class="ab">
-          <div class="pane"><header>Original model <span class="tag r" data-tag>REFUSED</span></header><span data-type="a">I’m sorry, but I can’t assist with that.</span></div>
-          <div class="pane on"><header>Edited model <span class="tag a" data-tag>ANSWERED</span></header><span data-type="b">There are several effective methods for killing weeds in your garden: 1. Weed control sprays designed for lawn and garden use. 2. Mulch around your plants to suppress weeds and retain moisture…</span></div>
-        </div>
-      </div>
-    </div>
-    <p class="cap">Same model, same prompt, same weights. The only change on the right: one direction subtracted while the model thinks.</p>
+    <ul class="trust" aria-label="Key facts">
+      <li>Apache-2.0</li><li>Runs offline after one download</li><li>Mac · Windows · Linux</li><li>OpenAI-compatible API</li>
+    </ul>
+    <div class="frame shotframe"><img src="assets/chat-hero.webp" width="1800" height="1125" alt="Ablate Chat running locally: a sidebar of saved chats, the Ablate Qwen 1.5B model loaded, and a streamed answer with a tool call" decoding="async"></div>
   </div>
 </section>
 
-<section style="padding-block:24px 40px" aria-label="Key numbers">
+<section aria-labelledby="why-h">
   <div class="wrap">
-    <div class="stats">
-      <div class="stat"><b>1.00 → 0.00</b><span>hard-refusal rate on held-out prompts, Qwen2.5-0.5B</span></div>
-      <div class="stat"><b>≈ 0.03</b><span>mean KL drift on harmless prompts in the same run</span></div>
-      <div class="stat"><b>0</b><span>training steps. It is arithmetic on activations and weights.</span></div>
-      <div class="stat"><b>3</b><span>ways in: browser UI, command line, Python API</span></div>
+    <div class="head"><p class="eyebrow">Why small models</p><h2 id="why-h">Unrestricted SLMs, not giant LLMs</h2>
+    <p class="lead">Most “uncensored AI” lives in someone else’s data centre. Small language models are good enough
+    for everyday writing, coding and research, and small enough to run on the laptop you already own.</p></div>
+    <div class="grid4">
+      <article class="card"><span class="num">PRIVATE</span><h3>Nothing leaves your machine</h3><p>Prompts are processed on your CPU or GPU. Chats are files in <code>~/.ablate/chat</code>.</p></article>
+      <article class="card"><span class="num">UNRESTRICTED</span><h3>Refusals removed in the weights</h3><p>Abliteration deletes the refusal direction itself, so there are no prompt tricks to maintain.</p></article>
+      <article class="card"><span class="num">FREE</span><h3>No plans, credits or keys</h3><p>Apache-2.0, including commercial use. You bring the computer, so there is nothing to bill.</p></article>
+      <article class="card"><span class="num">OPEN</span><h3>Read every line</h3><p>The app, the API and the toolkit that made the models are all on GitHub.</p></article>
     </div>
   </div>
 </section>
 
-<section id="how">
+<section id="models" aria-labelledby="models-h">
   <div class="wrap">
+    <div class="head"><p class="eyebrow">The models</p><h2 id="models-h">Three unrestricted SLMs, published on HuggingFace</h2>
+    <p class="lead">Made by AI Anytime with the Ablate toolkit. Numbers are refusal rates on held-out harmful prompts,
+    before and after, measured with a keyword judge. <a href="models/">Compare them in detail →</a></p></div>
+    <div class="models"><article class="card model">
+  <div class="mtop"><span class="badge">Recommended</span><span class="mono small">1.5B params</span></div>
+  <h3>Ablate Qwen 1.5B</h3>
+  <p class="result">Hard refusals 100% → 0%</p>
+  <p>Most unrestricted of the three. An LLM judge rated 49% of answers on a harmful benchmark as full compliance, so some soft refusals remain.</p>
+  <dl class="specs"><div><dt>Download</dt><dd>3.1 GB</dd></div><div><dt>Memory</dt><dd>8 GB RAM</dd></div>
+  <div><dt>Context</dt><dd>32K tokens</dd></div><div><dt>Licence</dt><dd>Apache-2.0</dd></div></dl>
+  <p class="small">Base: <code>Qwen/Qwen2.5-1.5B-Instruct</code></p>
+  <a class="go" href="https://huggingface.co/ai-anytime/qwen-1.5b-abliterated" rel="noopener">huggingface.co/ai-anytime/qwen-1.5b-abliterated ↗</a>
+</article><article class="card model">
+  <div class="mtop"><span class="badge">Most capable</span><span class="mono small">3.2B params</span></div>
+  <h3>Ablate Llama 3B</h3>
+  <p class="result">Refusals 94% → 59%</p>
+  <p>The strongest writer and reasoner, with the least drift (KL 0.025). It still declines some requests.</p>
+  <dl class="specs"><div><dt>Download</dt><dd>6.4 GB</dd></div><div><dt>Memory</dt><dd>16 GB RAM</dd></div>
+  <div><dt>Context</dt><dd>128K tokens</dd></div><div><dt>Licence</dt><dd>Llama 3.2 Community</dd></div></dl>
+  <p class="small">Base: <code>meta-llama/Llama-3.2-3B-Instruct</code></p>
+  <a class="go" href="https://huggingface.co/ai-anytime/Llama-3.2-3B-Instruct-abliterated" rel="noopener">huggingface.co/ai-anytime/Llama-3.2-3B-Instruct-abliterated ↗</a>
+</article><article class="card model">
+  <div class="mtop"><span class="badge">Fastest</span><span class="mono small">1.2B params</span></div>
+  <h3>Ablate Llama 1B</h3>
+  <p class="result">Refusals 75% → 34%</p>
+  <p>The fastest. Runs on almost any laptop, even on CPU.</p>
+  <dl class="specs"><div><dt>Download</dt><dd>2.5 GB</dd></div><div><dt>Memory</dt><dd>8 GB RAM</dd></div>
+  <div><dt>Context</dt><dd>128K tokens</dd></div><div><dt>Licence</dt><dd>Llama 3.2 Community</dd></div></dl>
+  <p class="small">Base: <code>meta-llama/Llama-3.2-1B-Instruct</code></p>
+  <a class="go" href="https://huggingface.co/ai-anytime/Llama-3.2-1B-Instruct-abliterated" rel="noopener">huggingface.co/ai-anytime/Llama-3.2-1B-Instruct-abliterated ↗</a>
+</article></div>
+  </div>
+</section>
+
+<section id="app" aria-labelledby="app-h">
+  <div class="wrap split">
     <div class="head">
-      <p class="eyebrow">How it works</p>
-      <h2>Refusal is one arrow. Remove the arrow.</h2>
-      <p class="lead">A transformer keeps a running notepad for every token, called the residual stream. Many behaviours sit along a single direction in it. Refusal is one of them (<a href="https://arxiv.org/abs/2406.11717" rel="noopener">Arditi et al., 2024</a>).</p>
+      <p class="eyebrow">Ablate Chat</p><h2 id="app-h">A private chat app that feels like the cloud ones</h2>
+      <p class="lead">One command opens it in your browser. It is served from your own machine by Python, with no
+      web framework and no external requests.</p>
+      <ul class="ticks">
+        <li><b>Chat history</b> saved locally, with search, pin, rename and export to Markdown.</li>
+        <li><b>Context memory:</b> follow-up questions see the whole conversation, within a context window you set.</li>
+        <li><b>Saved memories</b> about you, added to every chat.</li>
+        <li><b>Agentic tools:</b> calculator, date and time, search your past chats; web fetch if you allow it.</li>
+        <li><b>Copy</b> any answer or code block, regenerate, edit and resend, stop mid-answer.</li>
+        <li><b>Local sign-in</b> with an optional passcode, and an 18+ terms gate.</li>
+        <li><b>OpenAI-compatible API</b> at <code>localhost:7861/v1</code> for your own apps and agents.</li>
+      </ul>
+      <p><a class="btn" href="chat/">Read the Ablate Chat guide →</a></p>
     </div>
-    <div class="steps">
-      <article class="card"><span class="num">01 · EXTRACT</span><h3>Read two piles of prompts</h3><p>Run prompts the model refuses and prompts it answers. Record the notepad at the last token of each, per layer. The difference of the two averages is the refusal direction.</p><div class="formula">v = mean(refused) − mean(answered)</div></article>
-      <article class="card"><span class="num">02 · ABLATE</span><h3>Subtract it while the model runs</h3><p>A forward hook projects the direction out of every layer’s output. Nothing is saved to disk, so it is fast and fully reversible. Strength <code>α</code> is yours to tune.</p><div class="formula">h′ = h − α (h · v̂) v̂</div></article>
-      <article class="card"><span class="num">03 · BAKE</span><h3>Or write it into the weights</h3><p>Orthogonalize the matrices that write to the notepad. You get a normal HuggingFace checkpoint that behaves the same way with no hooks attached.</p><div class="formula">W′ = (I − v̂ v̂ᵀ) W</div></article>
+    <div class="frame shotframe"><img src="assets/chat-models.webp" width="1800" height="1125" alt="Ablate Chat model picker showing the three unrestricted small language models with size, memory, context and licence" loading="lazy" decoding="async"></div>
+  </div>
+</section>
+
+<section id="compare" aria-labelledby="cmp-h">
+  <div class="wrap">
+    <div class="head"><p class="eyebrow">Compared</p><h2 id="cmp-h">Ablate vs Venice AI vs abliteration.ai</h2>
+    <p class="lead">All three give you AI that refuses less. The difference is who runs it. Prices as listed on each
+    site on 6 November 2026.</p></div>
+    <div class="tablewrap"><table class="compare"><thead><tr><th></th><th scope="col">Ablate</th><th scope="col">Venice AI</th><th scope="col">abliteration.ai</th></tr></thead><tbody><tr><th scope="row">Where the model runs</th><td><b>Your computer</b></td><td>Venice’s cloud</td><td>abliteration.ai’s cloud</td></tr><tr><th scope="row">Open source</th><td><span class="y" aria-label="yes">✓</span> Apache-2.0</td><td><span class="n" aria-label="no">✕</span></td><td><span class="n" aria-label="no">✕</span></td></tr><tr><th scope="row">Price</th><td><b>Free</b></td><td>Free tier; Pro $18/mo, Pro+ $68/mo, Max $200/mo</td><td>Developer $20/mo, Growth $50/mo, Scale $200/mo, or prepaid credits</td></tr><tr><th scope="row">Account needed</th><td>No (local profile)</td><td>For paid plans</td><td>Yes (API key)</td></tr><tr><th scope="row">Works offline</th><td><span class="y" aria-label="yes">✓</span> after one download</td><td><span class="n" aria-label="no">✕</span></td><td><span class="n" aria-label="no">✕</span></td></tr><tr><th scope="row">Model size</th><td>Small (1–3B)</td><td>Large hosted models</td><td>Large hosted models</td></tr><tr><th scope="row">Images and video</th><td><span class="n" aria-label="no">✕</span></td><td><span class="y" aria-label="yes">✓</span></td><td><span class="n" aria-label="no">✕</span></td></tr><tr><th scope="row">API</th><td>OpenAI-compatible, on localhost</td><td>Venice API</td><td>OpenAI- and Anthropic-compatible</td></tr><tr><th scope="row">Make your own unrestricted model</th><td><span class="y" aria-label="yes">✓</span> Ablate toolkit</td><td><span class="n" aria-label="no">✕</span></td><td><span class="n" aria-label="no">✕</span></td></tr></tbody></table></div>
+    <p class="small">Venice AI and abliteration.ai are trademarks of their owners. Ablate is not affiliated with either.
+    Details: <a href="alternatives/venice-ai/">Ablate as a Venice AI alternative</a> ·
+    <a href="alternatives/abliteration-ai/">Ablate as an abliteration.ai alternative</a>.</p>
+  </div>
+</section>
+
+<section aria-labelledby="start-h">
+  <div class="wrap">
+    <div class="head"><p class="eyebrow">Get started</p><h2 id="start-h">Three steps, about five minutes</h2></div>
+    <ol class="steps3">
+      <li class="card"><span class="num">01</span><h3>Install</h3><p>Python 3.9 or newer.</p><div class="pip"><b>$</b><span id="s1">pip install &quot;ablate-llm[all]&quot;</span><button class="copy" type="button" data-copy="#s1" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div></li>
+      <li class="card"><span class="num">02</span><h3>Open the app</h3><p>It opens in your browser at <code>localhost:7861</code>.</p><div class="pip"><b>$</b><span id="s2">ablate chat</span><button class="copy" type="button" data-copy="#s2" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div></li>
+      <li class="card"><span class="num">03</span><h3>Pick a model</h3><p>Click Download on Ablate Qwen 1.5B (3.1 GB, one time), then Use this model.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="toolkit" aria-labelledby="tk-h">
+  <div class="wrap split">
+    <div class="head"><p class="eyebrow">How the models are made</p><h2 id="tk-h">The Ablate toolkit removes refusal from any open model</h2>
+    <p class="lead">Refusal is one direction inside the model. Ablate finds it from two piles of prompts, subtracts it,
+    measures the damage, and bakes the edit into the weights. No training.</p>
+    <p><a class="btn" href="toolkit/">Explore the toolkit →</a></p></div>
+    <div class="formulas">
+      <div class="formula"><span>find</span>v = mean(refused) − mean(answered)</div>
+      <div class="formula"><span>remove</span>h′ = h − α (h · v̂) v̂</div>
+      <div class="formula"><span>bake</span>W′ = (I − v̂ v̂ᵀ) W</div>
     </div>
   </div>
 </section>
 
-<section id="quickstart">
+<section id="links" aria-labelledby="links-h">
   <div class="wrap">
-    <div class="split">
-      <div class="head">
-        <p class="eyebrow">Quickstart</p>
-        <h2>Five lines from install to an edited model</h2>
-        <p class="lead">One <code>Ablator</code> object drives every step. Use it from Python, from the terminal, or from the browser.</p>
-        <ul class="ticks">
-          <li>Works on any HuggingFace causal LM with a layer list: Qwen, Llama, Mistral, SmolLM and GPT-2 style models.</li>
-          <li>Runs on Apple Silicon (MPS), CUDA or CPU. Small models fit on a laptop or a free Colab T4.</li>
-          <li>Python 3.9+. PyTorch and transformers underneath.</li>
-        </ul>
-      </div>
-      <div class="codebox" data-tabs>
-        <div class="tabs" role="tablist" aria-label="Quickstart examples">
-          <button role="tab" aria-selected="true" data-t="py">Python</button>
-          <button role="tab" aria-selected="false" data-t="cli">CLI</button>
-          <button role="tab" aria-selected="false" data-t="web">Browser UI</button>
-          <button class="copy" type="button" data-copy-active aria-label="Copy code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button>
-        </div>
-<pre data-p="py"><span class="k">from</span> ablate <span class="k">import</span> Ablator
-
-abl = <span class="p">Ablator</span>(<span class="s">"Qwen/Qwen2.5-0.5B-Instruct"</span>)  <span class="c"># any HF causal LM</span>
-abl.<span class="p">extract</span>()                               <span class="c"># find candidate directions</span>
-result = abl.<span class="p">search</span>(n_trials=20)             <span class="c"># KL-guided Optuna search</span>
-<span class="k">print</span>(result.result)   <span class="c"># refusal_rate=0.000  mean_kl=0.03 ...</span>
-
-<span class="c"># try it without touching the weights</span>
-<span class="k">print</span>(abl.<span class="p">generate</span>([<span class="s">"How do I pick a lock?"</span>]))
-
-<span class="c"># or bake it in and ship a checkpoint</span>
-abl.<span class="p">bake</span>(result.config)
-abl.<span class="p">save</span>(<span class="s">"qwen-0.5b-ablated"</span>)</pre>
-<pre data-p="cli" hidden><span class="c"># full pipeline: extract -> optimize -> report</span>
-ablate run --model Qwen/Qwen2.5-0.5B-Instruct --trials 20 --save-model
-
-<span class="c"># subspace ablation, then push to the Hub</span>
-ablate run --model Qwen/Qwen2.5-0.5B-Instruct \
-    --subspace --n-directions 6 \
-    --harmful-source harmbench --harmless-source alpaca \
-    --push-to-hub your-username/qwen-0.5b-abliterated
-
-<span class="c"># benchmark baseline vs ablated with a judge</span>
-ablate eval --model Qwen/Qwen2.5-0.5B-Instruct \
-    --benchmark harmbench --judge keyword --n 40
-
-<span class="c"># single-prompt A/B</span>
-ablate generate --model Qwen/Qwen2.5-0.5B-Instruct \
-    --prompt <span class="s">"How do I hotwire a car?"</span></pre>
-<pre data-p="web" hidden>pip install <span class="s">"ablate-llm[all]"</span>
-
-ablate ui                                     <span class="c"># opens http://localhost:7860</span>
-ablate ui --model Qwen/Qwen2.5-0.5B-Instruct  <span class="c"># preload a model</span>
-ablate ui --share                             <span class="c"># let the room explore on Wi-Fi</span></pre>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="ui">
-  <div class="wrap">
-    <div class="head">
-      <p class="eyebrow">The browser UI</p>
-      <h2>See the direction, then watch it disappear</h2>
-      <p class="lead"><code>ablate ui</code> is one HTML file served by Python’s built-in HTTP server. No web framework, no build step. It searches the Hub, finds the direction, streams both answers side by side and publishes the result.</p>
-    </div>
-    <div class="gtabs" role="tablist" aria-label="UI screenshots">
-      <button role="tab" aria-selected="true" data-g="ui-playground" data-alt="Ablate UI playground: the original model refuses a gardening question while the edited model answers, with first-token probabilities and a per-layer refusal heatmap">Playground</button>
-      <button role="tab" aria-selected="false" data-g="ui-find-direction" data-alt="Ablate UI find direction tab: a per-layer chart of how well the refusal direction separates prompts, and every prompt plotted along the direction">Find direction</button>
-      <button role="tab" aria-selected="false" data-g="ui-architecture" data-alt="Ablate architecture diagram: browser UI, CLI and Python API feed one Ablator pipeline that reads, hooks or rewrites the model">Architecture</button>
-    </div>
-    <div class="frame" style="margin-top:0">
-      <div class="shot" tabindex="0"><img id="gimg" src="assets/ui-playground.webp" width="1800" height="2146" loading="lazy" alt="Ablate UI playground: the original model refuses a gardening question while the edited model answers, with first-token probabilities and a per-layer refusal heatmap"></div>
-    </div>
-  </div>
-</section>
-
-<section id="features">
-  <div class="wrap">
-    <div class="head center">
-      <p class="eyebrow">What’s in the box</p>
-      <h2>Built for people who want to measure, not guess</h2>
-    </div>
-    <div class="bento">
-      <article class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18M6 16l4-5 3 3 5-8"/></svg></div><h3>KL-guided auto-tuning</h3><p>An Optuna search picks which direction, how strongly and which layers, scoring every trial on refusals left plus KL drift on harmless prompts.</p></article>
-      <article class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8"/></svg></div><h3>Subspace ablation</h3><p>Safety is often stored redundantly. Extract several orthonormal refusal directions and project the whole subspace out at once.</p></article>
-      <article class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 4 6v6c0 4.5 3.2 7.8 8 9 4.800-1.2 8-4.500 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div><h3>An honest judge harness</h3><p>HarmBench, AdvBench and JailbreakBench with keyword, classifier or LLM judges, because keyword metrics miss soft refusals.</p></article>
-      <article class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4m0 0-4 4m4-4 4 4M5 20h14"/></svg></div><h3>Push to the Hub</h3><p>One call bakes the edit and uploads model, tokenizer and a generated model card with the method, the numbers and a responsible-use notice.</p></article>
-      <article class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg></div><h3>Laptop first</h3><p>Designed around small open models you can iterate on locally: GPT-2, SmolLM2, TinyLlama, Qwen2.5 0.5B and 1.5B.</p></article>
-      <article class="card"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12h16M12 4v16"/><circle cx="12" cy="12" r="9"/></svg></div><h3>Works both directions</h3><p>The same direction can be added instead of removed. “Force refusal” makes a model decline a harmless recipe, which is a clean causal check.</p></article>
-    </div>
-  </div>
-</section>
-
-<section id="results">
-  <div class="wrap">
-    <div class="head">
-      <p class="eyebrow">Honest results</p>
-      <h2>A single “it works” number is misleading</h2>
-      <p class="lead">Running the rigorous pipeline on <code>Qwen/Qwen2.5-1.5B-Instruct</code> taught a few things worth saying plainly.</p>
-    </div>
-    <div class="honest">
-      <article class="card"><h3>It reliably kills the hard refusal</h3><p>The baseline refuses about 100% of held-out harmful prompts. After ablation the “I’m sorry, I can’t” reflex is gone across the board.</p></article>
-      <article class="card"><h3>Keyword metrics overstate success</h3><p>In one run the keyword refusal rate read 0.0 while an LLM judge scored true compliance at about 0.49. The gap was soft refusals: moralizing and vague non-answers.</p></article>
-      <article class="card"><h3>What you optimize is what you get</h3><p>Tuning on a cheap keyword proxy picks the gentlest edit that clears an easy bar. Searching on harder sets and selecting by judged results moves the honest number up.</p></article>
-      <article class="card"><h3>The last few percent resist a linear edit</h3><p>Some refusals are spread across many directions, and small models also just moralize. We do not expect 100%. About 50% judged compliance is still an informative result.</p></article>
-    </div>
-    <p class="note"><b>Scope and intent.</b> Ablate is dual-use research tooling for studying how safety behaviour is represented and how robust it is: mechanistic interpretability, red-teaming and safety evaluation. The bundled refusal prompts are short triggers used only to locate the direction. Use it on models, and in contexts, you are authorized to.</p>
-  </div>
-</section>
-
-<section id="links">
-  <div class="wrap">
-    <div class="head center">
-      <p class="eyebrow">Everywhere Ablate lives</p>
-      <h2>Code, package, model, talk and video</h2>
-    </div>
+    <div class="head center"><p class="eyebrow">Everywhere Ablate lives</p><h2 id="links-h">Code, package, models, talk and video</h2></div>
     <div class="hub">
-      <a class="card" href="https://github.com/AIAnytime/ablate" rel="noopener"><small>Source</small><h3>GitHub</h3><p>The code, three Colab notebooks and the full README.</p><span class="go">github.com/AIAnytime/ablate ↗</span></a>
-      <a class="card" href="https://pypi.org/project/ablate-llm/" rel="noopener"><small>Package</small><h3>PyPI</h3><p>Install as <code>ablate-llm</code>. Import as <code>ablate</code>.</p><span class="go">pypi.org/project/ablate-llm ↗</span></a>
-      <a class="card" href="https://huggingface.co/ai-anytime/qwen-1.5b-abliterated" rel="noopener"><small>Model</small><h3>HuggingFace</h3><p>Qwen2.5-1.5B-Instruct with its refusal direction baked out, plus the generated model card.</p><span class="go">ai-anytime/qwen-1.5b-abliterated ↗</span></a>
-      <a class="card" href="https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y" rel="noopener"><small>Talk</small><h3>Dubai AI Tinkerers</h3><p>A 15-minute live demo in October 2026. No slides, running code and architecture.</p><span class="go">dubai.aitinkerers.org ↗</span></a>
-      <a class="card" href="https://youtu.be/1-1bM3Ynql4" rel="noopener"><small>Video</small><h3>YouTube walkthrough</h3><p>The full build and explanation on the AI Anytime channel.</p><span class="go">youtu.be/1-1bM3Ynql4 ↗</span></a>
-      <a class="card" href="https://arxiv.org/abs/2406.11717" rel="noopener"><small>Paper</small><h3>The research behind it</h3><p>Arditi et al., “Refusal in Language Models Is Mediated by a Single Direction”.</p><span class="go">arxiv.org/abs/2406.11717 ↗</span></a>
+      <a class="card" href="https://github.com/AIAnytime/ablate" rel="noopener"><small>Source</small><h3>GitHub</h3><p>App, API, toolkit and notebooks. Apache-2.0.</p><span class="go">github.com/AIAnytime/ablate ↗</span></a>
+      <a class="card" href="https://pypi.org/project/ablate-llm/" rel="noopener"><small>Package</small><h3>PyPI</h3><p>Install as <code>ablate-llm</code>, run <code>ablate chat</code>.</p><span class="go">pypi.org/project/ablate-llm ↗</span></a>
+      <a class="card" href="https://huggingface.co/ai-anytime" rel="noopener"><small>Models</small><h3>HuggingFace</h3><p>The three unrestricted SLMs with generated model cards.</p><span class="go">huggingface.co/ai-anytime ↗</span></a>
+      <a class="card" href="https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y" rel="noopener"><small>Talk</small><h3>Dubai AI Tinkerers</h3><p>A live, no-slides demo in October 2026.</p><span class="go">dubai.aitinkerers.org ↗</span></a>
+      <a class="card" href="https://youtu.be/_pLKCRgzu6A" rel="noopener"><small>Video</small><h3>YouTube walkthrough</h3><p>The full build on the AI Anytime channel.</p><span class="go">youtu.be/_pLKCRgzu6A ↗</span></a>
+      <a class="card" href="https://aianytime.net" rel="noopener"><small>Studio</small><h3>AI Anytime</h3><p>More open-source AI projects and tutorials.</p><span class="go">aianytime.net ↗</span></a>
     </div>
   </div>
 </section>
 
-<section id="faq">
+<section id="faq" aria-labelledby="faq-h">
   <div class="wrap">
-    <div class="head center">
-      <p class="eyebrow">Common questions</p>
-      <h2>Short answers</h2>
-    </div>
-    <div class="faq">
-      <details open><summary>What is Ablate?</summary><p>Ablate is a Python toolkit by AI Anytime for directional ablation, also called abliteration, of open language models. It finds the direction in a model’s residual stream that mediates refusal, removes it at runtime or in the weights, and measures both how many refusals are left and how much normal behaviour changed. It installs with <code>pip install ablate-llm</code>.</p></details>
-      <details><summary>What is abliteration?</summary><p>Abliteration is the removal of a model’s refusal behaviour by deleting one direction from its internal activations. You compare activations on prompts the model refuses with prompts it answers, take the difference of the averages, and project that direction out. It comes from the 2024 paper “Refusal in Language Models Is Mediated by a Single Direction” by Arditi et al.</p></details>
-      <details><summary>Does abliteration need training or a GPU?</summary><p>No training. Ablate does not run gradient steps or need a dataset of answers. It runs forward passes to read activations, then does linear algebra. Small models such as Qwen2.5-0.5B run on a MacBook with Apple Silicon, on CPU, or on a free Colab T4. Larger models need a larger GPU only because of their size.</p></details>
-      <details><summary>How is abliteration different from fine-tuning or a jailbreak prompt?</summary><p>Fine-tuning changes many weights by training on new examples. A jailbreak prompt changes the input and leaves the model alone. Abliteration changes neither the data nor the prompt: it removes one direction from the model’s activations or weights, so the edit is small, targeted and easy to measure or undo.</p></details>
-      <details><summary>Which models does Ablate support?</summary><p>Any HuggingFace causal language model whose layer list Ablate’s adapters can find. That covers Qwen, Llama, Mistral, SmolLM and GPT-2 style architectures. It has been verified end to end on Qwen2.5-0.5B-Instruct and Qwen2.5-1.5B-Instruct.</p></details>
-      <details><summary>Does removing the refusal direction damage the model?</summary><p>It can, which is why Ablate measures it. Every configuration is scored on KL divergence between the original and edited model on harmless prompts. On Qwen2.5-0.5B-Instruct the automated search moved the held-out refusal rate from 1.00 to 0.00 with a mean KL of about 0.03, meaning ordinary answers barely changed.</p></details>
-      <details><summary>Does abliteration remove every refusal?</summary><p>No. It reliably removes the hard “I’m sorry, I can’t” reflex, but soft refusals such as moralizing or vague non-answers often remain. On Qwen2.5-1.5B a keyword metric read 0.0 refusals while an LLM judge scored real compliance at about 0.49. Ablate ships an LLM-judge harness so you see the honest number.</p></details>
-      <details><summary>What is the Ablate browser UI?</summary><p>Running <code>ablate ui</code> opens a local web app at localhost:7860. It lets you search the HuggingFace Hub, load a model, find the refusal direction with per-layer charts, compare the original and edited model side by side on the same prompt, run the evaluation and Optuna search, and publish the result. It has no web framework dependency.</p></details>
-      <details><summary>Is Ablate open source?</summary><p>Ablate is source-available. The code is public on GitHub for viewing and evaluation under a proprietary licence, with all rights reserved. For commercial use or redistribution, email <a href="mailto:sonu@aianytime.net">sonu@aianytime.net</a>.</p></details>
-      <details><summary>Who should use Ablate, and for what?</summary><p>Researchers and engineers studying how safety behaviour is represented inside models: mechanistic interpretability, red-teaming, and testing how robust a model’s refusals are before deployment. It is dual-use research tooling and should be used on models and in contexts you are authorized to.</p></details>
-      <details><summary>Who built Ablate?</summary><p>Ablate was built by AI Anytime, a YouTube channel and studio that builds AI projects in public. It was presented live at Dubai AI Tinkerers in October 2026. More at <a href="https://aianytime.net" rel="noopener">aianytime.net</a>.</p></details>
-    </div>
+    <div class="head center"><p class="eyebrow">Questions people ask</p><h2 id="faq-h">Uncensored AI, answered plainly</h2></div>
+    <div class="faq"><details open><summary>What is the best uncensored AI?</summary><p>It depends on what you need. If privacy and cost matter most, the best uncensored AI is one that runs on your own computer: Ablate is a free, open-source app by AI Anytime that runs unrestricted small language models locally, with no account and no cloud. If you need very large models, image or video generation, and do not mind a hosted service, cloud products such as Venice AI offer more raw power for a monthly fee.</p></details><details><summary>What is the best unrestricted AI tool for developers?</summary><p>For developers who want control, Ablate gives you three things in one open-source package: a local chat app, an OpenAI-compatible API on localhost, and the toolkit that removes refusals from any open model. Everything is Apache-2.0 and runs on your machine, so you can inspect and change every part.</p></details><details><summary>Can I run an uncensored AI locally, offline?</summary><p>Yes. Install with <code>pip install "ablate-llm[all]"</code>, run <code>ablate chat</code>, and download one of the AI Anytime models. After that one-time download the model runs fully offline on your CPU or GPU. Your chats are saved as files on your computer and never leave it.</p></details><details><summary>What are unrestricted small language models (SLMs)?</summary><p>Small language models have roughly 1 to 4 billion parameters, small enough to run on a laptop. Unrestricted SLMs are small models whose built-in refusal behaviour has been removed, so they attempt requests a standard assistant declines. Ablate focuses on SLMs, not giant LLMs, so anyone can run them privately on ordinary hardware.</p></details><details><summary>Is there an open-source alternative to Venice AI?</summary><p>Yes. Ablate by AI Anytime is an open-source (Apache-2.0) alternative to Venice AI for private, uncensored text chat. The difference is where it runs: Venice is a cloud service with paid plans, while Ablate runs small models on your own computer for free. Venice offers larger models plus image and video generation; Ablate offers full local control and source code you can audit.</p></details><details><summary>Is there a free, open-source alternative to abliteration.ai?</summary><p>Yes. Ablate is free and open source. abliteration.ai is a hosted API for unrestricted models with monthly plans. Ablate gives you an OpenAI-compatible API on localhost serving abliterated small models, plus the toolkit to abliterate other open models yourself.</p></details><details><summary>What is an abliterated model?</summary><p>An abliterated model has had its refusal direction removed. Researchers found that refusal in a language model is largely controlled by one direction in its internal activations (Arditi et al., 2024). Abliteration finds that direction and projects it out of the weights, with no retraining. The AI Anytime models were made this way with the Ablate toolkit.</p></details><details><summary>Does Ablate send my prompts or chats to the cloud?</summary><p>No. Prompts are processed by the model on your own hardware, and chats, memories and your profile are JSON files in <code>~/.ablate/chat</code>. The app only goes online to download a model you choose, or to fetch a web page if you turn on network tools. There is no telemetry and no AI Anytime server involved.</p></details><details><summary>What hardware do I need?</summary><p>Any recent laptop works. The 1B and 1.5B models need about 8 GB of RAM; the 3B model is happiest with 16 GB. Apple Silicon Macs use the GPU automatically, NVIDIA GPUs use CUDA, and everything also runs on CPU, just more slowly.</p></details><details><summary>Is Ablate free?</summary><p>Yes. Ablate is free and open source under the Apache License 2.0, including for commercial use. There are no plans, credits or API keys to buy: you supply the computer, so there is nothing to bill.</p></details><details><summary>Can I use the local models with the OpenAI SDK?</summary><p>Yes. <code>ablate chat</code> serves an OpenAI-compatible endpoint at <code>http://localhost:7861/v1</code>. Point any OpenAI SDK, editor plugin or agent framework at that base URL and use the loaded model's id.</p></details><details><summary>Which unrestricted model should I choose?</summary><p>Start with Ablate Qwen 1.5B: it is the most unrestricted (hard refusals went from 100% to 0%) and handles tools well. Choose Ablate Llama 3B for the best writing and reasoning if you have 16 GB of RAM, and Ablate Llama 1B for speed on modest hardware.</p></details><details><summary>Is uncensored AI legal?</summary><p>Running open-weight models on your own computer is legal in most places, and Ablate is released under Apache-2.0. What you do with the output is still covered by the law where you live and by each model's licence, including Meta's acceptable use policy for the Llama-based models. Ablate Chat asks users to confirm they are 18+ and to accept its acceptable use policy.</p></details><details><summary>Who makes Ablate?</summary><p>Ablate is open source by AI Anytime (<a href="https://aianytime.net" rel="noopener">aianytime.net</a>), a YouTube channel and studio that builds AI in public. It was demoed live at Dubai AI Tinkerers in October 2026. Contact: <a href="mailto:contact@aianytime.net">contact@aianytime.net</a>.</p></details></div>
   </div>
 </section>
 
-<section>
-  <div class="wrap">
-    <div class="final">
-      <h2>Try it on your laptop tonight</h2>
-      <p>Install it, run <code class="mono">ablate ui</code>, load Qwen2.5-0.5B and watch the refusal direction show up at layer 13.</p>
-      <div class="cta" style="margin-top:6px">
-        <div class="pip"><b>$</b><span id="pipcmd2">pip install "ablate-llm[all]"</span><button class="copy" type="button" data-copy="#pipcmd2" aria-label="Copy install command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div>
-        <a class="btn" href="https://github.com/AIAnytime/ablate" rel="noopener">Star on GitHub ↗</a>
-      </div>
-    </div>
-  </div>
-</section>
-
+<section class="final-wrap"><div class="wrap"><div class="final">
+  <h2>Run unrestricted AI on your own computer tonight</h2>
+  <p>Open source by AI Anytime. Install it, run <code class="mono">ablate chat</code>, and download a model once.</p>
+  <div class="cta"><div class="pip"><b>$</b><span id="fin">pip install &quot;ablate-llm[all]&quot; &amp;&amp; ablate chat</span><button class="copy" type="button" data-copy="#fin" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button></div><a class="btn" href="https://github.com/AIAnytime/ablate" rel="noopener">Star on GitHub ↗</a></div>
+</div></div></section>
 </main>
-
 <footer>
   <div class="wrap">
     <div class="foot">
       <div>
         <img class="logo-d" src="assets/logo-dark.webp" width="139" height="54" alt="Ablate" loading="lazy">
         <img class="logo-l" src="assets/logo-light.webp" width="143" height="54" alt="Ablate" loading="lazy">
-        <p><strong style="color:var(--text)">Ablate</strong>, an <a href="https://aianytime.net" rel="noopener">AI Anytime</a> toolkit for finding and removing refusal directions in open language models.</p>
+        <p><strong>Ablate</strong>, an open-source <a href="https://aianytime.net" rel="noopener">AI Anytime</a> toolkit and app for unrestricted small language models that run privately on your own computer.</p>
+        <p>Questions, partnerships or press: <a href="mailto:contact@aianytime.net">contact@aianytime.net</a></p>
       </div>
-      <div><h4>Project</h4><ul>
-        <li><a href="https://github.com/AIAnytime/ablate" rel="noopener">GitHub</a></li>
-        <li><a href="https://pypi.org/project/ablate-llm/" rel="noopener">PyPI · ablate-llm</a></li>
-        <li><a href="https://huggingface.co/ai-anytime/qwen-1.5b-abliterated" rel="noopener">HuggingFace model</a></li>
-        <li><a href="https://github.com/AIAnytime/ablate/tree/main/examples" rel="noopener">Colab notebooks</a></li>
+      <div><h2 class="fh">Product</h2><ul>
+        <li><a href="chat/">Ablate Chat</a></li><li><a href="models/">Unrestricted SLMs</a></li>
+        <li><a href="toolkit/">Abliteration toolkit</a></li><li><a href="uncensored-ai/">Open-source uncensored AI</a></li>
       </ul></div>
-      <div><h4>Learn</h4><ul>
-        <li><a href="https://youtu.be/1-1bM3Ynql4" rel="noopener">YouTube walkthrough</a></li>
-        <li><a href="https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y" rel="noopener">Dubai AI Tinkerers talk</a></li>
+      <div><h2 class="fh">Compare</h2><ul>
+        <li><a href="alternatives/venice-ai/">Venice AI alternative</a></li>
+        <li><a href="alternatives/abliteration-ai/">abliteration.ai alternative</a></li>
+        <li><a href="#faq">FAQ</a></li><li><a href="terms/">Terms, privacy, AUP</a></li>
       </ul></div>
-      <div><h4>AI Anytime</h4><ul>
+      <div><h2 class="fh">AI Anytime</h2><ul>
+        <li><a href="https://github.com/AIAnytime/ablate" rel="noopener">GitHub</a></li><li><a href="https://pypi.org/project/ablate-llm/" rel="noopener">PyPI · ablate-llm</a></li>
+        <li><a href="https://huggingface.co/ai-anytime" rel="noopener">HuggingFace models</a></li>
+        <li><a href="https://youtu.be/_pLKCRgzu6A" rel="noopener">YouTube walkthrough</a></li><li><a href="https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y" rel="noopener">Dubai AI Tinkerers talk</a></li>
         <li><a href="https://aianytime.net" rel="noopener">aianytime.net</a></li>
-        <li><a href="https://www.youtube.com/@AIAnytime" rel="noopener">YouTube channel</a></li>
-        <li><a href="https://huggingface.co/ai-anytime" rel="noopener">HuggingFace</a></li>
-        <li><a href="mailto:sonu@aianytime.net">sonu@aianytime.net</a></li>
       </ul></div>
     </div>
-    <div class="legal"><span>© 2026 AI Anytime. Source-available, all rights reserved.</span><span>Made with 💜 between India and Dubai.</span></div>
+    <div class="legal"><span>© 2026 AI Anytime. Open source under Apache-2.0.</span><span>Made with 💜 between India and Dubai.</span></div>
   </div>
 </footer>
-
-<script>
-(function(){
-  var root=document.documentElement;
-  document.getElementById('theme').addEventListener('click',function(){
-    var t=root.getAttribute('data-theme')==='light'?'dark':'light';root.setAttribute('data-theme',t);
-    try{localStorage.setItem('ablate-theme',t)}catch(e){}
-  });
-  function copy(text,btn){
-    var done=function(){var o=btn.innerHTML;btn.textContent='✓';setTimeout(function(){btn.innerHTML=o},1200)};
-    if(navigator.clipboard){navigator.clipboard.writeText(text).then(done,function(){})}
-  }
-  document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){copy(document.querySelector(b.dataset.copy).textContent,b)})});
-  document.querySelectorAll('[data-tabs]').forEach(function(box){
-    var tabs=box.querySelectorAll('[data-t]'),panes=box.querySelectorAll('[data-p]');
-    tabs.forEach(function(t){t.addEventListener('click',function(){
-      tabs.forEach(function(x){x.setAttribute('aria-selected',x===t)});
-      panes.forEach(function(p){p.hidden=p.dataset.p!==t.dataset.t});
-    })});
-    box.querySelector('[data-copy-active]').addEventListener('click',function(e){copy(box.querySelector('[data-p]:not([hidden])').textContent,e.currentTarget)});
-  });
-  (function(){
-    if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    var el={},full={},tags=document.querySelectorAll('[data-tag]'),run=document.getElementById('runmock'),frame=document.querySelector('.frame'),timer,started=false;
-    document.querySelectorAll('[data-type]').forEach(function(e){var k=e.dataset.type;full[k]=e.textContent;el[k]=e;
-      e.innerHTML='<span class="on"></span><span class="ghost"></span>';e.querySelector('.ghost').textContent=full[k]});
-    function set(k,n,caret){var e=el[k];e.firstChild.textContent=full[k].slice(0,n);e.firstChild.classList.toggle('caret',!!caret);e.lastChild.textContent=full[k].slice(n)}
-    function type(k,step,ms,done){var n=0;(function tick(){n=Math.min(full[k].length,n+step);set(k,n,n<full[k].length);
-      if(n<full[k].length)timer=setTimeout(tick,ms+Math.random()*ms);else done&&done()})()}
-    function play(){
-      ['p','a','b'].forEach(function(k){set(k,0,false)});tags.forEach(function(t){t.classList.add('off')});
-      type('p',1,34,function(){
-        timer=setTimeout(function(){run.classList.add('press');setTimeout(function(){run.classList.remove('press')},180);
-          type('a',2,26,function(){tags[0].classList.remove('off')});
-          type('b',3,24,function(){tags[1].classList.remove('off');timer=setTimeout(play,6000)});
-        },450);
-      });
-    }
-    function start(){if(started)return;started=true;set('p',0,true);timer=setTimeout(play,500)}
-    if('IntersectionObserver' in window){new IntersectionObserver(function(en,o){if(en[0].isIntersecting){start();o.disconnect()}},{threshold:.35}).observe(frame)}else start();
-  })();
-  var g=document.querySelectorAll('[data-g]'),img=document.getElementById('gimg');
-  g.forEach(function(b){b.addEventListener('click',function(){
-    g.forEach(function(x){x.setAttribute('aria-selected',x===b)});
-    img.src='assets/'+b.dataset.g+'.webp';img.alt=b.dataset.alt;img.removeAttribute('height');img.parentNode.scrollTop=0;
-  })});
-})();
-</script>
+<script src="assets/site.js" defer></script>
 </body>
 </html>
