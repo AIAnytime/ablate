@@ -37,7 +37,7 @@ Key facts:
 
 - [GitHub repository](https://github.com/AIAnytime/ablate): source code (Apache-2.0), README, RunPod guide, notebooks
 - [PyPI package](https://pypi.org/project/ablate-llm/): `pip install ablate-llm`
-- [HuggingFace models](https://huggingface.co/ai-anytime)
+- [HuggingFace models collection](https://huggingface.co/collections/ai-anytime/abliterated-models)
 - [YouTube walkthrough](https://youtu.be/_pLKCRgzu6A)
 - [Dubai AI Tinkerers talk](https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y): live demo, October 2026
 - [Research paper](https://arxiv.org/abs/2406.11717): Arditi et al., 2024, "Refusal in Language Models Is Mediated by a Single Direction"
