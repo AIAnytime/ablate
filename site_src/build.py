@@ -187,74 +187,103 @@ def chat_frame(src: str, alt: str, w: int, h: int, eager: bool = False) -> str:
             f'{"" if eager else " loading=\"lazy\""} decoding="async"></div>')
 
 
+def svg(d):
+    return f'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{d}</svg>'
+
+I_LOCK = svg('<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>')
+I_HIST = svg('<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>')
+I_CTX = svg('<path d="M4 6h16M4 12h10M4 18h7"/><circle cx="18" cy="16" r="3"/>')
+I_MEM = svg('<path d="M12 3a6 6 0 0 0-6 6c0 2.2 1.2 3.6 2.3 4.7.6.6.7 1 .7 1.8V17h6v-1.5c0-.8.1-1.2.7-1.8C16.8 12.6 18 11.2 18 9a6 6 0 0 0-6-6Z"/><path d="M9 21h6"/>')
+I_TOOL = svg('<path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-3-3h-6v-6l3 3 8-8z"/>')
+I_API = svg('<path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/>')
+I_COPY = svg('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>')
+I_WIFI = svg('<path d="M2 9a15 15 0 0 1 20 0M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0"/><circle cx="12" cy="20" r="1"/>')
+
 HOME = f'''
-<section class="hero">
-  <div class="wrap">
-    <p class="eyebrow"><a href="{AIA}" rel="noopener">Open source by AI Anytime · aianytime.net</a></p>
-    <h1>Unrestricted small language models. <em>Private, local, open source.</em></h1>
-    <p class="lead">Ablate is the open-source alternative to Venice AI and abliteration.ai. Chat with uncensored
-    small language models (SLMs) on your own computer: no cloud, no account, no logs, no monthly bill.</p>
-    <div class="cta">
+<section class="hx">
+  <div class="hx-bg" aria-hidden="true"><span class="hx-grid"></span><span class="hx-glow"></span>
+    <i style="left:12%;top:22%"></i><i style="left:84%;top:18%;width:8px;height:8px"></i><i style="left:76%;top:46%;width:5px;height:5px"></i><i style="left:20%;top:58%;width:6px;height:6px"></i><i style="left:90%;top:64%"></i></div>
+  <div class="wrap hx-in">
+    <a class="announce" href="chat/"><span class="tagnew">New</span><span>Ablate Chat 0.4 · open source by AI Anytime</span><span aria-hidden="true">→</span></a>
+    <h1 class="hx-h1">Unrestricted small language models.<br> <span class="grad">Private, local, open&nbsp;source.</span></h1>
+    <p class="hx-lead">The open-source alternative to Venice AI and abliteration.ai. Chat with uncensored SLMs on your own computer: no cloud, no account, no logs, no monthly bill.</p>
+    <div class="cta hx-cta">
       {copy_chip(INSTALL + " && ablate chat", "cmd1")}
       <a class="btn primary" href="{GH}" rel="noopener">{ICON_GH}<span>Star on GitHub</span></a>
-      <a class="btn" href="chat/">How Ablate Chat works →</a>
     </div>
-    <ul class="trust" aria-label="Key facts">
-      <li>Apache-2.0</li><li>Runs offline after one download</li><li>Mac · Windows · Linux</li><li>OpenAI-compatible API</li>
-    </ul>
-    {chat_frame("assets/chat-hero.webp", "Ablate Chat running locally: a sidebar of saved chats, the Ablate Qwen 1.5B model loaded, and a streamed answer with a tool call", 1800, 1125, True)}
+    <ul class="trust" aria-label="Key facts"><li>Apache-2.0</li><li>Offline after one download</li><li>Mac · Windows · Linux</li><li>OpenAI-compatible API</li></ul>
+    <div class="hx-shot">
+      <div class="hx-shot-glow" aria-hidden="true"></div>
+      <img src="assets/chat-hero.webp" width="1800" height="1125" alt="Ablate Chat running locally: saved chats in the sidebar, Ablate Qwen 1.5B loaded, a streamed answer and a calculator tool call" decoding="async">
+    </div>
   </div>
 </section>
 
+<section class="strip" aria-label="At a glance"><div class="wrap">
+  <dl class="kpis">
+    <div><dt>Models</dt><dd>3 SLMs</dd><span>1.2B to 3.2B parameters</span></div>
+    <div><dt>Qwen 1.5B refusals</dt><dd>100% → 0%</dd><span>held-out harmful prompts</span></div>
+    <div><dt>Data sent to a cloud</dt><dd>0 bytes</dd><span>after the one-time download</span></div>
+    <div><dt>Price</dt><dd>$0</dd><span>Apache-2.0, commercial use OK</span></div>
+  </dl>
+</div></section>
+
 <section aria-labelledby="why-h">
   <div class="wrap">
-    <div class="head"><p class="eyebrow">Why small models</p><h2 id="why-h">Unrestricted SLMs, not giant LLMs</h2>
-    <p class="lead">Most “uncensored AI” lives in someone else’s data centre. Small language models are good enough
-    for everyday writing, coding and research, and small enough to run on the laptop you already own.</p></div>
-    <div class="grid4">
-      <article class="card"><span class="num">PRIVATE</span><h3>Nothing leaves your machine</h3><p>Prompts are processed on your CPU or GPU. Chats are files in <code>~/.ablate/chat</code>.</p></article>
-      <article class="card"><span class="num">UNRESTRICTED</span><h3>Refusals removed in the weights</h3><p>Abliteration deletes the refusal direction itself, so there are no prompt tricks to maintain.</p></article>
-      <article class="card"><span class="num">FREE</span><h3>No plans, credits or keys</h3><p>Apache-2.0, including commercial use. You bring the computer, so there is nothing to bill.</p></article>
-      <article class="card"><span class="num">OPEN</span><h3>Read every line</h3><p>The app, the API and the toolkit that made the models are all on GitHub.</p></article>
+    <div class="head center"><p class="eyebrow">Why small models</p><h2 id="why-h">Unrestricted SLMs, not giant LLMs</h2>
+    <p class="lead">Most “uncensored AI” lives in someone else’s data centre. Small language models are good enough for everyday writing, coding and research, and small enough for the laptop you already own.</p></div>
+    <div class="bento">
+      <article class="card b-big">
+        <span class="num">PRIVATE BY DESIGN</span><h3>Nothing leaves your machine</h3>
+        <p>Prompts run on your own CPU or GPU. Chats, memories and your profile are plain files in <code>~/.ablate/chat</code>. Delete the folder and it is gone.</p>
+        <div class="term" aria-hidden="true"><div class="term-bar"><i></i><i></i><i></i><span>zsh</span></div>
+<pre><span class="tp">$</span> ablate chat
+
+  ablate chat  ·  http://localhost:7861
+  data folder  ·  ~/.ablate/chat
+  <span class="tg">100% local: prompts and chats never leave this computer.</span>
+  Press Ctrl+C to stop.</pre></div>
+      </article>
+      <article class="card"><span class="num">UNRESTRICTED</span><h3>Refusals removed in the weights</h3><p>Abliteration deletes the refusal direction itself. No jailbreak prompts to maintain.</p></article>
+      <article class="card"><span class="num">FREE</span><h3>No plans, credits or keys</h3><p>You bring the computer, so there is nothing to bill. Commercial use is allowed.</p></article>
+      <article class="card b-wide"><span class="num">OPEN SOURCE</span><h3>Read every line, change anything</h3><p>The chat app, the API and the toolkit that made the models are on GitHub under Apache-2.0, by <a href="{AIA}" rel="noopener">AI Anytime</a>.</p></article>
     </div>
   </div>
 </section>
 
 <section id="models" aria-labelledby="models-h">
   <div class="wrap">
-    <div class="head"><p class="eyebrow">The models</p><h2 id="models-h">Three unrestricted SLMs, published on HuggingFace</h2>
-    <p class="lead">Made by AI Anytime with the Ablate toolkit. Numbers are refusal rates on held-out harmful prompts,
-    before and after, measured with a keyword judge. <a href="models/">Compare them in detail →</a></p></div>
+    <div class="head center"><p class="eyebrow">The models</p><h2 id="models-h">Three unrestricted SLMs on HuggingFace</h2>
+    <p class="lead">Made by AI Anytime with the Ablate toolkit. Refusal rates are measured on held-out harmful prompts, before and after. <a href="models/">Compare them in detail →</a></p></div>
     {models_grid()}
   </div>
 </section>
 
 <section id="app" aria-labelledby="app-h">
-  <div class="wrap split">
-    <div class="head">
-      <p class="eyebrow">Ablate Chat</p><h2 id="app-h">A private chat app that feels like the cloud ones</h2>
-      <p class="lead">One command opens it in your browser. It is served from your own machine by Python, with no
-      web framework and no external requests.</p>
-      <ul class="ticks">
-        <li><b>Chat history</b> saved locally, with search, pin, rename and export to Markdown.</li>
-        <li><b>Context memory:</b> follow-up questions see the whole conversation, within a context window you set.</li>
-        <li><b>Saved memories</b> about you, added to every chat.</li>
-        <li><b>Agentic tools:</b> calculator, date and time, search your past chats; web fetch if you allow it.</li>
-        <li><b>Copy</b> any answer or code block, regenerate, edit and resend, stop mid-answer.</li>
-        <li><b>Local sign-in</b> with an optional passcode, and an 18+ terms gate.</li>
-        <li><b>OpenAI-compatible API</b> at <code>localhost:7861/v1</code> for your own apps and agents.</li>
+  <div class="wrap">
+    <div class="head center"><p class="eyebrow">Ablate Chat</p><h2 id="app-h">Feels like the cloud apps. Runs on your laptop.</h2>
+    <p class="lead">One command opens it in your browser, served by Python from your own machine.</p></div>
+    <div class="appgrid">
+      <div class="appshot"><img src="assets/chat-light.webp" width="1800" height="1125" loading="lazy" decoding="async" alt="Ablate Chat in light theme: a saved conversation with a creative answer and a calculator tool call"></div>
+      <ul class="feats">
+        <li>{I_HIST}<div><b>Chat history</b><span>Search, pin, rename and export, saved locally.</span></div></li>
+        <li>{I_CTX}<div><b>Context window you set</b><span>Follow-ups see the conversation; oldest turns drop first.</span></div></li>
+        <li>{I_MEM}<div><b>Memory</b><span>Facts about you, added to every chat.</span></div></li>
+        <li>{I_TOOL}<div><b>Agentic tools</b><span>Calculator, time, search past chats. Web fetch is opt-in.</span></div></li>
+        <li>{I_COPY}<div><b>Copy, edit, regenerate</b><span>One-click copy for answers and code blocks.</span></div></li>
+        <li>{I_API}<div><b>OpenAI-compatible API</b><span><code>localhost:7861/v1</code> for your own apps.</span></div></li>
+        <li>{I_LOCK}<div><b>Local sign-in</b><span>Optional passcode and an 18+ terms gate.</span></div></li>
+        <li>{I_WIFI}<div><b>Share on your Wi-Fi</b><span><code>--share</code> lets other devices sign in.</span></div></li>
       </ul>
-      <p><a class="btn" href="chat/">Read the Ablate Chat guide →</a></p>
     </div>
-    {chat_frame("assets/chat-models.webp", "Ablate Chat model picker showing the three unrestricted small language models with size, memory, context and licence", 1800, 1125)}
+    <p class="center-cta"><a class="btn" href="chat/">Read the Ablate Chat guide →</a></p>
   </div>
 </section>
 
 <section id="compare" aria-labelledby="cmp-h">
   <div class="wrap">
-    <div class="head"><p class="eyebrow">Compared</p><h2 id="cmp-h">Ablate vs Venice AI vs abliteration.ai</h2>
-    <p class="lead">All three give you AI that refuses less. The difference is who runs it. Prices as listed on each
-    site on 6 November 2026.</p></div>
+    <div class="head center"><p class="eyebrow">Compared</p><h2 id="cmp-h">Ablate vs Venice AI vs abliteration.ai</h2>
+    <p class="lead">All three give you AI that refuses less. The difference is who runs it. Prices as listed on each site on 6 November 2026.</p></div>
     {compare_table([
       ["Where the model runs", "<b>Your computer</b>", "Venice’s cloud", "abliteration.ai’s cloud"],
       ["Open source", YES + " Apache-2.0", NO, NO],
@@ -266,33 +295,33 @@ HOME = f'''
       ["API", "OpenAI-compatible, on localhost", "Venice API", "OpenAI- and Anthropic-compatible"],
       ["Make your own unrestricted model", YES + " Ablate toolkit", NO, NO],
     ], ["Ablate", "Venice AI", "abliteration.ai"])}
-    <p class="small">Venice AI and abliteration.ai are trademarks of their owners. Ablate is not affiliated with either.
-    Details: <a href="alternatives/venice-ai/">Ablate as a Venice AI alternative</a> ·
-    <a href="alternatives/abliteration-ai/">Ablate as an abliteration.ai alternative</a>.</p>
+    <p class="small center-note">Venice AI and abliteration.ai are trademarks of their owners; Ablate is not affiliated.
+    <a href="alternatives/venice-ai/">Ablate vs Venice AI</a> · <a href="alternatives/abliteration-ai/">Ablate vs abliteration.ai</a></p>
   </div>
 </section>
 
 <section aria-labelledby="start-h">
   <div class="wrap">
-    <div class="head"><p class="eyebrow">Get started</p><h2 id="start-h">Three steps, about five minutes</h2></div>
+    <div class="head center"><p class="eyebrow">Get started</p><h2 id="start-h">Running in about five minutes</h2></div>
     <ol class="steps3">
-      <li class="card"><span class="num">01</span><h3>Install</h3><p>Python 3.9 or newer.</p>{copy_chip(INSTALL, "s1")}</li>
-      <li class="card"><span class="num">02</span><h3>Open the app</h3><p>It opens in your browser at <code>localhost:7861</code>.</p>{copy_chip("ablate chat", "s2")}</li>
-      <li class="card"><span class="num">03</span><h3>Pick a model</h3><p>Click Download on Ablate Qwen 1.5B (3.1 GB, one time), then Use this model.</p></li>
+      <li class="card step"><span class="stepn">1</span><h3>Install</h3><p>Python 3.9 or newer.</p>{copy_chip(INSTALL, "s1")}</li>
+      <li class="card step"><span class="stepn">2</span><h3>Open the app</h3><p>It opens at <code>localhost:7861</code>.</p>{copy_chip("ablate chat", "s2")}</li>
+      <li class="card step"><span class="stepn">3</span><h3>Pick a model</h3><p>Download Ablate Qwen 1.5B once (3.1 GB), then click <b>Use this model</b>. That’s it.</p></li>
     </ol>
   </div>
 </section>
 
 <section id="toolkit" aria-labelledby="tk-h">
-  <div class="wrap split">
-    <div class="head"><p class="eyebrow">How the models are made</p><h2 id="tk-h">The Ablate toolkit removes refusal from any open model</h2>
-    <p class="lead">Refusal is one direction inside the model. Ablate finds it from two piles of prompts, subtracts it,
-    measures the damage, and bakes the edit into the weights. No training.</p>
-    <p><a class="btn" href="toolkit/">Explore the toolkit →</a></p></div>
-    <div class="formulas">
-      <div class="formula"><span>find</span>v = mean(refused) − mean(answered)</div>
-      <div class="formula"><span>remove</span>h′ = h − α (h · v̂) v̂</div>
-      <div class="formula"><span>bake</span>W′ = (I − v̂ v̂ᵀ) W</div>
+  <div class="wrap">
+    <div class="tk card">
+      <div class="tk-text"><p class="eyebrow">How the models are made</p><h2 id="tk-h">The Ablate toolkit removes refusal from any open model</h2>
+      <p class="lead">Refusal is one direction inside the model. Ablate finds it from two piles of prompts, subtracts it, measures the damage and bakes the edit into the weights. No training.</p>
+      <p><a class="btn" href="toolkit/">Explore the toolkit →</a></p></div>
+      <div class="formulas">
+        <div class="formula"><span>find</span>v = mean(refused) − mean(answered)</div>
+        <div class="formula"><span>remove</span>h′ = h − α (h · v̂) v̂</div>
+        <div class="formula"><span>bake</span>W′ = (I − v̂ v̂ᵀ) W</div>
+      </div>
     </div>
   </div>
 </section>
@@ -807,7 +836,7 @@ Key facts:
 
 def main() -> None:
     (OUT / "assets").mkdir(parents=True, exist_ok=True)
-    css = (ROOT / "base.css").read_text() + (ROOT / "extra.css").read_text()
+    css = "".join((ROOT / f).read_text() for f in ("base.css", "extra.css", "design.css"))
     (OUT / "assets/site.css").write_text(css)
     (OUT / "assets/site.js").write_text((ROOT / "site.js").read_text())
     for p in PAGES:

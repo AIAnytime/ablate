@@ -261,3 +261,157 @@ table.compare{width:100%;border-collapse:collapse;font-size:.93rem;min-width:640
   .grid2,.grid3,.grid4,.models,.steps3{grid-template-columns:1fr}
   .ribbon a[href^="mailto"]{display:none}
 }
+
+/* ================= design layer (v0.4 redesign) ================= */
+:root{--grad:linear-gradient(92deg,#5AA9F5 0%,#8B6CFF 48%,#C9B8FF 100%);--glow:rgba(139,108,255,.32);--gridline:rgba(255,255,255,.045)}
+:root[data-theme="light"]{--grad:linear-gradient(92deg,#1F6FC4 0%,#6A48F0 55%,#9A7BFF 100%);--glow:rgba(106,72,240,.18);--gridline:rgba(20,18,31,.06)}
+
+/* sans display type; mono stays for labels, code and numbers */
+h1,h2,h3,.h3{font-family:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:-.035em}
+h2{font-size:clamp(1.8rem,3.6vw,2.75rem);line-height:1.08;font-weight:600}
+h3,.h3{font-size:1.12rem;letter-spacing:-.015em;font-weight:600}
+.lead{line-height:1.65}
+.head{gap:12px;margin-bottom:44px}
+.head.center{max-width:760px;margin-inline:auto;margin-bottom:44px}
+.head.center h2{text-wrap:balance}
+section{padding-block:88px}
+.card{border-radius:22px;transition:border-color .2s,transform .2s,box-shadow .2s}
+.card:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.num{color:var(--soft)}
+
+/* ---------- hero ---------- */
+.hx{position:relative;isolation:isolate;padding-block:84px 24px;overflow:hidden;text-align:center}
+.hx-bg{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.hx-grid{position:absolute;inset:-1px;background-image:linear-gradient(var(--gridline) 1px,transparent 1px),linear-gradient(90deg,var(--gridline) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 30%,transparent 75%);mask-image:radial-gradient(ellipse 70% 60% at 50% 30%,#000 30%,transparent 75%)}
+.hx-glow{position:absolute;left:50%;top:-180px;width:1100px;height:700px;transform:translateX(-50%);background:radial-gradient(closest-side,var(--glow),transparent 72%)}
+.hx-bg i{position:absolute;width:10px;height:10px;border-radius:2px;background:var(--accent);opacity:.55;animation:float 7s ease-in-out infinite}
+.hx-bg i:nth-child(odd){background:var(--blue);animation-duration:9s}
+@keyframes float{50%{transform:translateY(-14px)}}
+.hx-in{display:flex;flex-direction:column;align-items:center}
+.announce{display:inline-flex;align-items:center;gap:10px;padding:5px 14px 5px 5px;border-radius:999px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 80%,transparent);backdrop-filter:blur(8px);text-decoration:none;font:500 .82rem "Geist",sans-serif;color:var(--muted);transition:border-color .2s}
+.announce:hover{border-color:var(--accent);color:var(--text)}
+.tagnew{font:600 .66rem "Geist Mono",monospace;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:#fff;padding:4px 9px;border-radius:999px}
+.hx-h1{margin-top:28px;font-size:clamp(2.6rem,6.4vw,5.1rem);line-height:1.0;letter-spacing:-.05em;font-weight:600;max-width:15ch;text-wrap:balance}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}
+.hx-lead{margin-top:24px;max-width:58ch;color:var(--muted);font-size:clamp(1.02rem,1.5vw,1.18rem);line-height:1.65}
+.hx-cta{justify-content:center;margin-top:32px}
+.hx .trust{justify-content:center;margin-top:20px}
+.hx-shot{position:relative;margin-top:56px;width:100%;max-width:1120px}
+.hx-shot-glow{position:absolute;inset:8% 6% -6%;background:var(--grad);filter:blur(70px);opacity:.42;border-radius:40px;z-index:-1}
+.hx-shot img{width:100%;height:auto;border-radius:18px;border:1px solid color-mix(in srgb,var(--accent) 35%,#2A2640);box-shadow:0 40px 120px -40px rgba(8,4,30,.9),0 0 0 8px color-mix(in srgb,var(--accent) 10%,transparent)}
+
+/* ---------- KPI strip ---------- */
+.strip{padding-block:40px 8px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:0;border:1px solid var(--line);border-radius:22px;background:var(--panel);overflow:hidden}
+.kpis>div{padding:26px 26px 24px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.kpis>div:last-child{border-right:0}
+.kpis dt{font:500 .7rem "Geist Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.kpis dd{margin:4px 0 0;font:600 clamp(1.6rem,3vw,2.2rem)/1.05 "Geist",sans-serif;letter-spacing:-.03em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-variant-numeric:tabular-nums}
+.kpis span{color:var(--muted);font-size:.86rem}
+
+/* ---------- bento ---------- */
+.bento{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:auto auto;gap:18px}
+.b-big{grid-row:span 2}
+.b-wide{grid-column:span 2}
+.term{margin-top:auto;border:1px solid #2A2640;border-radius:14px;background:#0A0A12;color:#C9C6DB;overflow:hidden}
+.term-bar{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid #22203A;font:.7rem "Geist Mono",monospace;color:#77738F}
+.term-bar i{width:9px;height:9px;border-radius:50%;background:#2A2640}
+.term-bar span{margin-left:6px}
+.term pre{margin:0;padding:14px 16px;font-size:.78rem;line-height:1.7;white-space:pre-wrap;color:#C9C6DB}
+.tp{color:#8B6CFF}.tg{color:#3ECF8E}
+
+/* ---------- model cards ---------- */
+.model{position:relative;overflow:hidden}
+.model::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--grad);opacity:.55}
+.models .model:first-child{border-color:color-mix(in srgb,var(--accent) 55%,var(--line));box-shadow:0 20px 60px -30px var(--glow)}
+.models .model:first-child::before{opacity:1}
+.model h3{font-size:1.25rem}
+
+/* ---------- app section ---------- */
+.appgrid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px;align-items:center}
+.appshot{position:relative}
+.appshot::before{content:"";position:absolute;inset:10%;background:var(--grad);filter:blur(60px);opacity:.3;z-index:-1}
+.appshot img{width:100%;height:auto;border-radius:16px;border:1px solid color-mix(in srgb,var(--accent) 30%,#2A2640);box-shadow:0 30px 90px -40px rgba(8,4,30,.9)}
+.feats{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:22px 24px}
+.feats li{display:flex;gap:12px;align-items:flex-start}
+.feats svg{width:20px;height:20px;flex:none;color:var(--accent);margin-top:2px;padding:7px;box-sizing:content-box;border-radius:10px;background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.feats b{display:block;font-weight:600;font-size:.97rem;letter-spacing:-.01em}
+.feats span{display:block;color:var(--muted);font-size:.88rem;line-height:1.5;margin-top:2px}
+.center-cta{text-align:center;margin-top:40px}
+.center-note{text-align:center;margin-top:18px}
+
+/* ---------- steps ---------- */
+.step{position:relative;padding-top:30px}
+.stepn{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--grad);color:#fff;font:600 1rem "Geist",sans-serif;box-shadow:0 10px 30px -10px var(--glow)}
+.steps3 .pip{width:100%;justify-content:space-between}
+
+/* ---------- toolkit band ---------- */
+.tk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center;padding:clamp(28px,5vw,56px);background:radial-gradient(600px 300px at 0% 0%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%),var(--panel)}
+.tk-text{display:flex;flex-direction:column;gap:14px}
+
+/* ---------- comparison table polish ---------- */
+.tablewrap{border-radius:22px}
+.compare thead th:nth-child(2){background:color-mix(in srgb,var(--accent) 14%,var(--panel2))}
+
+/* ---------- sub-page heroes: centred like the home page ---------- */
+.hero.sub{position:relative;isolation:isolate;text-align:center;padding-block:72px 32px;overflow:hidden}
+.hero.sub::before{content:"";position:absolute;left:50%;top:-220px;width:900px;height:560px;transform:translateX(-50%);background:radial-gradient(closest-side,var(--glow),transparent 72%);z-index:-1}
+.hero.sub .wrap{display:flex;flex-direction:column;align-items:center}
+.hero.sub h1{margin-top:14px;font-size:clamp(2.2rem,5vw,3.8rem);line-height:1.04;letter-spacing:-.045em;max-width:18ch}
+.hero.sub .lead{margin-top:18px;max-width:60ch}
+.hero.sub .cta{justify-content:center}
+.hero.sub .shotframe{width:100%;max-width:1120px}
+.prose.hero.sub{text-align:left}
+.prose.hero.sub .wrap{align-items:stretch}
+.prose h1{max-width:none}
+
+/* ---------- final CTA ---------- */
+.final{align-items:center;text-align:center;position:relative;overflow:hidden}
+.final h2{font-size:clamp(1.8rem,4vw,3rem);max-width:18ch}
+.final .cta{justify-content:center}
+
+@media (max-width:980px){
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis>div:nth-child(2){border-right:0}
+  .kpis>div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+  .bento{grid-template-columns:1fr 1fr}
+  .b-big{grid-row:auto;grid-column:span 2}
+  .appgrid,.tk{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  section{padding-block:60px}
+  .hx{padding-top:56px}
+  .bento{grid-template-columns:1fr}
+  .b-big,.b-wide{grid-column:auto}
+  .feats{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr}
+  .kpis>div{border-right:0;border-bottom:1px solid var(--line)}
+  .kpis>div:last-child{border-bottom:0}
+  .hx-cta .pip{max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){.hx-bg i{animation:none}}
+
+/* headline + faq refinements */
+.hx-h1{font-size:clamp(2.4rem,5.6vw,4.6rem);max-width:none;line-height:1.02}
+summary{font:500 1.02rem/1.4 "Geist",system-ui,sans-serif;letter-spacing:-.01em}
+details{border-radius:18px}
+details[open]{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.links{font-family:"Geist",sans-serif;text-transform:none;letter-spacing:0;font-size:.9rem;font-weight:500}
+@media (max-width:640px){.hx-h1 br{display:none}}
+
+/* phone fixes: long commands wrap inside their chip, nothing pushes the page wider */
+.pip{max-width:100%;min-width:0}
+.hx-glow{max-width:200vw}
+@media (max-width:640px){
+  .pip{height:auto;min-height:42px;padding-block:8px}
+  .pip span{white-space:normal;overflow-wrap:anywhere;text-align:left;font-size:.8rem;line-height:1.45}
+  .cta{width:100%}
+  .cta .btn{justify-content:center}
+  .announce{font-size:.76rem}
+}
+
+/* one alignment rule everywhere: stacked section heads are centred; side-by-side (split) heads stay left */
+.wrap:not(.split) > .head{align-items:center;text-align:center;max-width:780px;margin-inline:auto}
+.wrap:not(.split) > .head .lead{margin-inline:auto}
+.hero.sub::before{top:-320px;opacity:.85;height:640px}
+.hero.sub{overflow:visible}
