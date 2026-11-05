@@ -720,7 +720,7 @@ def layout(p: dict, body: str) -> str:
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="{up}assets/site.css">
+<link rel="stylesheet" href="{up}assets/site.css?v={VERSION}">
 {jsonld(p)}
 </head>
 <body>
@@ -729,8 +729,8 @@ def layout(p: dict, body: str) -> str:
 <header class="nav">
   <div class="wrap">
     <a class="brand" href="{up}" aria-label="Ablate home">
-      <img class="logo-d" src="{up}assets/logo-dark.webp" width="103" height="40" alt="Ablate">
-      <img class="logo-l" src="{up}assets/logo-light.webp" width="106" height="40" alt="Ablate">
+      <img class="logo-d" src="{up}assets/logo-dark.webp?v={VERSION}" width="103" height="40" alt="Ablate">
+      <img class="logo-l" src="{up}assets/logo-light.webp?v={VERSION}" width="106" height="40" alt="Ablate">
     </a>
     <nav class="links" aria-label="Main">{nav}</nav>
     <span class="sp"></span>
@@ -751,8 +751,8 @@ def layout(p: dict, body: str) -> str:
   <div class="wrap">
     <div class="foot">
       <div>
-        <img class="logo-d" src="{up}assets/logo-dark.webp" width="139" height="54" alt="Ablate" loading="lazy">
-        <img class="logo-l" src="{up}assets/logo-light.webp" width="143" height="54" alt="Ablate" loading="lazy">
+        <img class="logo-d" src="{up}assets/logo-dark.webp?v={VERSION}" width="139" height="54" alt="Ablate" loading="lazy">
+        <img class="logo-l" src="{up}assets/logo-light.webp?v={VERSION}" width="143" height="54" alt="Ablate" loading="lazy">
         <p><strong>Ablate</strong>, an open-source <a href="{AIA}" rel="noopener">AI Anytime</a> toolkit and app for unrestricted small language models that run privately on your own computer.</p>
         <p>Questions, partnerships or press: <a href="mailto:{EMAIL}">{EMAIL}</a></p>
       </div>
@@ -775,7 +775,7 @@ def layout(p: dict, body: str) -> str:
     <div class="legal"><span>© 2026 AI Anytime. Open source under Apache-2.0.</span><span>Made with 💜 between India and Dubai.</span></div>
   </div>
 </footer>
-<script src="{up}assets/site.js" defer></script>
+<script src="{up}assets/site.js?v={VERSION}" defer></script>
 </body>
 </html>
 '''
