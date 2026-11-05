@@ -112,6 +112,14 @@ def cmd_ui(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_chat(args: argparse.Namespace) -> int:
+    from .chat import serve
+
+    serve(host="0.0.0.0" if args.share else args.host, port=args.port, model=args.model,
+          open_browser=not args.no_browser)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="ablate", description="Directional ablation toolkit for language models.")
     sub = p.add_subparsers(dest="command", required=True)
@@ -174,6 +182,16 @@ def build_parser() -> argparse.ArgumentParser:
                    help="listen on the local network so others on the same Wi-Fi can explore")
     u.add_argument("--no-browser", action="store_true", help="do not open a browser tab")
     u.set_defaults(func=cmd_ui)
+
+    c = sub.add_parser("chat", help="private local chat with the unrestricted small models (no cloud)")
+    c.add_argument("--model", default=None,
+                   help="model to download (once) and load at start, e.g. ai-anytime/Llama-3.2-1B-Instruct-abliterated")
+    c.add_argument("--host", default="127.0.0.1")
+    c.add_argument("--port", type=int, default=7861)
+    c.add_argument("--share", action="store_true",
+                   help="listen on the local network; other devices sign in with your passcode")
+    c.add_argument("--no-browser", action="store_true", help="do not open a browser tab")
+    c.set_defaults(func=cmd_chat)
 
     return p
 

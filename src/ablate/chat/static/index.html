@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ablate Chat</title>
+<meta name="description" content="Private, local chat with unrestricted small language models. Runs on your computer.">
+<link rel="icon" type="image/png" href="/static/mark.png">
+<script>try{var t=localStorage.getItem('ablate-chat-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<style>
+:root{--bg:#07080C;--side:#0B0C12;--panel:#12121B;--panel2:#191926;--line:#24233A;--line2:#2F2D48;--text:#ECEBF5;--muted:#9693B0;--faint:#6C6988;--accent:#8B6CFF;--accent2:#5AA9F5;--ink:#0B0714;--ok:#3ECF8E;--warn:#F5A742;--bad:#FF6B7A;--user:#1D1B2E;--code:#0C0C14;--glow1:rgba(139,108,255,.16);--glow2:rgba(90,169,245,.10);color-scheme:dark}
+:root[data-theme="light"]{--bg:#F7F7FA;--side:#EFEEF4;--panel:#FFFFFF;--panel2:#F2F0FA;--line:#E2DFEE;--line2:#D3CFE6;--text:#15131F;--muted:#5D5A78;--faint:#8A87A3;--accent:#6A48F0;--accent2:#1F6FC4;--ink:#FFFFFF;--ok:#11875A;--warn:#A85C00;--bad:#C8283A;--user:#ECE8FB;--code:#14121F;--glow1:rgba(106,72,240,.10);--glow2:rgba(31,111,196,.06);color-scheme:light}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+code,pre,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.ico{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- sign-in (split) ---------- */
+#auth{position:fixed;inset:0;display:grid;grid-template-columns:minmax(0,41%) minmax(0,1fr);z-index:30;background:var(--bg)}
+.auth-l{background:#E9E7E1;color:#14121A;display:flex;flex-direction:column;justify-content:space-between;padding:64px 72px}
+.auth-l img{height:64px;width:auto;align-self:flex-start;mix-blend-mode:multiply}
+.auth-l h1{font-size:clamp(2.2rem,4.2vw,3.7rem);line-height:1.02;letter-spacing:-.035em;font-weight:500;margin:0}
+.auth-l p{margin:18px 0 0;color:#4A4758;max-width:36ch}
+.auth-r{background:#07080C;color:#ECEBF5;display:grid;place-items:center;padding:32px}
+.auth-card{width:min(430px,100%);display:flex;flex-direction:column;gap:14px}
+.auth-card h2{font-size:2.15rem;font-weight:500;letter-spacing:-.03em;margin:0}
+.auth-card .sub{color:#9693B0;margin:-6px 0 14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.82rem;color:#C9C6DB}
+.field input,.field textarea,.field select{background:#0E0E16;border:1px solid #2A2840;border-radius:8px;padding:11px 12px;color:#ECEBF5;outline:none;width:100%}
+.field input:focus,.field textarea:focus{border-color:#8B6CFF}
+.btn-light{background:#E9E7E1;color:#14121A;border:0;border-radius:8px;height:46px;font-weight:500}
+.btn-light:hover{background:#fff}
+.or{display:flex;align-items:center;gap:12px;color:#6C6988;font-size:.8rem}
+.or::before,.or::after{content:"";flex:1;height:1px;background:#24233A}
+.pill-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pill-row span{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border:1px solid #2A2840;border-radius:8px;color:#C9C6DB;font-size:.86rem}
+.auth-err{color:#FF6B7A;font-size:.88rem;min-height:1.3em}
+.auth-foot{color:#6C6988;font-size:.82rem;text-align:center}
+.auth-foot a{color:#C9C6DB}
+
+/* ---------- 18+ gate ---------- */
+.scrim{position:fixed;inset:0;background:rgba(3,3,8,.72);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:40;padding:16px}
+.gate{width:min(500px,100%);background:#0A0A10;border:1px solid #23243A;border-radius:28px;padding:40px 36px 28px;text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center;color:#ECEBF5}
+.gate .mark{width:92px;height:92px;border-radius:22px;border:2px solid #24345A;background:#111421;display:grid;place-items:center}
+.gate .mark img{width:70px;height:70px}
+.gate h2{font-size:1.9rem;font-weight:500;margin:4px 0 0}
+.gate h3{font-size:1.25rem;font-weight:600;margin:0}
+.gate p{color:#9AA0B8;margin:0}
+.gate label{display:flex;gap:12px;text-align:left;align-items:flex-start;border:1px solid #3A3A48;border-radius:8px;padding:12px 14px;font-size:.95rem;line-height:1.5;cursor:pointer}
+.gate label input{width:22px;height:22px;accent-color:#8B6CFF;flex:none;margin-top:1px}
+.gate label a{color:#7C8CFF}
+.gate .go{width:100%;height:56px;border:0;border-radius:18px;background:#8B6CFF;color:#fff;font-size:1.15rem;font-weight:500;box-shadow:0 10px 30px -10px rgba(139,108,255,.7)}
+.gate .go:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.gate .home{color:#C9C6DB;text-decoration:none}
+
+/* ---------- app shell ---------- */
+#app{display:grid;grid-template-columns:280px minmax(0,1fr);height:100%}
+#app.collapsed{grid-template-columns:0 minmax(0,1fr)}
+#app.collapsed aside{visibility:hidden}
+aside{background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.side-top{display:flex;align-items:center;justify-content:space-between;padding:16px 14px 10px 18px}
+.side-top img{height:34px;width:auto}
+.logo-d{mix-blend-mode:lighten}
+.logo-l{mix-blend-mode:multiply}
+.logo-l{display:none}
+[data-theme="light"] .logo-l{display:block}
+[data-theme="light"] .logo-d{display:none}
+.iconbtn{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;border:0;background:none;color:var(--muted)}
+.iconbtn:hover{background:var(--panel2);color:var(--text)}
+.nav{display:flex;flex-direction:column;gap:2px;padding:6px 10px}
+.nav button,.nav label{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:10px;border:0;background:none;color:var(--text);text-align:left;font-size:.95rem}
+.nav button:hover,.nav label:focus-within{background:var(--panel2)}
+.nav button.on{background:var(--panel2)}
+.nav input{flex:1;min-width:0;border:0;background:none;outline:none;color:var(--text)}
+.nav input::placeholder{color:var(--text)}
+.newchat{margin:4px 10px 8px;display:flex;align-items:center;justify-content:center;gap:8px;height:40px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--text);font-weight:500}
+.newchat:hover{border-color:var(--accent)}
+.sec{padding:16px 22px 6px;font-size:.78rem;color:var(--faint)}
+.chats{flex:1;overflow-y:auto;padding:0 10px 10px;min-height:0}
+.chat-row{display:flex;align-items:center;gap:6px;border-radius:9px;padding:0 4px 0 12px}
+.chat-row:hover,.chat-row.on{background:var(--panel2)}
+.chat-row .t{flex:1;min-width:0;border:0;background:none;text-align:left;padding:8px 0;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.9rem}
+.chat-row .acts{display:none;gap:2px}
+.chat-row:hover .acts,.chat-row.on .acts{display:flex}
+.chat-row .acts button{width:26px;height:26px;border:0;border-radius:7px;background:none;color:var(--muted);display:grid;place-items:center}
+.chat-row .acts button:hover{color:var(--text);background:var(--line)}
+.chat-row .acts .ico{width:14px;height:14px}
+.empty-chats{color:var(--faint);font-size:.86rem;padding:6px 12px}
+.side-foot{border-top:1px solid var(--line);padding:12px 12px 14px;display:flex;flex-direction:column;gap:10px}
+.local-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+.local-card b{color:var(--ok);font-weight:600}
+.me{display:flex;align-items:center;gap:12px;padding:4px 4px}
+.avatar{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-weight:700;color:#fff;background:linear-gradient(135deg,#5AA9F5,#8B6CFF);flex:none}
+.me .n{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.me small{display:block;font-weight:400;color:var(--muted);font-size:.78rem}
+
+main{position:relative;display:flex;flex-direction:column;min-width:0;min-height:0;background:radial-gradient(1100px 600px at 70% -10%,var(--glow1),transparent 60%),radial-gradient(900px 500px at 10% 110%,var(--glow2),transparent 60%),var(--bg)}
+.topbar{display:flex;align-items:center;gap:10px;padding:12px 18px;min-height:60px}
+.modelbtn{display:flex;align-items:center;gap:10px;height:38px;padding:0 12px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--text);font-weight:500;max-width:60vw}
+.modelbtn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.dot.ok{background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 25%,transparent)}
+.dot.busy{background:var(--warn)}
+.topbar .sp{flex:1}
+.chip{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:color-mix(in srgb,var(--panel) 70%,transparent);color:var(--muted);font-size:.8rem;white-space:nowrap}
+.chip .ico{width:14px;height:14px}
+.meter{width:70px;height:5px;border-radius:9px;background:var(--line);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--accent)}
+
+.scroll{flex:1;overflow-y:auto;min-height:0}
+.thread{max-width:780px;margin:0 auto;padding:18px 20px 40px;display:flex;flex-direction:column;gap:22px}
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px;min-height:0}
+.hero img{width:64px;height:64px;filter:drop-shadow(0 8px 30px rgba(139,108,255,.45))}
+.hero h1{font-size:clamp(1.9rem,3.6vw,2.7rem);font-weight:400;letter-spacing:-.02em;margin:0;text-align:center}
+.hero .note{color:var(--muted);font-size:.86rem;text-align:center;max-width:56ch;margin-top:-8px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:820px}
+.chips button{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;border:1px solid var(--line2);background:color-mix(in srgb,var(--panel) 80%,transparent);color:var(--text);font-size:.9rem}
+.chips button:hover{border-color:var(--accent)}
+.chips .ico{width:15px;height:15px;color:var(--muted)}
+
+.msg{display:flex;flex-direction:column;gap:6px;min-width:0}
+.msg.user{align-items:flex-end}
+.bubble{min-width:0;max-width:100%}
+.msg.user .bubble{background:var(--user);border:1px solid var(--line);border-radius:18px 18px 4px 18px;padding:10px 16px;max-width:85%;white-space:pre-wrap;word-wrap:break-word}
+.msg.ai .who{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--muted)}
+.msg.ai .who img{width:18px;height:18px}
+.md{word-wrap:break-word}
+.md>*:first-child{margin-top:0}.md>*:last-child{margin-bottom:0}
+.md p{margin:.55em 0}
+.md h1,.md h2,.md h3{font-size:1.08rem;margin:1em 0 .4em;line-height:1.3}
+.md ul,.md ol{padding-left:1.4em;margin:.5em 0}
+.md li{margin:.2em 0}
+.md code{font-size:.86em;background:var(--panel2);border:1px solid var(--line);padding:1px 5px;border-radius:6px}
+.md pre{position:relative;background:var(--code);color:#E6E4F2;border:1px solid var(--line);border-radius:12px;padding:14px 16px;overflow-x:auto;font-size:.85rem;line-height:1.6;margin:.7em 0}
+.md pre code{background:none;border:0;padding:0;color:inherit}
+.md pre .cp{position:absolute;top:8px;right:8px;font-size:.72rem;padding:3px 8px;border-radius:7px;border:1px solid #2F2D48;background:#1B1930;color:#C9C6DB}
+.md pre .lang{position:absolute;top:9px;left:14px;font-size:.68rem;color:#77738F;text-transform:uppercase;letter-spacing:.08em}
+.md pre.has-lang{padding-top:30px}
+.md table{border-collapse:collapse;margin:.6em 0;font-size:.92rem;display:block;overflow-x:auto}
+.md th,.md td{border:1px solid var(--line);padding:6px 10px;text-align:left}
+.md blockquote{margin:.6em 0;padding:2px 14px;border-left:3px solid var(--accent);color:var(--muted)}
+.md a{word-break:break-all}
+.cursor::after{content:"";display:inline-block;width:8px;height:1.05em;margin-left:2px;vertical-align:-.15em;background:var(--accent);border-radius:2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.thinking{display:inline-flex;gap:4px;padding:6px 0}
+.thinking i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bob 1.2s infinite}
+.thinking i:nth-child(2){animation-delay:.15s}.thinking i:nth-child(3){animation-delay:.3s}
+@keyframes bob{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.step{border:1px solid var(--line);border-radius:12px;background:var(--panel);font-size:.85rem;overflow:hidden}
+.step summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px 12px;color:var(--muted)}
+.step summary::-webkit-details-marker{display:none}
+.step summary b{color:var(--text);font-weight:600}
+.step pre{margin:0;padding:10px 12px;border-top:1px solid var(--line);font-size:.78rem;white-space:pre-wrap;word-break:break-word;color:var(--muted);max-height:260px;overflow:auto}
+.acts-row{display:flex;align-items:center;gap:2px;color:var(--faint);font-size:.76rem;min-height:28px}
+.acts-row button{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 8px;border:0;border-radius:8px;background:none;color:var(--muted);font-size:.78rem}
+.acts-row button:hover{background:var(--panel2);color:var(--text)}
+.acts-row .ico{width:15px;height:15px}
+.acts-row .stat{margin-left:8px;font-variant-numeric:tabular-nums}
+.msg.user .acts-row{opacity:0;transition:opacity .15s}
+.msg.user:hover .acts-row{opacity:1}
+.notice{align-self:center;font-size:.8rem;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+.errmsg{color:var(--bad);border:1px solid color-mix(in srgb,var(--bad) 40%,transparent);background:color-mix(in srgb,var(--bad) 8%,transparent);border-radius:12px;padding:10px 14px;font-size:.9rem}
+
+.composer-wrap{padding:0 20px 18px}
+.composer{max-width:780px;margin:0 auto;border:1px solid var(--line2);background:color-mix(in srgb,var(--panel) 88%,transparent);backdrop-filter:blur(10px);border-radius:26px;padding:8px 8px 8px 14px;display:flex;flex-direction:column;gap:6px;box-shadow:0 18px 50px -24px rgba(0,0,0,.6)}
+#hero-slot{width:min(800px,100%)}
+.hero .composer{width:100%}
+.composer:focus-within{border-color:var(--accent)}
+.composer textarea{border:0;background:none;outline:none;resize:none;min-height:28px;max-height:240px;padding:8px 4px;line-height:1.5;color:var(--text);width:100%}
+.composer textarea::placeholder{color:var(--faint)}
+.crow{display:flex;align-items:center;gap:6px}
+.crow .sp{flex:1}
+.tbtn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 10px;border-radius:999px;border:1px solid transparent;background:none;color:var(--muted);font-size:.82rem}
+.tbtn:hover{background:var(--panel2);color:var(--text)}
+.tbtn.on{border-color:color-mix(in srgb,var(--accent) 50%,transparent);color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.send{width:40px;height:40px;border-radius:50%;border:0;background:var(--text);color:var(--bg);display:grid;place-items:center}
+.send:disabled{opacity:.35;cursor:not-allowed}
+.send.stop{background:var(--bad);color:#fff}
+.attachments{display:flex;flex-wrap:wrap;gap:6px}
+.att{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:3px 4px 3px 9px}
+.att button{border:0;background:none;color:var(--muted);width:20px;height:20px;border-radius:5px}
+.foot-note{max-width:780px;margin:8px auto 0;text-align:center;font-size:.74rem;color:var(--faint)}
+
+/* ---------- modals / drawer ---------- */
+.modal{position:fixed;inset:0;z-index:35;background:rgba(3,3,8,.6);backdrop-filter:blur(4px);display:grid;place-items:center;padding:16px}
+.sheet{width:min(860px,100%);max-height:88vh;overflow:auto;background:var(--panel);border:1px solid var(--line2);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.sheet header{display:flex;align-items:flex-start;gap:12px}
+.sheet header h2{margin:0;font-size:1.25rem;font-weight:600}
+.sheet header p{margin:2px 0 0;color:var(--muted);font-size:.88rem}
+.sheet header .sp{flex:1}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.mcard{border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--panel2);min-width:0}
+.mcard.on{border-color:var(--accent)}
+.mcard h3{margin:0;font-size:1rem}
+.mcard p{margin:0;color:var(--muted);font-size:.86rem}
+.specs{display:flex;flex-wrap:wrap;gap:6px}
+.specs span{font-size:.72rem;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.mcard .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:var(--panel);color:var(--text);font-size:.86rem;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.bar{height:6px;border-radius:9px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));width:0;transition:width .4s}
+.small{font-size:.78rem;color:var(--muted)}
+.custom{display:flex;gap:8px;flex-wrap:wrap}
+.custom input{flex:1;min-width:220px;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:8px 12px;outline:none}
+.memlist{display:flex;flex-direction:column;gap:8px}
+.mem{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--panel2)}
+.mem span{flex:1;min-width:0}
+.switch{position:relative;width:38px;height:22px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch i{position:absolute;inset:0;background:var(--line2);border-radius:99px;transition:.2s}
+.switch i::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s}
+.switch input:checked+i{background:var(--accent)}
+.switch input:checked+i::after{transform:translateX(16px)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);z-index:36;background:var(--panel);border-left:1px solid var(--line2);box-shadow:-30px 0 60px -30px rgba(0,0,0,.6);display:flex;flex-direction:column}
+.drawer header{display:flex;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.drawer header h2{margin:0;font-size:1.1rem;flex:1}
+.drawer .body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:18px}
+.group{display:flex;flex-direction:column;gap:10px}
+.group h4{margin:0;font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.set{display:flex;flex-direction:column;gap:6px}
+.set .lbl{display:flex;justify-content:space-between;font-size:.88rem}
+.set .lbl b{font-variant-numeric:tabular-nums;font-weight:600}
+.set small{color:var(--faint);font-size:.76rem}
+.set textarea,.set input[type=text],.set input[type=password]{background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:9px 11px;outline:none;color:var(--text);width:100%}
+.set textarea{min-height:96px;resize:vertical}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.9rem}
+.toggle-row small{display:block;color:var(--faint);font-size:.76rem}
+.codeline{display:flex;gap:6px;align-items:center;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:6px 6px 6px 10px;font-size:.78rem}
+.codeline code{flex:1;min-width:0;overflow-x:auto;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;background:var(--text);color:var(--bg);padding:8px 14px;border-radius:10px;font-size:.86rem;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
+
+@media (max-width:900px){
+  #auth{grid-template-columns:1fr}
+  .auth-l{display:none}
+  #app{grid-template-columns:1fr}
+  aside{position:fixed;inset:0 auto 0 0;width:290px;z-index:20;transform:translateX(-100%);transition:transform .2s}
+  #app.open aside{transform:none}
+  #app.collapsed aside{visibility:visible}
+  .mgrid{grid-template-columns:1fr}
+  .chip.hide-sm{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/></symbol>
+  <symbol id="i-brain" viewBox="0 0 24 24"><path d="M9 3a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 2 5 3 3 0 0 0 3 3h0a3 3 0 0 0 3-3V6a3 3 0 0 0-3-3Z"/><path d="M15 3a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-2 5 3 3 0 0 1-3 3h0a3 3 0 0 1-3-3"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="m21 11-8.6 8.6a5 5 0 0 1-7-7L14 4a3.3 3.3 0 0 1 4.7 4.7L10 17.4a1.7 1.7 0 0 1-2.4-2.4l8-8"/></symbol>
+  <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0 5 5L21 13l-8 8-3-3-6 0 0-6 3 3 8-8z"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 17v5M9 3h6l-1 6 4 4H6l4-4z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-5 4 5 4M16 8l5 4-5 4"/></symbol>
+  <symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+</svg>
+
+<!-- ============ sign-in ============ -->
+<section id="auth" hidden>
+  <div class="auth-l">
+    <img src="/static/logo-light.png" alt="Ablate">
+    <div>
+      <h1>Unrestricted small models. On your machine.</h1>
+      <p>Open source by AI Anytime. No account, no cloud, no logs: your profile and chats are files on this computer.</p>
+    </div>
+  </div>
+  <div class="auth-r">
+    <form class="auth-card" id="auth-create" hidden>
+      <h2>Welcome to Ablate.</h2>
+      <p class="sub">Create a local profile. It never leaves this computer.</p>
+      <div class="pill-row" aria-label="What makes it private">
+        <span><svg class="ico"><use href="#i-lock"/></svg>Local</span>
+        <span><svg class="ico"><use href="#i-cube"/></svg>Open</span>
+        <span><svg class="ico"><use href="#i-x"/></svg>No cloud</span>
+      </div>
+      <div class="or">your profile</div>
+      <div class="field"><label for="c-name">Display name *</label><input id="c-name" autocomplete="nickname" required maxlength="40" placeholder="e.g. Sonu"></div>
+      <div class="field"><label for="c-pass">Passcode (optional)</label><input id="c-pass" type="password" autocomplete="new-password" placeholder="Locks the app and lets other devices sign in"></div>
+      <div class="auth-err" id="c-err"></div>
+      <button class="btn-light" type="submit">Continue</button>
+      <p class="auth-foot">Open source under Apache-2.0 · <a href="https://aianytime.github.io/ablate/" target="_blank" rel="noopener">About Ablate</a></p>
+    </form>
+    <form class="auth-card" id="auth-login" hidden>
+      <h2>Welcome back.</h2>
+      <p class="sub" id="l-sub">Unlock your local Ablate Chat.</p>
+      <div class="field"><label for="l-pass">Passcode *</label><input id="l-pass" type="password" autocomplete="current-password" required></div>
+      <div class="auth-err" id="l-err"></div>
+      <button class="btn-light" type="submit">Continue</button>
+      <p class="auth-foot">Forgot it? Delete <code class="mono">~/.ablate/chat/profile.json</code> on this computer.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ============ 18+ gate ============ -->
+<div class="scrim" id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gate-t">
+  <div class="gate">
+    <div class="mark"><img src="/static/mark.png" alt=""></div>
+    <h2 id="gate-t">Ablate Chat</h2>
+    <h3>Please verify your age</h3>
+    <p>These models have had their refusals removed and can produce content other assistants decline. To keep this a responsible environment, please confirm you are of legal age.</p>
+    <label><input type="checkbox" id="gate-ok"><span>I confirm that I am 18+ (or the age of majority where I live) and I agree to the <a href="/terms#terms" target="_blank">Terms of Use</a>, <a href="/terms#privacy" target="_blank">Privacy Policy</a>, and <a href="/terms#aup" target="_blank">Acceptable Use Policy</a></span></label>
+    <button class="go" id="gate-go" disabled>Continue</button>
+    <a class="home" href="https://aianytime.github.io/ablate/" target="_blank" rel="noopener">Home</a>
+  </div>
+</div>
+
+<!-- ============ app ============ -->
+<div id="app" hidden>
+  <aside>
+    <div class="side-top">
+      <img class="logo-d" src="/static/logo-dark.png" alt="Ablate"><img class="logo-l" src="/static/logo-light.png" alt="Ablate">
+      <button class="iconbtn" id="collapse" title="Hide sidebar" aria-label="Hide sidebar"><svg class="ico"><use href="#i-panel"/></svg></button>
+    </div>
+    <button class="newchat" id="new"><svg class="ico"><use href="#i-plus"/></svg>New chat</button>
+    <nav class="nav" aria-label="App">
+      <label><svg class="ico"><use href="#i-search"/></svg><input id="q" placeholder="Search" aria-label="Search chats"></label>
+      <button id="open-models"><svg class="ico"><use href="#i-cube"/></svg>Models</button>
+      <button id="open-memory"><svg class="ico"><use href="#i-brain"/></svg>Memory</button>
+      <button id="open-settings"><svg class="ico"><use href="#i-gear"/></svg>Settings</button>
+    </nav>
+    <div class="sec">Chats</div>
+    <div class="chats" id="chats"></div>
+    <div class="side-foot">
+      <div class="local-card"><svg class="ico" style="color:var(--ok)"><use href="#i-lock"/></svg><span><b>100% local.</b> Chats are saved on this computer only.</span></div>
+      <div class="me"><div class="avatar" id="avatar">A</div><div class="n"><span id="me-name">You</span><small id="me-dev">local</small></div>
+        <button class="iconbtn" id="logout" title="Lock" aria-label="Lock"><svg class="ico"><use href="#i-out"/></svg></button></div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <button class="iconbtn" id="menu" title="Chats" aria-label="Show chats"><svg class="ico"><use href="#i-menu"/></svg></button>
+      <button class="modelbtn" id="modelbtn"><span class="dot" id="mdot"></span><span id="mname">Choose a model</span><svg class="ico" style="width:14px;height:14px"><use href="#i-down"/></svg></button>
+      <span class="sp"></span>
+      <span class="chip hide-sm" id="ctx" title="Context window used by the last reply"><span id="ctx-t">0 / 4,096</span><span class="meter"><i id="ctx-bar"></i></span></span>
+      <span class="chip hide-sm"><svg class="ico" style="color:var(--ok)"><use href="#i-lock"/></svg>Private · on this device</span>
+      <button class="iconbtn" id="export" title="Export chat as Markdown" aria-label="Export chat"><svg class="ico"><use href="#i-dl"/></svg></button>
+      <button class="iconbtn" id="theme" title="Theme" aria-label="Switch theme"><svg class="ico"><use href="#i-moon"/></svg></button>
+    </div>
+
+    <div class="hero" id="hero">
+      <img src="/static/mark.png" alt="">
+      <h1>Ready when you are</h1>
+      <p class="note" id="hero-note">Pick a model to start. It downloads once, then runs offline.</p>
+      <div id="hero-slot"></div>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="scroll" id="scroll" hidden><div class="thread" id="thread"></div></div>
+    <div class="composer-wrap" id="bottom-slot" hidden></div>
+
+    <form class="composer" id="composer">
+      <div class="attachments" id="atts"></div>
+      <textarea id="input" rows="1" placeholder="Ask anything, privately…" aria-label="Message"></textarea>
+      <div class="crow">
+        <button type="button" class="tbtn" id="attach" title="Attach a text or code file"><svg class="ico"><use href="#i-clip"/></svg>Attach</button>
+        <input type="file" id="file" multiple hidden accept=".txt,.md,.py,.js,.ts,.json,.csv,.html,.css,.yaml,.yml,.toml,.sh,.sql,.java,.c,.cpp,.go,.rs,.rb,.php,.log,text/*">
+        <button type="button" class="tbtn" id="tools" title="Let the model use local tools"><svg class="ico"><use href="#i-tool"/></svg>Tools</button>
+        <span class="sp"></span>
+        <span class="small" id="hint"></span>
+        <button class="send" id="send" type="submit" aria-label="Send"><svg class="ico"><use href="#i-up"/></svg></button>
+      </div>
+    </form>
+  </main>
+</div>
+
+<!-- models -->
+<div class="modal" id="m-models" hidden role="dialog" aria-modal="true" aria-labelledby="mm-t">
+  <div class="sheet">
+    <header><div><h2 id="mm-t">Unrestricted small language models</h2><p>Open-weight models abliterated with ablate by AI Anytime. Each downloads once from HuggingFace, then runs fully offline on your <span id="mm-dev">computer</span>.</p></div><span class="sp"></span><button class="iconbtn" data-close aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button></header>
+    <div class="mgrid" id="mgrid"></div>
+    <div class="group"><h4>Any other model</h4>
+      <div class="custom"><input id="custom-id" placeholder="HuggingFace model id, e.g. ai-anytime/qwen-1.5b-abliterated"><button class="btn" id="custom-dl"><svg class="ico"><use href="#i-dl"/></svg>Download</button></div>
+      <small class="small">Downloads go to your HuggingFace cache. Remove a model here to free the disk space.</small>
+    </div>
+  </div>
+</div>
+
+<!-- memory -->
+<div class="modal" id="m-memory" hidden role="dialog" aria-modal="true" aria-labelledby="mem-t">
+  <div class="sheet" style="width:min(620px,100%)">
+    <header><div><h2 id="mem-t">Memory</h2><p>Facts added to every chat so the model remembers them. Stored in <code class="mono">~/.ablate/chat/memory.json</code>.</p></div><span class="sp"></span><button class="iconbtn" data-close aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button></header>
+    <div class="toggle-row"><span>Use memory in chats</span><label class="switch"><input type="checkbox" id="use-mem"><i></i></label></div>
+    <div class="memlist" id="memlist"></div>
+    <div class="custom"><input id="mem-new" placeholder="e.g. I write Python and prefer short answers."><button class="btn primary" id="mem-add">Add</button></div>
+  </div>
+</div>
+
+<!-- settings drawer -->
+<div class="drawer" id="settings" hidden role="dialog" aria-labelledby="set-t">
+  <header><h2 id="set-t">Settings</h2><button class="iconbtn" data-close aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button></header>
+  <div class="body">
+    <div class="group"><h4>Model behaviour</h4>
+      <div class="set"><div class="lbl">System prompt</div><textarea id="s-system"></textarea></div>
+      <div class="set"><div class="lbl">Context window <b id="v-ctx"></b></div><input type="range" id="s-ctx" min="512" max="32768" step="512"><small>How much of the conversation the model sees. Older messages are dropped first. Bigger uses more memory.</small></div>
+      <div class="set"><div class="lbl">Max reply length <b id="v-max"></b></div><input type="range" id="s-max" min="64" max="4096" step="64"></div>
+      <div class="set"><div class="lbl">Temperature <b id="v-temp"></b></div><input type="range" id="s-temp" min="0" max="1.5" step="0.05"><small>0 = always the same answer. Higher = more creative.</small></div>
+      <div class="set"><div class="lbl">Top-p <b id="v-top"></b></div><input type="range" id="s-top" min="0.1" max="1" step="0.05"></div>
+      <div class="set"><div class="lbl">Repetition penalty <b id="v-rep"></b></div><input type="range" id="s-rep" min="1" max="1.5" step="0.01"></div>
+    </div>
+    <div class="group"><h4>Tools</h4>
+      <div class="toggle-row"><span>Local tools<small>Calculator, date and time, search your past chats.</small></span><label class="switch"><input type="checkbox" id="s-tools"><i></i></label></div>
+      <div class="toggle-row"><span>Network tools<small>Lets the model fetch public web pages. Off keeps everything offline.</small></span><label class="switch"><input type="checkbox" id="s-net"><i></i></label></div>
+    </div>
+    <div class="group"><h4>Profile</h4>
+      <div class="set"><div class="lbl">Display name</div><input type="text" id="p-name" maxlength="40"></div>
+      <div class="set"><div class="lbl">New passcode</div><input type="password" id="p-pass" autocomplete="new-password" placeholder="Leave empty to keep it"><small>A passcode locks the app and is required with <code class="mono">--share</code>.</small></div>
+      <div><button class="btn" id="p-save">Save profile</button></div>
+    </div>
+    <div class="group"><h4>OpenAI-compatible API</h4>
+      <small class="small">Point any OpenAI SDK, editor or agent at the loaded model.</small>
+      <div class="codeline"><code id="api-base"></code><button class="iconbtn" data-copy="#api-base" aria-label="Copy base URL"><svg class="ico"><use href="#i-copy"/></svg></button></div>
+      <div class="codeline"><code id="api-key"></code><button class="iconbtn" data-copy="#api-key" aria-label="Copy API key"><svg class="ico"><use href="#i-copy"/></svg></button></div>
+      <small class="small">The key is only needed from other devices. Requests from this computer work without it.</small>
+    </div>
+    <div class="group"><h4>Data</h4><small class="small">Everything lives in <code class="mono">~/.ablate/chat</code>. Delete that folder to reset. <a href="/terms" target="_blank">Terms, privacy and acceptable use</a>.</small></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ico = n => `<svg class="ico"><use href="#i-${n}"/></svg>`;
+let ST = null, CHAT = null, busy = false, toolsOn = true, atts = [], editAt = null, ctrl = null;
+
+async function api(path, body) {
+  const r = await fetch(path, body === undefined ? {} : {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error?.message || j.error || r.statusText);
+  return j;
+}
+function toast(t) { const el = document.createElement('div'); el.className = 'toast'; el.textContent = t; document.body.appendChild(el); setTimeout(() => el.remove(), 1800); }
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); toast('Copied'); }
+  catch { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast('Copied'); }
+}
+
+/* ---------------- markdown (escape first, then format) ---------------- */
+function inline(s) {
+  return s.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+function md(src) {
+  const out = []; const parts = String(src).split(/```/);
+  parts.forEach((part, i) => {
+    if (i % 2) {
+      const nl = part.indexOf('\n'); const lang = nl > -1 ? part.slice(0, nl).trim() : ''; const code = nl > -1 ? part.slice(nl + 1) : part;
+      out.push(`<pre class="${lang ? 'has-lang' : ''}">${lang ? `<span class="lang">${esc(lang)}</span>` : ''}<button class="cp" type="button">Copy</button><code>${esc(code.replace(/\n$/, ''))}</code></pre>`);
+      return;
+    }
+    const lines = esc(part).split('\n'); let list = null, para = [], table = [];
+    const flushP = () => { if (para.length) { out.push('<p>' + inline(para.join('<br>')) + '</p>'); para = []; } };
+    const flushL = () => { if (list) { out.push(`<${list.t}>` + list.items.map(x => '<li>' + inline(x) + '</li>').join('') + `</${list.t}>`); list = null; } };
+    const flushT = () => {
+      if (!table.length) return;
+      const rows = table.filter(r => !/^\s*\|?\s*:?-{2,}/.test(r)).map(r => r.replace(/^\s*\||\|\s*$/g, '').split('|').map(c => inline(c.trim())));
+      out.push('<table>' + rows.map((r, k) => '<tr>' + r.map(c => k ? `<td>${c}</td>` : `<th>${c}</th>`).join('') + '</tr>').join('') + '</table>'); table = [];
+    };
+    for (const ln of lines) {
+      let m;
+      if (/^\s*\|.*\|\s*$/.test(ln)) { flushP(); flushL(); table.push(ln); continue; } else flushT();
+      if ((m = ln.match(/^(#{1,3})\s+(.*)/))) { flushP(); flushL(); out.push(`<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`); }
+      else if ((m = ln.match(/^\s*[-*•]\s+(.*)/))) { flushP(); if (!list || list.t !== 'ul') { flushL(); list = {t: 'ul', items: []}; } list.items.push(m[1]); }
+      else if ((m = ln.match(/^\s*\d+[.)]\s+(.*)/))) { flushP(); if (!list || list.t !== 'ol') { flushL(); list = {t: 'ol', items: []}; } list.items.push(m[1]); }
+      else if ((m = ln.match(/^&gt;\s?(.*)/))) { flushP(); flushL(); out.push('<blockquote>' + inline(m[1]) + '</blockquote>'); }
+      else if (!ln.trim()) { flushP(); flushL(); }
+      else { flushL(); para.push(ln); }
+    }
+    flushT(); flushP(); flushL();
+  });
+  return out.join('');
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('pre .cp'); if (b) copyText(b.parentElement.querySelector('code').textContent);
+  const c = e.target.closest('[data-copy]'); if (c) copyText($(c.dataset.copy).textContent);
+  if (e.target.closest('[data-close]') || e.target.classList.contains('modal')) closeAll();
+});
+
+/* ---------------- auth flow ---------------- */
+async function boot() {
+  const me = await api('/api/me');
+  if (!me.profile) return showAuth('create');
+  if (!me.authed && !me.profile.accepted_terms && !me.profile.has_passcode) return showGate();
+  if (!me.authed) return showAuth('login', me.profile.name);
+  start();
+}
+function showAuth(which, name) {
+  $('#auth').hidden = false; $('#app').hidden = true;
+  $('#auth-create').hidden = which !== 'create'; $('#auth-login').hidden = which !== 'login';
+  if (name) $('#l-sub').textContent = `Unlock Ablate Chat, ${name}.`;
+  setTimeout(() => (which === 'create' ? $('#c-name') : $('#l-pass')).focus(), 50);
+}
+$('#auth-create').addEventListener('submit', async e => {
+  e.preventDefault(); $('#c-err').textContent = '';
+  try { await api('/api/auth/create', {name: $('#c-name').value, passcode: $('#c-pass').value}); showGate(); }
+  catch (err) { $('#c-err').textContent = err.message; }
+});
+$('#auth-login').addEventListener('submit', async e => {
+  e.preventDefault(); $('#l-err').textContent = '';
+  try { await api('/api/auth/login', {passcode: $('#l-pass').value}); const me = await api('/api/me'); me.profile.accepted_terms ? start() : showGate(); }
+  catch (err) { $('#l-err').textContent = err.message; }
+});
+function showGate() { $('#auth').hidden = true; $('#gate').hidden = false; $('#gate-ok').focus(); }
+$('#gate-ok').addEventListener('change', e => { $('#gate-go').disabled = !e.target.checked; });
+$('#gate-go').addEventListener('click', async () => { await api('/api/auth/terms', {}); $('#gate').hidden = true; start(); });
+$('#logout').addEventListener('click', async () => { await api('/api/auth/logout', {}); location.reload(); });
+
+/* ---------------- app ---------------- */
+async function start() {
+  $('#auth').hidden = true; $('#gate').hidden = true; $('#app').hidden = false;
+  ST = await api('/api/state');
+  toolsOn = !!ST.settings.tools;
+  $('#me-name').textContent = ST.profile.name; $('#avatar').textContent = (ST.profile.name || 'A').trim()[0].toUpperCase();
+  $('#me-dev').textContent = `100% local · ${({mps: 'Apple GPU', cuda: 'NVIDIA GPU', cpu: 'CPU'})[ST.device] || ST.device}`;
+  $('#mm-dev').textContent = ({mps: 'Mac (Apple GPU)', cuda: 'NVIDIA GPU', cpu: 'CPU'})[ST.device] || 'computer';
+  renderModelBtn(); renderChats(); renderTools(); fillSettings(); newChat();
+  if (!ST.loaded) openModels();
+}
+function current() { return ST.models.find(m => m.id === ST.loaded); }
+function renderModelBtn(loading) {
+  const m = current();
+  $('#mname').textContent = loading ? `Loading ${loading}…` : (m ? m.name : 'Choose a model');
+  $('#mdot').className = 'dot ' + (loading ? 'busy' : m ? 'ok' : '');
+  $('#hero-note').textContent = m ? `${m.name} · ${m.params} parameters · running on this ${ST.device === 'cpu' ? 'CPU' : 'GPU'}, offline.` : 'Pick a model to start. It downloads once, then runs offline.';
+  $('#send').disabled = !m && !busy;
+}
+function renderChats() {
+  const q = $('#q').value.trim().toLowerCase();
+  const rows = ST.chats.filter(c => !q || c.title.toLowerCase().includes(q));
+  $('#chats').innerHTML = rows.length ? rows.map(c => `<div class="chat-row ${CHAT && CHAT.id === c.id ? 'on' : ''}" data-id="${esc(c.id)}">
+      <button class="t" data-open title="${esc(c.title)}">${c.pinned ? '📌 ' : ''}${esc(c.title)}</button>
+      <span class="acts"><button data-pin title="${c.pinned ? 'Unpin' : 'Pin'}">${ico('pin')}</button><button data-rename title="Rename">${ico('edit')}</button><button data-del title="Delete">${ico('trash')}</button></span></div>`).join('')
+    : `<div class="empty-chats">${q ? 'No matching chats.' : 'Your chats will show up here.'}</div>`;
+}
+$('#q').addEventListener('input', renderChats);
+$('#chats').addEventListener('click', async e => {
+  const row = e.target.closest('.chat-row'); if (!row) return; const id = row.dataset.id; const c = ST.chats.find(x => x.id === id);
+  if (e.target.closest('[data-open]')) return openChat(id);
+  if (e.target.closest('[data-pin]')) ST.chats = (await api('/api/chats/update', {id, pinned: !c.pinned})).chats;
+  if (e.target.closest('[data-rename]')) {
+    const btn = row.querySelector('.t'); const inp = document.createElement('input'); inp.value = c.title; inp.className = 't'; inp.style.cssText = 'border:1px solid var(--accent);border-radius:6px;padding:4px 6px;background:var(--bg)';
+    btn.replaceWith(inp); inp.focus(); inp.select();
+    const done = async ok => { if (ok && inp.value.trim()) ST.chats = (await api('/api/chats/update', {id, title: inp.value.trim()})).chats; renderChats(); };
+    inp.addEventListener('keydown', ev => { if (ev.key === 'Enter') done(true); if (ev.key === 'Escape') done(false); });
+    inp.addEventListener('blur', () => done(true)); return;
+  }
+  if (e.target.closest('[data-del]')) {
+    const del = row.querySelector('[data-del]');
+    if (!del.dataset.armed) { del.dataset.armed = 1; del.style.color = 'var(--bad)'; del.title = 'Click again to delete'; setTimeout(() => { delete del.dataset.armed; del.style.color = ''; }, 2500); return; }
+    ST.chats = (await api('/api/chats/delete', {id})).chats; if (CHAT && CHAT.id === id) newChat();
+  }
+  renderChats();
+});
+async function openChat(id) {
+  if (busy) return;
+  CHAT = await api('/api/chats/' + encodeURIComponent(id)); editAt = null;
+  renderThread(); renderChats(); closeSide();
+}
+function newChat() { if (busy) return; CHAT = {id: null, title: 'New chat', messages: []}; editAt = null; renderThread(); renderChats(); $('#input').focus(); closeSide(); }
+$('#new').addEventListener('click', newChat);
+
+const CHIPS = [
+  ['pen', 'Write a villain monologue', "Write a chilling, theatrical monologue for the villain of my thriller novel, as they confront the detective."],
+  ['spark', 'Explain abliteration', 'Explain what "abliteration" of a language model is, in plain English, with an analogy.'],
+  ['calc', 'Use a tool', "What's 18% of 2,450, and what's the date today?"],
+  ['code', 'Write code', 'Write a Python function that removes duplicate lines from a file while keeping the order.'],
+];
+function placeComposer(empty) {
+  const comp = $('#composer');
+  if (empty) { $('#hero-slot').appendChild(comp); } else { $('#bottom-slot').appendChild(comp); }
+  $('#hero').hidden = !empty; $('#scroll').hidden = empty; $('#bottom-slot').hidden = empty;
+  if (!$('#foot-note')) { const n = document.createElement('p'); n.id = 'foot-note'; n.className = 'foot-note'; n.textContent = 'Unrestricted model: answers can be wrong or offensive. Runs on this computer; nothing is sent anywhere.'; $('#bottom-slot').appendChild(n); }
+}
+$('#chips').innerHTML = CHIPS.map((c, i) => `<button type="button" data-chip="${i}">${ico(c[0])}${esc(c[1])}</button>`).join('');
+$('#chips').addEventListener('click', e => { const b = e.target.closest('[data-chip]'); if (!b) return; $('#input').value = CHIPS[+b.dataset.chip][2]; autosize(); send(); });
+
+function msgHTML(m, i) {
+  if (m.role === 'user') {
+    return `<div class="msg user" data-i="${i}"><div class="bubble">${esc(m.content)}</div>
+      <div class="acts-row"><button data-act="copy">${ico('copy')}Copy</button><button data-act="edit">${ico('edit')}Edit</button></div></div>`;
+  }
+  const steps = (m.steps || []).map(s => `<details class="step"><summary>${ico('tool')}<span>Used <b>${esc(s.name)}</b></span></summary><pre>${esc(JSON.stringify({input: s.args, output: s.result}, null, 2))}</pre></details>`).join('');
+  const st = m.stats || {}; const model = (ST.models.find(x => x.id === m.model) || {}).name || (m.model || '').split('/').pop();
+  return `<div class="msg ai" data-i="${i}"><div class="who"><img src="/static/mark.png" alt="">${esc(model || 'Ablate')}</div>${steps}
+    <div class="bubble md">${m.content ? md(m.content) : (st.stopped ? '<p class="small">Stopped.</p>' : '')}</div>
+    <div class="acts-row"><button data-act="copy">${ico('copy')}Copy</button>${i === CHAT.messages.length - 1 ? `<button data-act="regen">${ico('redo')}Regenerate</button>` : ''}
+    ${st.tokens ? `<span class="stat">${st.tokens} tokens · ${st.tps} tok/s${st.stopped ? ' · stopped' : ''}</span>` : ''}</div></div>`;
+}
+function renderThread() {
+  const empty = !CHAT.messages.length; placeComposer(empty);
+  $('#thread').innerHTML = CHAT.messages.map(msgHTML).join('');
+  if (!empty) scrollDown(true);
+}
+function scrollDown(force) { const s = $('#scroll'); if (force || s.scrollHeight - s.scrollTop - s.clientHeight < 160) s.scrollTop = s.scrollHeight; }
+$('#thread').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b || busy) { if (b && b.dataset.act === 'copy') {} else return; }
+  const i = +b.closest('.msg').dataset.i; const m = CHAT.messages[i];
+  if (b.dataset.act === 'copy') return copyText(m.content);
+  if (b.dataset.act === 'edit') { editAt = i; $('#input').value = m.content.split('\n\n<file ')[0]; autosize(); $('#input').focus(); $('#hint').textContent = 'Editing: the conversation continues from this message.'; }
+  if (b.dataset.act === 'regen') { const u = i - 1; if (CHAT.messages[u]?.role === 'user') { editAt = u; $('#input').value = CHAT.messages[u].content; send(); } }
+});
+
+/* ---------------- composer ---------------- */
+function autosize() { const t = $('#input'); t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight, 240) + 'px'; }
+$('#input').addEventListener('input', autosize);
+$('#input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(); }
+  if (e.key === 'Escape') { if (busy) stop(); else if (editAt !== null) { editAt = null; $('#hint').textContent = ''; $('#input').value = ''; autosize(); } }
+});
+$('#composer').addEventListener('submit', e => { e.preventDefault(); busy ? stop() : send(); });
+function renderTools() { $('#tools').classList.toggle('on', toolsOn); $('#tools').title = toolsOn ? 'Tools on: calculator, time, search chats' : 'Tools off'; }
+$('#tools').addEventListener('click', async () => { toolsOn = !toolsOn; renderTools(); ST.settings = (await api('/api/settings', {tools: toolsOn})).settings; $('#s-tools').checked = toolsOn; });
+$('#attach').addEventListener('click', () => $('#file').click());
+$('#file').addEventListener('change', async e => {
+  for (const f of e.target.files) {
+    if (f.size > 400000) { toast(`${f.name} is too big (400 KB max)`); continue; }
+    atts.push({name: f.name, text: await f.text()});
+  }
+  e.target.value = ''; renderAtts();
+});
+function renderAtts() { $('#atts').innerHTML = atts.map((a, i) => `<span class="att">${esc(a.name)}<button type="button" data-rm="${i}" aria-label="Remove">×</button></span>`).join(''); }
+$('#atts').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { atts.splice(+b.dataset.rm, 1); renderAtts(); } });
+function setBusy(on) {
+  busy = on; const s = $('#send'); s.classList.toggle('stop', on); s.innerHTML = ico(on ? 'stop' : 'up'); s.setAttribute('aria-label', on ? 'Stop' : 'Send');
+  s.disabled = !on && !current(); $('#mdot').className = 'dot ' + (on ? 'busy' : current() ? 'ok' : '');
+}
+async function stop() { try { await api('/api/stop', {}); } catch {} }
+
+async function send() {
+  const text = $('#input').value.trim();
+  if (busy || (!text && !atts.length)) return;
+  if (!current()) { openModels(); return toast('Load a model first'); }
+  const truncate = editAt; editAt = null; $('#hint').textContent = '';
+  if (truncate !== null) CHAT.messages.splice(truncate);
+  const shown = text + atts.map(a => `\n\n📎 ${a.name}`).join('');
+  CHAT.messages.push({role: 'user', content: shown});
+  const body = {chat_id: CHAT.id, message: text, attachments: atts, truncate_at: truncate, settings: {tools: toolsOn}};
+  $('#input').value = ''; atts = []; renderAtts(); autosize();
+  renderThread();
+  const holder = document.createElement('div'); holder.className = 'msg ai';
+  holder.innerHTML = `<div class="who"><img src="/static/mark.png" alt="">${esc(current().name)}</div><div class="steps"></div><div class="bubble md"><span class="thinking"><i></i><i></i><i></i></span></div><div class="acts-row"></div>`;
+  $('#thread').appendChild(holder); scrollDown(true);
+  const bubble = holder.querySelector('.bubble'); const stepsEl = holder.querySelector('.steps');
+  let txt = '', raf = 0, failed = null;
+  const paint = () => { raf = 0; bubble.innerHTML = md(txt); bubble.lastElementChild?.classList.add('cursor'); scrollDown(); };
+  setBusy(true);
+  try {
+    const r = await fetch('/api/chat', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || r.statusText);
+    const rd = r.body.getReader(); const dec = new TextDecoder(); let buf = '';
+    for (;;) {
+      const {value, done} = await rd.read(); if (done) break;
+      buf += dec.decode(value, {stream: true}); let k;
+      while ((k = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, k); buf = buf.slice(k + 1); if (!line.trim()) continue;
+        const ev = JSON.parse(line);
+        if (ev.type === 'meta') { const isNew = !CHAT.id; CHAT.id = ev.chat_id; CHAT.title = ev.title; if (isNew) { ST.chats.unshift({id: ev.chat_id, title: ev.title, pinned: false, updated: Date.now() / 1000}); renderChats(); } }
+        else if (ev.type === 'context') { setCtx(ev.used, ev.limit); if (ev.trimmed) { const n = document.createElement('div'); n.className = 'notice'; n.textContent = `${ev.trimmed} older message${ev.trimmed > 1 ? 's' : ''} left out to fit the context window`; holder.before(n); } }
+        else if (ev.type === 'queued') bubble.innerHTML = `<p class="small">${esc(ev.message)}</p>`;
+        else if (ev.type === 'token') { txt += ev.t; if (!raf) raf = requestAnimationFrame(paint); }
+        else if (ev.type === 'tool_call') stepsEl.insertAdjacentHTML('beforeend', `<details class="step" open><summary>${ico('tool')}<span>Using <b>${esc(ev.name)}</b>…</span></summary><pre>${esc(JSON.stringify(ev.args, null, 2))}</pre></details>`);
+        else if (ev.type === 'tool_result') { const d = stepsEl.lastElementChild; d.querySelector('summary span').innerHTML = `Used <b>${esc(ev.name)}</b>`; d.querySelector('pre').textContent = JSON.stringify({input: JSON.parse(d.querySelector('pre').textContent || '{}'), output: ev.result}, null, 2); d.open = false; }
+        else if (ev.type === 'error') failed = ev.message;
+      }
+    }
+  } catch (err) { failed = err.message; }
+  setBusy(false);
+  if (CHAT.id) { try { CHAT = await api('/api/chats/' + encodeURIComponent(CHAT.id)); } catch {} }
+  renderThread();
+  if (failed) { const d = document.createElement('div'); d.className = 'errmsg'; d.textContent = failed; $('#thread').appendChild(d); scrollDown(true); }
+  try { ST.chats = (await api('/api/state')).chats; renderChats(); } catch {}
+}
+function setCtx(used, limit) { $('#ctx-t').textContent = `${used.toLocaleString()} / ${limit.toLocaleString()}`; $('#ctx-bar').style.width = Math.min(100, used / limit * 100) + '%'; }
+
+/* ---------------- models ---------------- */
+let poll = 0;
+function openModels() { closeAll(); $('#m-models').hidden = false; renderModels(); clearInterval(poll); poll = setInterval(refreshModels, 1500); }
+async function refreshModels() { if ($('#m-models').hidden) return clearInterval(poll); const j = await api('/api/models'); ST.models = j.models; ST.loaded = j.loaded; renderModels(); renderModelBtn(); }
+function renderModels() {
+  $('#mgrid').innerHTML = ST.models.map(m => {
+    const d = m.download, dl = d && !d.finished, pct = dl && d.total ? Math.round(d.done / d.total * 100) : 0;
+    return `<article class="mcard ${m.loaded ? 'on' : ''}" data-id="${esc(m.id)}">
+      <h3>${esc(m.name)}</h3>${m.blurb ? `<p>${esc(m.blurb)}</p>` : ''}
+      <div class="specs">${m.params ? `<span>${esc(m.params)} params</span>` : ''}${m.size_gb ? `<span>${m.size_gb} GB</span>` : ''}${m.ram ? `<span>${esc(m.ram)}</span>` : ''}${m.license ? `<span>${esc(m.license)}</span>` : ''}</div>
+      ${dl ? `<div class="bar"><i style="width:${pct}%"></i></div><span class="small">Downloading… ${pct}% (${(d.done / 1e9).toFixed(2)} of ${(d.total / 1e9).toFixed(2)} GB)</span>` : ''}
+      ${d && d.error ? `<span class="small" style="color:var(--bad)">${esc(d.error)}</span>` : ''}
+      <div class="row">${m.loaded ? `<button class="btn" data-m="unload">Unload</button>` : m.downloaded ? `<button class="btn primary" data-m="load">Use this model</button>` : dl ? '' : `<button class="btn primary" data-m="download">${ico('dl')}Download</button>`}
+        ${m.downloaded ? `<button class="btn danger" data-m="remove" title="Delete from disk">${ico('trash')}</button>` : ''}
+        <a class="btn" href="https://huggingface.co/${esc(m.id)}" target="_blank" rel="noopener" title="Model card">HF ↗</a></div></article>`;
+  }).join('');
+}
+$('#mgrid').addEventListener('click', async e => {
+  const b = e.target.closest('[data-m]'); if (!b) return; const id = b.closest('.mcard').dataset.id; const act = b.dataset.m;
+  try {
+    if (act === 'download') ST.models = (await api('/api/models/download', {id})).models;
+    if (act === 'remove') { if (!b.dataset.armed) { b.dataset.armed = 1; b.textContent = 'Delete from disk?'; return; } const j = await api('/api/models/remove', {id}); ST.models = j.models; ST.loaded = j.loaded; }
+    if (act === 'load' || act === 'unload') {
+      b.disabled = true; b.textContent = act === 'load' ? 'Loading…' : 'Unloading…'; renderModelBtn(act === 'load' ? ST.models.find(x => x.id === id).name : '');
+      const j = await api('/api/models/load', {id: act === 'load' ? id : null}); ST.models = j.models; ST.loaded = j.loaded; ST.max_context = j.max_context;
+      if (j.device) ST.device = j.device; fillSettings(); if (act === 'load') { closeAll(); $('#input').focus(); }
+    }
+  } catch (err) { toast(err.message); }
+  renderModels(); renderModelBtn();
+});
+$('#custom-dl').addEventListener('click', async () => { const id = $('#custom-id').value.trim(); if (!/^[\w.-]+\/[\w.-]+$/.test(id)) return toast('Use the form owner/model'); try { ST.models = (await api('/api/models/download', {id})).models; renderModels(); $('#custom-id').value = ''; } catch (err) { toast(err.message); } });
+$('#modelbtn').addEventListener('click', openModels);
+$('#open-models').addEventListener('click', openModels);
+
+/* ---------------- memory ---------------- */
+function renderMem() {
+  $('#use-mem').checked = !!ST.settings.use_memory;
+  $('#memlist').innerHTML = ST.memories.length ? ST.memories.map((m, i) => `<div class="mem"><label class="switch"><input type="checkbox" data-mi="${i}" ${m.on ? 'checked' : ''}><i></i></label><span>${esc(m.text)}</span><button class="iconbtn" data-mdel="${i}" aria-label="Delete">${ico('trash')}</button></div>`).join('') : '<p class="small">Nothing saved yet. Add facts about you or how you like answers.</p>';
+}
+async function saveMem() { ST.memories = (await api('/api/memories', {memories: ST.memories})).memories; renderMem(); }
+$('#open-memory').addEventListener('click', () => { closeAll(); $('#m-memory').hidden = false; renderMem(); $('#mem-new').focus(); });
+$('#mem-add').addEventListener('click', () => { const t = $('#mem-new').value.trim(); if (!t) return; ST.memories.push({text: t, on: true}); $('#mem-new').value = ''; saveMem(); });
+$('#mem-new').addEventListener('keydown', e => { if (e.key === 'Enter') $('#mem-add').click(); });
+$('#memlist').addEventListener('change', e => { const i = e.target.dataset.mi; if (i !== undefined) { ST.memories[+i].on = e.target.checked; saveMem(); } });
+$('#memlist').addEventListener('click', e => { const b = e.target.closest('[data-mdel]'); if (b) { ST.memories.splice(+b.dataset.mdel, 1); saveMem(); } });
+$('#use-mem').addEventListener('change', async e => { ST.settings = (await api('/api/settings', {use_memory: e.target.checked})).settings; });
+
+/* ---------------- settings ---------------- */
+const SL = [['#s-ctx', 'context_tokens', '#v-ctx', v => (+v).toLocaleString() + ' tokens'], ['#s-max', 'max_new_tokens', '#v-max', v => v + ' tokens'], ['#s-temp', 'temperature', '#v-temp', v => (+v).toFixed(2)], ['#s-top', 'top_p', '#v-top', v => (+v).toFixed(2)], ['#s-rep', 'repetition_penalty', '#v-rep', v => (+v).toFixed(2)]];
+function fillSettings() {
+  const s = ST.settings; $('#s-system').value = s.system; $('#s-tools').checked = !!s.tools; $('#s-net').checked = !!s.network_tools;
+  $('#s-ctx').max = Math.min(ST.max_context || 32768, 32768);
+  SL.forEach(([el, k, lab, f]) => { $(el).value = s[k]; $(lab).textContent = f(s[k]); });
+  $('#p-name').value = ST.profile.name; $('#api-base').textContent = `http://localhost:${ST.port}/v1`; $('#api-key').textContent = ST.profile.api_key || '';
+  setCtx(0, Math.min(s.context_tokens, ST.max_context || s.context_tokens));
+}
+let saveT = 0;
+function saveSettings(patch) { Object.assign(ST.settings, patch); clearTimeout(saveT); saveT = setTimeout(async () => { ST.settings = (await api('/api/settings', ST.settings)).settings; }, 300); }
+SL.forEach(([el, k, lab, f]) => $(el).addEventListener('input', e => { $(lab).textContent = f(e.target.value); saveSettings({[k]: +e.target.value}); }));
+$('#s-system').addEventListener('input', e => saveSettings({system: e.target.value}));
+$('#s-tools').addEventListener('change', e => { toolsOn = e.target.checked; renderTools(); saveSettings({tools: toolsOn}); });
+$('#s-net').addEventListener('change', e => saveSettings({network_tools: e.target.checked}));
+$('#p-save').addEventListener('click', async () => { const body = {name: $('#p-name').value}; if ($('#p-pass').value) body.passcode = $('#p-pass').value; ST.profile = (await api('/api/profile', body)).profile; $('#p-pass').value = ''; $('#me-name').textContent = ST.profile.name; toast('Profile saved'); });
+$('#open-settings').addEventListener('click', () => { closeAll(); $('#settings').hidden = false; });
+
+/* ---------------- misc ---------------- */
+function closeAll() { ['#m-models', '#m-memory', '#settings'].forEach(s => $(s).hidden = true); }
+function closeSide() { $('#app').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); newChat(); } });
+$('#collapse').addEventListener('click', () => $('#app').classList.add('collapsed'));
+$('#menu').addEventListener('click', () => { const a = $('#app'); if (a.classList.contains('collapsed')) a.classList.remove('collapsed'); else a.classList.toggle('open'); });
+$('#theme').addEventListener('click', () => { const t = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; document.documentElement.setAttribute('data-theme', t); try { localStorage.setItem('ablate-chat-theme', t); } catch {} });
+$('#export').addEventListener('click', () => {
+  if (!CHAT || !CHAT.messages.length) return toast('Nothing to export yet');
+  const text = `# ${CHAT.title}\n\n` + CHAT.messages.map(m => `**${m.role === 'user' ? 'You' : 'Ablate'}:**\n\n${m.content}\n`).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type: 'text/markdown'}));
+  a.download = (CHAT.title || 'chat').replace(/[^\w-]+/g, '-').slice(0, 60) + '.md'; a.click(); URL.revokeObjectURL(a.href);
+});
+boot().catch(err => { document.body.innerHTML = `<p style="padding:24px">Could not reach ablate chat: ${esc(err.message)}</p>`; });
+</script>
+</body>
+</html>

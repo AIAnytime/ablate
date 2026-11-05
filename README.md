@@ -8,24 +8,24 @@
 
 <h1 align="center">Ablate</h1>
 
-<p align="center"><b>Directional ablation (abliteration) toolkit for automatic censorship removal of open-source language models (SLMs/LLMs).</b></p>
+<p align="center"><b>Open-source, private, local chat with unrestricted small language models (SLMs), plus the abliteration toolkit that makes them.</b><br>The open-source alternative to Venice AI and abliteration.ai. No cloud, no account, no logs.</p>
 
 <p align="center">
   <a href="https://pypi.org/project/ablate-llm/"><img alt="PyPI" src="https://img.shields.io/pypi/v/ablate-llm.svg?color=7c5cff"></a>
   <a href="https://pypi.org/project/ablate-llm/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/ablate-llm.svg"></a>
-  <a href="https://github.com/AIAnytime/ablate/blob/main/LICENSE"><img alt="License: Proprietary" src="https://img.shields.io/badge/license-Proprietary-red.svg"></a>
+  <a href="https://github.com/AIAnytime/ablate/blob/main/LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-blue.svg"></a>
 </p>
 
 <p align="center">
   <a href="https://aianytime.github.io/ablate/">🌐 Website</a> &nbsp;•&nbsp;
   <a href="https://pypi.org/project/ablate-llm/">📦 PyPI</a> &nbsp;•&nbsp;
   <a href="https://huggingface.co/collections/ai-anytime/abliterated-models">🤗 Models</a> &nbsp;•&nbsp;
-  <a href="https://youtu.be/1-1bM3Ynql4">▶️ Video walkthrough</a> &nbsp;•&nbsp;
+  <a href="https://youtu.be/_pLKCRgzu6A">▶️ Video walkthrough</a> &nbsp;•&nbsp;
   <a href="https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y">🎤 Dubai AI Tinkerers talk</a> &nbsp;•&nbsp;
   <a href="#citation">📚 Cite</a>
 </p>
 
-<p align="center"><i>Created with 💜 by <b>AI Anytime</b></i></p>
+<p align="center"><i>Open source by <b><a href="https://aianytime.net">AI Anytime</a></b> · Apache-2.0 · contact@aianytime.net</i></p>
 
 <p align="center">
   <a href="https://youtu.be/_pLKCRgzu6A">
@@ -61,6 +61,51 @@ iterate on locally on a laptop, or on a free Colab T4.
 > **🎤 Presented at Dubai AI Tinkerers (October 2026).** Ablate was demoed live,
 > no slides, using the browser UI shown below:
 > [dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y](https://dubai.aitinkerers.org/talks/rsvp_rDbfcoxeQ5Y)
+
+## 💬 Ablate Chat: unrestricted SLMs on your own computer
+
+```bash
+pip install "ablate-llm[all]"
+ablate chat            # opens http://localhost:7861
+```
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/chat-hero.png"><img alt="Ablate Chat: local chat with an unrestricted small language model, with saved chats, a tool call and a streamed answer" src="https://raw.githubusercontent.com/AIAnytime/ablate/main/media/chat-hero.png" width="900"></a>
+</p>
+
+A private chat app for the AI Anytime **unrestricted small language models**. Models download once from
+HuggingFace, then everything runs offline on your CPU or GPU. Chats, memories and your profile are JSON
+files in `~/.ablate/chat`. No telemetry, no account, no server of ours.
+
+| Model | Params | Refusals before → after | Download | RAM | Licence |
+|---|---|---|---|---|---|
+| [`ai-anytime/qwen-1.5b-abliterated`](https://huggingface.co/ai-anytime/qwen-1.5b-abliterated) (recommended) | 1.5B | 100% → 0% | 3.1 GB | 8 GB | Apache-2.0 |
+| [`ai-anytime/Llama-3.2-3B-Instruct-abliterated`](https://huggingface.co/ai-anytime/Llama-3.2-3B-Instruct-abliterated) | 3.2B | 94% → 59% | 6.4 GB | 16 GB | Llama 3.2 Community |
+| [`ai-anytime/Llama-3.2-1B-Instruct-abliterated`](https://huggingface.co/ai-anytime/Llama-3.2-1B-Instruct-abliterated) | 1.2B | 75% → 34% | 2.5 GB | 8 GB | Llama 3.2 Community |
+
+Refusal rates are on held-out harmful prompts with a keyword judge, from each model's card.
+
+- **Chat history**: saved locally, with search, pin, rename, delete and Markdown export.
+- **Context window you set**, with a usage meter; the oldest turns are dropped first. Follow-ups see the whole conversation.
+- **Memory**: saved facts added to every chat.
+- **Agentic tools**: calculator, date and time, search past chats. Web fetch exists but is off by default.
+- **Copy** answers and code blocks, **edit** and resend, **regenerate**, **stop**, attach text and code files.
+- **Local sign-in** with an optional passcode and an 18+ terms gate. `ablate chat --share` lets devices on your Wi-Fi sign in with that passcode; model management stays on the host.
+- **OpenAI-compatible API** with streaming at `http://localhost:7861/v1`:
+
+```python
+from openai import OpenAI
+client = OpenAI(base_url="http://localhost:7861/v1", api_key="local")
+reply = client.chat.completions.create(
+    model="ai-anytime/qwen-1.5b-abliterated",
+    messages=[{"role": "user", "content": "Write a villain monologue."}],
+)
+print(reply.choices[0].message.content)
+```
+
+How it compares: [vs Venice AI](https://aianytime.github.io/ablate/alternatives/venice-ai/) ·
+[vs abliteration.ai](https://aianytime.github.io/ablate/alternatives/abliteration-ai/) ·
+[all models](https://aianytime.github.io/ablate/models/) · [terms and acceptable use](https://aianytime.github.io/ablate/terms/)
 
 ## Architecture
 
@@ -409,10 +454,12 @@ Is Mediated by a Single Direction*.
 ## Acknowledgements
 
 Created with 💜 by **[AI Anytime](https://www.youtube.com/@AIAnytime)**. Watch the full
-**[video walkthrough on YouTube](https://youtu.be/1-1bM3Ynql4)**. Built on the
+**[video walkthrough on YouTube](https://youtu.be/_pLKCRgzu6A)**. Built on the
 mechanistic-interpretability work of Arditi et al. and the open-source
 `transformers` / `optuna` ecosystems.
 
 ## License
 
-Proprietary — all rights reserved. This code is published for viewing and evaluation only; no use, copying, modification, redistribution, commercial use, or use as AI/ML training data without written permission. See [LICENSE](LICENSE). Commercial licensing: sonu@aianytime.net.
+**Open source under the [Apache License 2.0](LICENSE).** Free to use, modify and redistribute, including commercially, under its terms. Copyright 2026 AI Anytime ([aianytime.net](https://aianytime.net)). Questions: contact@aianytime.net.
+
+The abliterated models keep their base model's licence: the Qwen model is Apache-2.0 and the Llama models are under the Llama 3.2 Community License.

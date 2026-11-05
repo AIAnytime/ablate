@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ablate-llm"
-version = "0.3.1"
-description = "Directional ablation (abliteration) toolkit for open-source language models: extract, ablate, and optimize the removal of refusal / behavioral directions in the residual stream."
+version = "0.4.0"
+description = "Open-source, local chat with unrestricted small language models (ablate chat), plus a directional ablation (abliteration) toolkit to remove refusal from open LLMs."
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "Proprietary" }
+license = { text = "Apache-2.0" }
 authors = [{ name = "AI Anytime" }]
 keywords = [
     "interpretability",
@@ -17,11 +17,17 @@ keywords = [
     "refusal-direction",
     "mechanistic-interpretability",
     "safety",
+    "uncensored-ai",
+    "unrestricted-ai",
+    "local-llm",
+    "small-language-models",
+    "private-ai-chat",
+    "openai-compatible",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
-    "License :: Other/Proprietary License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
@@ -52,4 +58,4 @@ ablate = "ablate.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-ablate = ["_data/*.txt", "ui/static/*"]
+ablate = ["_data/*.txt", "ui/static/*", "chat/static/*"]

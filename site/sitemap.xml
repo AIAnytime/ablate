@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://aianytime.github.io/ablate/</loc><lastmod>2026-10-11</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://aianytime.github.io/ablate/llms.txt</loc><lastmod>2026-10-11</lastmod></url>
-  <url><loc>https://aianytime.github.io/ablate/llms-full.txt</loc><lastmod>2026-10-11</lastmod></url>
+  <url><loc>https://aianytime.github.io/ablate/</loc><lastmod>2026-11-06</lastmod><priority>1.0</priority></url>
+  <url><loc>https://aianytime.github.io/ablate/chat/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
+  <url><loc>https://aianytime.github.io/ablate/models/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
+  <url><loc>https://aianytime.github.io/ablate/alternatives/venice-ai/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
+  <url><loc>https://aianytime.github.io/ablate/alternatives/abliteration-ai/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
+  <url><loc>https://aianytime.github.io/ablate/uncensored-ai/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
+  <url><loc>https://aianytime.github.io/ablate/toolkit/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
+  <url><loc>https://aianytime.github.io/ablate/terms/</loc><lastmod>2026-11-06</lastmod><priority>0.8</priority></url>
+  <url><loc>https://aianytime.github.io/ablate/llms.txt</loc><lastmod>2026-11-06</lastmod></url>
 </urlset>
