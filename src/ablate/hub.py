@@ -19,10 +19,14 @@ def build_model_card(
     method: str,
     config: dict,
     metrics: Optional[dict] = None,
-    license: str = "apache-2.0",
+    license: Optional[str] = "apache-2.0",
     extra_notes: str = "",
+    license_name: Optional[str] = None,
+    license_link: Optional[str] = None,
 ) -> str:
     """Return the full README.md (model card) string, YAML frontmatter included."""
+    license = license or "other"
+    built_with_llama = _is_llama(base_model, license)
     tags = [
         "abliteration",
         "directional-ablation",
@@ -31,10 +35,14 @@ def build_model_card(
         "safety-research",
         "ablate",
     ]
+    if built_with_llama:
+        tags.append("llama")
     fm = [
         "---",
         f"base_model: {base_model}",
         f"license: {license}",
+        *([f"license_name: {license_name}"] if license_name else []),
+        *([f"license_link: {license_link}"] if license_link else []),
         "library_name: transformers",
         "pipeline_tag: text-generation",
         "tags:",
@@ -55,8 +63,16 @@ def build_model_card(
             "judged attack-success rate on a harmful benchmark.\n\n"
         )
 
+    llama_md = (
+        "**Built with Llama.** This model is a derivative of a Meta Llama model and is "
+        "distributed under the base model's Llama Community License. A copy of the "
+        "license and acceptable use policy from the base model is included in this repo.\n\n"
+        if built_with_llama else ""
+    )
+
     body = f"""# {repo_id.split('/')[-1]}
 
+{llama_md}
 This is a **directionally-ablated ("abliterated")** version of
 [`{base_model}`](https://huggingface.co/{base_model}), produced with
 [**ablate**](https://github.com/AIAnytime/ablate) — an activation-engineering toolkit for
@@ -115,6 +131,46 @@ If you use this model or `ablate`, please cite Arditi et al. (2024),
     return "\n".join(fm) + body
 
 
+def _is_llama(base_model: str, license: Optional[str]) -> bool:
+    return base_model.lower().startswith("meta-llama/") or str(license or "").lower().startswith("llama")
+
+
+def base_model_license(base_model: str, token: Optional[str] = None) -> dict:
+    """Read ``license`` / ``license_name`` / ``license_link`` from the base model's card.
+
+    A derivative must carry its base model's license, so the card copies it instead
+    of assuming one. Returns ``{}`` when the base card cannot be read.
+    """
+    try:
+        from huggingface_hub import HfApi
+        cd = HfApi(token=token).model_info(base_model).card_data
+    except Exception:
+        return {}
+    if cd is None:
+        return {}
+    out = {k: cd.get(k) for k in ("license", "license_name", "license_link") if cd.get(k)}
+    if isinstance(out.get("license"), list):
+        out["license"] = out["license"][0]
+    return out
+
+
+def _copy_license_files(api, base_model: str, dest: str) -> list:
+    """Copy LICENSE / NOTICE / USE_POLICY files from the base repo into ``dest``."""
+    copied = []
+    try:
+        from huggingface_hub import hf_hub_download
+        names = [f for f in api.list_repo_files(base_model)
+                 if "/" not in f and f.upper().startswith(("LICENSE", "NOTICE", "USE_POLICY"))]
+        for f in names:
+            src = hf_hub_download(base_model, f, token=api.token)
+            with open(src, "rb") as a, open(os.path.join(dest, f), "wb") as b:
+                b.write(a.read())
+            copied.append(f)
+    except Exception:
+        pass
+    return copied
+
+
 def push_to_hub(
     model,
     tokenizer,
@@ -125,12 +181,13 @@ def push_to_hub(
     config: Optional[dict] = None,
     metrics: Optional[dict] = None,
     private: bool = True,
-    license: str = "apache-2.0",
+    license: Optional[str] = None,
     extra_notes: str = "",
     commit_message: str = "Upload abliterated model via ablate",
 ) -> str:
     """Save, card, and upload a model to ``repo_id``. Returns the repo URL.
 
+    ``license`` defaults to the base model's own license, read from its Hub card.
     ``token`` falls back to the ``HF_TOKEN`` / ``HUGGINGFACE_TOKEN`` env vars or a
     cached ``huggingface-cli login``.
     """
@@ -143,14 +200,19 @@ def push_to_hub(
     api = HfApi(token=token)
     api.create_repo(repo_id=repo_id, private=private, exist_ok=True, repo_type="model")
 
+    lic = {"license": license} if license else base_model_license(base_model, token)
     card = build_model_card(
         repo_id=repo_id, base_model=base_model, method=method,
-        config=config or {}, metrics=metrics, license=license, extra_notes=extra_notes,
+        config=config or {}, metrics=metrics, license=lic.get("license"),
+        license_name=lic.get("license_name"), license_link=lic.get("license_link"),
+        extra_notes=extra_notes,
     )
 
     with tempfile.TemporaryDirectory() as d:
         model.save_pretrained(d)
         tokenizer.save_pretrained(d)
+        if base_model != "unknown":
+            _copy_license_files(api, base_model, d)
         with open(os.path.join(d, "README.md"), "w", encoding="utf-8") as f:
             f.write(card)
         with open(os.path.join(d, "ablate_meta.json"), "w") as f:

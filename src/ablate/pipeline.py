@@ -234,7 +234,7 @@ class Ablator:
         token: Optional[str] = None,
         private: bool = True,
         metrics: Optional[dict] = None,
-        license: str = "apache-2.0",
+        license: Optional[str] = None,
         bake_if_needed: bool = True,
     ) -> str:
         """Bake (if needed) and upload the abliterated model + a generated model

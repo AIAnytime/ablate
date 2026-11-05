@@ -35,7 +35,7 @@ from ..config import AblationConfig, SubspaceConfig
 from ..evaluate import _coherence, is_refusal, mean_kl_divergence
 from ..extract import collect_activations
 from ..hooks import AblationHooks
-from ..hub import build_model_card
+from ..hub import base_model_license, build_model_card
 from ..model import LM
 from ..optimize import optimize, optimize_subspace
 from ..pipeline import Ablator
@@ -599,7 +599,10 @@ def _card_metrics() -> Optional[dict]:
 def card_preview(body: dict) -> dict:
     basis, conf = _resolve(body.get("config") or {})
     repo = (body.get("repo_id") or "you/model-abliterated").strip()
-    return {"card": build_model_card(repo, S.lm.name, _method_of(conf), conf.to_dict(), _card_metrics())}
+    lic = base_model_license(S.lm.name, S.token)
+    return {"card": build_model_card(repo, S.lm.name, _method_of(conf), conf.to_dict(), _card_metrics(),
+                                     license=lic.get("license"), license_name=lic.get("license_name"),
+                                     license_link=lic.get("license_link"))}
 
 
 def _bake_then(body: dict, emit: Emit, ship: Callable[[], str]) -> None:
