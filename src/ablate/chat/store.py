@@ -31,7 +31,7 @@ DEFAULT_SETTINGS = {
     "top_p": 0.9,
     "max_new_tokens": 768,
     "context_tokens": 4096,
-    "repetition_penalty": 1.1,
+    "repetition_penalty": 1.05,
     "use_memory": True,
     "tools": True,
     "network_tools": False,
