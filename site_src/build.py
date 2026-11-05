@@ -303,7 +303,7 @@ HOME = f'''
     <div class="hub">
       <a class="card" href="{GH}" rel="noopener"><small>Source</small><h3>GitHub</h3><p>App, API, toolkit and notebooks. Apache-2.0.</p><span class="go">github.com/AIAnytime/ablate ↗</span></a>
       <a class="card" href="{PYPI}" rel="noopener"><small>Package</small><h3>PyPI</h3><p>Install as <code>ablate-llm</code>, run <code>ablate chat</code>.</p><span class="go">pypi.org/project/ablate-llm ↗</span></a>
-      <a class="card" href="https://huggingface.co/ai-anytime" rel="noopener"><small>Models</small><h3>HuggingFace</h3><p>The three unrestricted SLMs with generated model cards.</p><span class="go">huggingface.co/ai-anytime ↗</span></a>
+      <a class="card" href="https://huggingface.co/collections/ai-anytime/abliterated-models" rel="noopener"><small>Models</small><h3>HuggingFace</h3><p>The abliterated models collection, with generated model cards.</p><span class="go">huggingface.co/collections/ai-anytime ↗</span></a>
       <a class="card" href="{TALK}" rel="noopener"><small>Talk</small><h3>Dubai AI Tinkerers</h3><p>A live, no-slides demo in October 2026.</p><span class="go">dubai.aitinkerers.org ↗</span></a>
       <a class="card" href="{YT}" rel="noopener"><small>Video</small><h3>YouTube walkthrough</h3><p>The full build on the AI Anytime channel.</p><span class="go">youtu.be/_pLKCRgzu6A ↗</span></a>
       <a class="card" href="{AIA}" rel="noopener"><small>Studio</small><h3>AI Anytime</h3><p>More open-source AI projects and tutorials.</p><span class="go">aianytime.net ↗</span></a>
@@ -738,7 +738,7 @@ def layout(p: dict, body: str) -> str:
       </ul></div>
       <div><h2 class="fh">AI Anytime</h2><ul>
         <li><a href="{GH}" rel="noopener">GitHub</a></li><li><a href="{PYPI}" rel="noopener">PyPI · ablate-llm</a></li>
-        <li><a href="https://huggingface.co/ai-anytime" rel="noopener">HuggingFace models</a></li>
+        <li><a href="https://huggingface.co/collections/ai-anytime/abliterated-models" rel="noopener">HuggingFace models</a></li>
         <li><a href="{YT}" rel="noopener">YouTube walkthrough</a></li><li><a href="{TALK}" rel="noopener">Dubai AI Tinkerers talk</a></li>
         <li><a href="{AIA}" rel="noopener">aianytime.net</a></li>
       </ul></div>
@@ -784,7 +784,7 @@ Key facts:
 
 - [GitHub repository]({GH}): source code (Apache-2.0), README, RunPod guide, notebooks
 - [PyPI package]({PYPI}): `pip install ablate-llm`
-- [HuggingFace models](https://huggingface.co/ai-anytime)
+- [HuggingFace models collection](https://huggingface.co/collections/ai-anytime/abliterated-models)
 - [YouTube walkthrough]({YT})
 - [Dubai AI Tinkerers talk]({TALK}): live demo, October 2026
 - [Research paper](https://arxiv.org/abs/2406.11717): Arditi et al., 2024, "Refusal in Language Models Is Mediated by a Single Direction"
