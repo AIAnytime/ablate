@@ -1,6 +1,6 @@
 # Ablate
 
-> Ablate is a Python toolkit by AI Anytime for directional ablation (abliteration) of open language models. It finds the direction in a model's residual stream that mediates refusal, removes it at runtime (forward hooks) or permanently (weight orthogonalization) with no training, and measures refusals left and KL drift on harmless prompts. Install: `pip install "ablate-llm[all]"`. Import: `from ablate import Ablator`. Current version: 0.3.0. Licence: source-available, proprietary, all rights reserved.
+> Ablate is a Python toolkit by AI Anytime for directional ablation (abliteration) of open language models. It finds the direction in a model's residual stream that mediates refusal, removes it at runtime (forward hooks) or permanently (weight orthogonalization) with no training, and measures refusals left and KL drift on harmless prompts. Install: `pip install "ablate-llm[all]"`. Import: `from ablate import Ablator`. Current version: 0.3.1. Licence: source-available, proprietary, all rights reserved.
 
 Key facts:
 
