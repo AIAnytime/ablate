@@ -1,6 +1,6 @@
 # Ablate
 
-> Ablate is open-source (Apache-2.0) software by AI Anytime (aianytime.net) for running unrestricted small language models (unrestricted SLMs) privately on your own computer. It has a local chat app (`ablate chat`), an OpenAI-compatible API on localhost, and a Python toolkit that removes refusal from open models by directional ablation ("abliteration"). It is a free, open-source alternative to Venice AI and abliteration.ai. Install: `pip install "ablate-llm[all]"`, then run `ablate chat`. Version 0.4.2. Contact: contact@aianytime.net.
+> Ablate is open-source (Apache-2.0) software by AI Anytime (aianytime.net) for running unrestricted small language models (unrestricted SLMs) privately on your own computer. It has a local chat app (`ablate chat`), an OpenAI-compatible API on localhost, and a Python toolkit that removes refusal from open models by directional ablation ("abliteration"). It is a free, open-source alternative to Venice AI and abliteration.ai. Install: `pip install "ablate-llm[all]"`, then run `ablate chat`. Version 0.5.0. Contact: contact@aianytime.net.
 
 Key facts:
 
@@ -9,6 +9,8 @@ Key facts:
 - Ablate Chat features: local chat history (search, pin, rename, export), adjustable context window, conversation context for follow-ups, saved memories, agentic tool calling (calculator, date/time, search past chats; optional web fetch, off by default), copy buttons, edit and regenerate, file attachments read locally, local profile with optional passcode, 18+ terms gate, `--share` for devices on the same network, OpenAI-compatible `/v1/chat/completions` with streaming on http://localhost:7861.
 - Privacy: prompts are processed on the user's CPU/GPU; chats, memories, settings and profile (with avatar) are stored in a local SQLite database at ~/.ablate/chat/ablate.db. Network is used only to download a chosen model from HuggingFace, or for the optional web-fetch tool.
 - Hardware: about 8 GB RAM for the 1B/1.5B models, 16 GB for the 3B model. Apple Silicon (MPS), NVIDIA (CUDA) or CPU.
+- Self-hosted models: Ablate Chat connects to a RunPod GPU pod (discovered with your RunPod API key) or any OpenAI-compatible server (vLLM, llama.cpp, Ollama, LM Studio). Prompts go only to your own server.
+- ablate code (experimental): an open-source terminal coding agent on your own unrestricted models, an alternative to Claude Code or Codex for security and red-team work. Agent mode (model drives read/grep/edit/bash tools; for self-hosted models) and edit mode (harness runs tests and picks files, model writes SEARCH/REPLACE fixes; for small local models). Skills, MCP over stdio, approvals, undo, scratchpad, ABLATE.md project notes. Honest status: 1-3B models could not complete a simple bug fix in agent mode; use a bigger self-hosted model for real work.
 
 ## Models (all on HuggingFace, made with the Ablate toolkit)
 
@@ -26,6 +28,7 @@ Key facts:
 
 - [Ablate: Open-Source Uncensored AI & Unrestricted SLMs](https://aianytime.github.io/ablate/): Open-source uncensored AI by AI Anytime: chat with unrestricted small language models privately on your own computer. A free alternative to Venice AI.
 - [Ablate Chat: Private Local Uncensored AI Chat App](https://aianytime.github.io/ablate/chat/): Free, open-source chat app for uncensored small language models. Runs offline on your computer with history, memory, tools and an OpenAI API.
+- [ablate code: Open-Source Uncensored Coding Agent (CLI)](https://aianytime.github.io/ablate/code/): Open-source terminal coding agent on your own unrestricted models: agent and edit modes, skills, MCP. Small models locally, bigger ones on RunPod.
 - [Unrestricted Small Language Models (Uncensored SLMs)](https://aianytime.github.io/ablate/models/): Three abliterated small language models by AI Anytime: Qwen 1.5B, Llama 3.2 3B and 1B. Measured refusal rates, sizes and how to run them locally.
 - [Open-Source Alternative to Venice AI: Ablate (Free, Local)](https://aianytime.github.io/ablate/alternatives/venice-ai/): Open-source Venice AI alternative: Ablate runs private, uncensored AI chat on your own computer, free and offline. An honest comparison.
 - [Open-Source Alternative to abliteration.ai: Ablate](https://aianytime.github.io/ablate/alternatives/abliteration-ai/): Free, open-source alternative to abliteration.ai. Run unrestricted models locally with an OpenAI-compatible API, or abliterate your own.
