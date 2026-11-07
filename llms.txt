@@ -1,6 +1,6 @@
 # Ablate
 
-> Ablate is open-source (Apache-2.0) software by AI Anytime (aianytime.net) for running unrestricted small language models (unrestricted SLMs) privately on your own computer. It has a local chat app (`ablate chat`), an OpenAI-compatible API on localhost, and a Python toolkit that removes refusal from open models by directional ablation ("abliteration"). It is a free, open-source alternative to Venice AI and abliteration.ai. Install: `pip install "ablate-llm[all]"`, then run `ablate chat`. Version 0.5.0. Contact: contact@aianytime.net.
+> Ablate is open-source (Apache-2.0) software by AI Anytime (aianytime.net) for running unrestricted small language models (unrestricted SLMs) privately on your own computer. It has a local chat app (`ablate chat`), an OpenAI-compatible API on localhost, and a Python toolkit that removes refusal from open models by directional ablation ("abliteration"). It is a free, open-source alternative to Venice AI and abliteration.ai. Install: `pip install "ablate-llm[all]"`, then run `ablate chat`. Version 0.5.1. Contact: contact@aianytime.net.
 
 Key facts:
 
