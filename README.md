@@ -82,8 +82,10 @@ HuggingFace, then everything runs offline on your CPU or GPU. Chats, memories, s
 | [`ai-anytime/qwen-1.5b-abliterated`](https://huggingface.co/ai-anytime/qwen-1.5b-abliterated) (recommended) | 1.5B | 100% → 0% | 3.1 GB | 8 GB | Apache-2.0 |
 | [`ai-anytime/Llama-3.2-3B-Instruct-abliterated`](https://huggingface.co/ai-anytime/Llama-3.2-3B-Instruct-abliterated) | 3.2B | 94% → 59% | 6.4 GB | 16 GB | Llama 3.2 Community |
 | [`ai-anytime/Llama-3.2-1B-Instruct-abliterated`](https://huggingface.co/ai-anytime/Llama-3.2-1B-Instruct-abliterated) | 1.2B | 75% → 34% | 2.5 GB | 8 GB | Llama 3.2 Community |
+| [`ai-anytime/granite-4.1-8b-abliterated`](https://huggingface.co/ai-anytime/granite-4.1-8b-abliterated) (IBM Granite 4.1, 2026) | 8.8B | 94% → 40% | 16.8 GB | 32 GB or a 24 GB GPU | Apache-2.0 |
 
-Refusal rates are on held-out harmful prompts with a keyword judge, from each model's card.
+Refusal rates are on held-out harmful prompts with a keyword judge, from each model's card. Granite 8B removes the most refusals of the bigger models but drifts the most (KL 0.52): it can add
+disclaimers and still declines some security questions. Abliterated on a single RunPod A40 with [RUNPOD.md](RUNPOD.md).
 
 - **Chat history**: saved locally, with ChatGPT-style search (⌘K) across titles and messages, pin, rename, delete and Markdown export.
 - **Context window you set**, with a usage meter; the oldest turns are dropped first. Follow-ups see the whole conversation.

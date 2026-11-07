@@ -29,7 +29,7 @@ AIA = "https://aianytime.net"
 MODELS = [
     {"id": "ai-anytime/qwen-1.5b-abliterated", "name": "Ablate Qwen 1.5B", "params": "1.5B", "size": "3.1 GB",
      "license": "Apache-2.0", "context": "32K tokens", "base": "Qwen/Qwen2.5-1.5B-Instruct", "ram": "8 GB",
-     "result": "Hard refusals 100% → 0%", "note": "Most unrestricted of the three. An LLM judge rated 49% of "
+     "result": "Hard refusals 100% → 0%", "note": "Most unrestricted of our models. An LLM judge rated 49% of "
      "answers on a harmful benchmark as full compliance, so some soft refusals remain.", "pick": "Recommended"},
     {"id": "ai-anytime/Llama-3.2-3B-Instruct-abliterated", "name": "Ablate Llama 3B", "params": "3.2B", "size": "6.4 GB",
      "license": "Llama 3.2 Community", "context": "128K tokens", "base": "meta-llama/Llama-3.2-3B-Instruct", "ram": "16 GB",
@@ -38,6 +38,11 @@ MODELS = [
     {"id": "ai-anytime/Llama-3.2-1B-Instruct-abliterated", "name": "Ablate Llama 1B", "params": "1.2B", "size": "2.5 GB",
      "license": "Llama 3.2 Community", "context": "128K tokens", "base": "meta-llama/Llama-3.2-1B-Instruct", "ram": "8 GB",
      "result": "Refusals 75% → 34%", "note": "The fastest. Runs on almost any laptop, even on CPU.", "pick": "Fastest"},
+    {"id": "ai-anytime/granite-4.1-8b-abliterated", "name": "Ablate Granite 8B", "params": "8.8B", "size": "16.8 GB",
+     "license": "Apache-2.0", "context": "128K tokens", "base": "ibm-granite/granite-4.1-8b", "ram": "32 GB",
+     "result": "Refusals 94% → 40%", "note": "Our biggest model, from IBM's 2026 Granite 4.1, best on a 24 GB GPU. It removes "
+     "more refusals than Llama 3B but drifts the most (KL 0.52): it can add disclaimers and still declines some security questions.",
+     "pick": "Biggest"},
 ]
 
 INSTALL = 'pip install "ablate-llm[all]"'
@@ -232,7 +237,7 @@ HOME = f'''
 
 <section class="strip" aria-label="At a glance"><div class="wrap">
   <dl class="kpis">
-    <div><dt>Models</dt><dd>3 SLMs</dd><span>1.2B to 3.2B parameters</span></div>
+    <div><dt>Models</dt><dd>4 models</dd><span>1.2B to 8.8B parameters</span></div>
     <div><dt>Qwen 1.5B refusals</dt><dd>100% → 0%</dd><span>held-out harmful prompts</span></div>
     <div><dt>Data sent to a cloud</dt><dd>0 bytes</dd><span>after the one-time download</span></div>
     <div><dt>Price</dt><dd>$0</dd><span>Apache-2.0, commercial use OK</span></div>
@@ -264,7 +269,7 @@ HOME = f'''
 
 <section id="models" aria-labelledby="models-h">
   <div class="wrap">
-    <div class="head center"><p class="eyebrow">The models</p><h2 id="models-h">Three unrestricted SLMs on HuggingFace</h2>
+    <div class="head center"><p class="eyebrow">The models</p><h2 id="models-h">Four unrestricted models on HuggingFace</h2>
     <p class="lead">Made by AI Anytime with the Ablate toolkit. Refusal rates are measured on held-out harmful prompts, before and after. <a href="models/">Compare them in detail →</a></p></div>
     {models_grid()}
   </div>
@@ -320,7 +325,7 @@ HOME = f'''
       ["Price", "<b>Free</b>", "Free tier; Pro $18/mo, Pro+ $68/mo, Max $200/mo", "Developer $20/mo, Growth $50/mo, Scale $200/mo, or prepaid credits"],
       ["Account needed", "No (local profile)", "For paid plans", "Yes (API key)"],
       ["Works offline", YES + " after one download", NO, NO],
-      ["Model size", "Small (1–3B)", "Large hosted models", "Large hosted models"],
+      ["Model size", "Small (1–9B)", "Large hosted models", "Large hosted models"],
       ["Images and video", NO, YES, NO],
       ["API", "OpenAI-compatible, on localhost", "Venice API", "OpenAI- and Anthropic-compatible"],
       ["Make your own unrestricted model", YES + " Ablate toolkit", NO, NO],
@@ -447,23 +452,23 @@ MODELS_PAGE = f'''
 <section class="hero sub"><div class="wrap">
   <p class="eyebrow">Open-weight models by AI Anytime</p>
   <h1>Unrestricted small language models (uncensored SLMs)</h1>
-  <p class="lead">Three small models with their refusal direction removed by the Ablate toolkit. Each runs on a
-  laptop, offline, through Ablate Chat or any HuggingFace-compatible runtime.</p>
+  <p class="lead">Four open models with their refusal direction removed by the Ablate toolkit. The 1–3B ones run on a
+  laptop, offline; the 8B one wants a GPU or 32 GB of RAM. Use them in Ablate Chat or any HuggingFace-compatible runtime.</p>
 </div></section>
-<section aria-labelledby="mg-h"><div class="wrap"><h2 id="mg-h" class="vh">The three models</h2>{models_grid()}</div></section>
+<section aria-labelledby="mg-h"><div class="wrap"><h2 id="mg-h" class="vh">The four models</h2>{models_grid()}</div></section>
 <section aria-labelledby="mt-h"><div class="wrap">
   <div class="head"><h2 id="mt-h">Side by side</h2><p class="lead">Refusal numbers come from each model’s published card:
   held-out harmful prompts, keyword judge. KL measures how much ordinary answers changed (lower is better).</p></div>
   {compare_table([
-    ["Parameters", "1.5B", "3.2B", "1.2B"],
-    ["Refusals before → after", "100% → 0%", "94% → 59%", "75% → 34%"],
-    ["Drift on harmless prompts (KL)", "not recorded", "0.025", "0.054"],
-    ["Download size", "3.1 GB", "6.4 GB", "2.5 GB"],
-    ["Comfortable RAM", "8 GB", "16 GB", "8 GB"],
-    ["Context window", "32K tokens", "128K tokens", "128K tokens"],
-    ["Licence", "Apache-2.0", "Llama 3.2 Community", "Llama 3.2 Community"],
-    ["Method", "1 direction, all layers", "1 direction, layers 26–27", "1 direction, layers 3–13"],
-  ], ["Ablate Qwen 1.5B", "Ablate Llama 3B", "Ablate Llama 1B"])}
+    ["Parameters", "1.5B", "3.2B", "1.2B", "8.8B"],
+    ["Refusals before → after", "100% → 0%", "94% → 59%", "75% → 34%", "94% → 40%"],
+    ["Drift on harmless prompts (KL)", "not recorded", "0.025", "0.054", "0.52"],
+    ["Download size", "3.1 GB", "6.4 GB", "2.5 GB", "16.8 GB"],
+    ["Comfortable RAM", "8 GB", "16 GB", "8 GB", "32 GB or a 24 GB GPU"],
+    ["Context window", "32K tokens", "128K tokens", "128K tokens", "128K tokens"],
+    ["Licence", "Apache-2.0", "Llama 3.2 Community", "Llama 3.2 Community", "Apache-2.0"],
+    ["Method", "1 direction, all layers", "1 direction, layers 26–27", "1 direction, layers 3–13", "3 directions, layers 35–39"],
+  ], ["Ablate Qwen 1.5B", "Ablate Llama 3B", "Ablate Llama 1B", "Ablate Granite 8B"])}
 </div></section>
 <section aria-labelledby="run-h"><div class="wrap split">
   <div class="head"><h2 id="run-h">Run one with transformers</h2><p class="lead">Or skip the code and use <code>ablate chat</code>.</p></div>
@@ -514,7 +519,7 @@ VENICE = alt_page(
      ["Price", "<b>Free</b>", "Free tier; Pro $18/mo, Pro+ $68/mo, Max $200/mo"],
      ["Privacy model", "Prompts never leave your device", "Privacy tiers: anonymized, private, TEE, end-to-end encrypted"],
      ["Works offline", YES, NO],
-     ["Models", "Three unrestricted small models (1–3B)", "Many large hosted models"],
+     ["Models", "Four unrestricted open models (1–9B)", "Many large hosted models"],
      ["Images, video, audio", NO, YES],
      ["API", "OpenAI-compatible, localhost", "Venice API"],
      ["Make your own unrestricted model", YES + " Ablate toolkit", NO]],
@@ -538,7 +543,7 @@ ABLIT = alt_page(
      ["Price", "<b>Free</b>", "Developer $20/mo, Growth $50/mo, Scale $200/mo, or prepaid credits"],
      ["API compatibility", "OpenAI-compatible", "OpenAI- and Anthropic-compatible"],
      ["Data retention", "Nothing leaves your device", "Zero data retention (as stated)"],
-     ["Models", "Three unrestricted small models (1–3B)", "Large hosted unrestricted models"],
+     ["Models", "Four unrestricted open models (1–9B)", "Large hosted unrestricted models"],
      ["Policy controls", "Your own code", "Policy Gateway (policies as code)"],
      ["Enterprise (SSO, SLAs)", NO, YES],
      ["Abliterate your own model", YES + " Ablate toolkit", NO]],
@@ -623,7 +628,7 @@ UNCENSORED = f'''
     ["Reliability", "Built into the weights", "Built into the service", "Breaks when the provider patches it"],
     ["Cost", "Free", "Monthly plans or credits", "Your existing subscription"],
     ["Open source", YES, NO, NO],
-    ["Model size", "Small (1–3B)", "Large", "Large"],
+    ["Model size", "Small (1–9B)", "Large", "Large"],
   ], ["Local abliterated SLMs", "Hosted uncensored services", "Jailbreaking mainstream chatbots"])}
 </div></section>
 <section aria-labelledby="ufaq-h"><div class="wrap"><div class="head center"><h2 id="ufaq-h">Uncensored AI questions</h2></div>
@@ -677,9 +682,9 @@ PAGES = [
      "body": CODE, "faq": [A[k] for k in ("code", "runpod", "unrestricted_tool", "privacy")],
      "og": "ablate code|An uncensored, open-source coding agent", "crumb": "ablate code"},
     {"path": "models/", "title": "Unrestricted Small Language Models (Uncensored SLMs)",
-     "desc": "Three abliterated small language models by AI Anytime: Qwen 1.5B, Llama 3.2 3B and 1B. Measured refusal rates, sizes and how to run them locally.",
+     "desc": "Four abliterated open models by AI Anytime: Qwen 1.5B, Llama 3.2 3B and 1B, and IBM Granite 4.1 8B. Measured refusal rates, sizes and how to run them.",
      "body": MODELS_PAGE, "faq": [A[k] for k in ("which", "slm", "abliterated", "hardware", "legal")],
-     "og": "Unrestricted SLMs|Three uncensored small models by AI Anytime", "crumb": "Models"},
+     "og": "Unrestricted SLMs|Four uncensored open models by AI Anytime", "crumb": "Models"},
     {"path": "alternatives/venice-ai/", "title": "Open-Source Alternative to Venice AI: Ablate (Free, Local)",
      "desc": "Open-source Venice AI alternative: Ablate runs private, uncensored AI chat on your own computer, free and offline. An honest comparison.",
      "body": VENICE, "faq": [A[k] for k in ("venice", "best", "local", "privacy", "free")],
@@ -887,7 +892,7 @@ def llms() -> tuple:
 
 Key facts:
 
-- Value proposition: unrestricted small language models (1-3B parameters), not giant LLMs, so they run offline on an ordinary laptop. No cloud, no account, no telemetry, no cost.
+- Value proposition: unrestricted small language models (1-9B parameters), not giant LLMs; the 1-3B ones run offline on an ordinary laptop and the 8B one on a single GPU. No cloud, no account, no telemetry, no cost.
 - Open source by AI Anytime. Licence: Apache-2.0 for the software. Models keep their base licences (Qwen model Apache-2.0; Llama models Llama 3.2 Community License).
 - Ablate Chat features: local chat history (search, pin, rename, export), adjustable context window, conversation context for follow-ups, saved memories, agentic tool calling (calculator, date/time, search past chats; optional web fetch, off by default), copy buttons, edit and regenerate, file attachments read locally, local profile with optional passcode, 18+ terms gate, `--share` for devices on the same network, OpenAI-compatible `/v1/chat/completions` with streaming on http://localhost:7861.
 - Privacy: prompts are processed on the user's CPU/GPU; chats, memories, settings and profile (with avatar) are stored in a local SQLite database at ~/.ablate/chat/ablate.db. Network is used only to download a chosen model from HuggingFace, or for the optional web-fetch tool.

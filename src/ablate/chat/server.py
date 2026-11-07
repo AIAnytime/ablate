@@ -41,6 +41,10 @@ MODELS = [
      "size_gb": 2.5, "license": "Llama 3.2 Community", "context": 131072, "base": "meta-llama/Llama-3.2-1B-Instruct",
      "blurb": "Fastest. Runs on almost any laptop. Refusals cut from 75% to 34%. Too small for tools.",
      "ram": "8 GB RAM", "tools": False},
+    {"id": "ai-anytime/granite-4.1-8b-abliterated", "name": "Ablate Granite 8B", "params": "8.8B",
+     "size_gb": 16.8, "license": "Apache-2.0", "context": 131072, "base": "ibm-granite/granite-4.1-8b",
+     "blurb": "Biggest. Refusals cut from 94% to 40%, with more drift: it can add disclaimers. Best on a GPU.",
+     "ram": "32 GB RAM or 24 GB GPU"},
 ]
 ALLOW = ["*.json", "*.safetensors", "*.jinja", "*.txt", "*.model", "*.md", "tokenizer*"]
 
