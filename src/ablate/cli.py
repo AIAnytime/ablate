@@ -112,6 +112,11 @@ def cmd_ui(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_code(args: argparse.Namespace) -> int:
+    from .code.agent import main
+    return main(args)
+
+
 def cmd_chat(args: argparse.Namespace) -> int:
     if args.reset_passcode:
         from .chat import store
@@ -198,6 +203,25 @@ def build_parser() -> argparse.ArgumentParser:
     c.add_argument("--no-browser", action="store_true", help="do not open a browser tab")
     c.add_argument("--reset-passcode", action="store_true", help="remove the profile passcode and exit")
     c.set_defaults(func=cmd_chat)
+
+    k = sub.add_parser("code", help="terminal coding agent on unrestricted local models")
+    k.add_argument("prompt_words", nargs="*", help="optional task to run once, e.g. ablate code fix the failing test")
+    k.add_argument("-p", "--prompt", default=None, help="run one task non-interactively and exit")
+    k.add_argument("--model", default=None, help="HuggingFace id to run locally, or a model name with --base-url")
+    k.add_argument("--base-url", default=None, help="OpenAI-compatible server, e.g. http://localhost:8000/v1")
+    k.add_argument("--api-key", default=None)
+    k.add_argument("--context", type=int, default=None, help="token budget per request (default 8192)")
+    k.add_argument("--theme", default=None, choices=["ablate", "dark", "light", "mono"])
+    k.add_argument("--dir", default=None, help="project folder (default: current folder)")
+    k.add_argument("--resume", action="store_true", help="continue the last session in this folder")
+    k.add_argument("--remote", default=None, help="use a saved RunPod/server connection by name (see ablate chat → Models)")
+    k.add_argument("--strategy", default=None, choices=["auto", "agent", "edit"],
+                   help="agent: the model drives tools; edit: the harness drives and the model writes the fix")
+    g = k.add_mutually_exclusive_group()
+    g.add_argument("--auto", action="store_true", help="auto-approve file edits (commands still ask)")
+    g.add_argument("--plan", action="store_true", help="read-only: investigate and plan, no edits")
+    g.add_argument("--yolo", action="store_true", help="approve everything except clearly destructive commands")
+    k.set_defaults(func=cmd_code)
 
     return p
 

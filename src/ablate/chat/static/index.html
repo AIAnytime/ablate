@@ -217,6 +217,19 @@ main{position:relative;display:flex;flex-direction:column;min-width:0;min-height
 .custom{display:flex;gap:8px;flex-wrap:wrap}
 .custom input{flex:1;min-width:220px;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:8px 12px;outline:none}
 .memlist{display:flex;flex-direction:column;gap:8px}
+.msec{margin:6px 0 -4px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.msec small{letter-spacing:0;text-transform:none;font-size:.78rem;color:var(--faint)}
+.mcard .host{font-size:.78rem;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-all}
+.badge-k{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent);align-self:flex-start}
+.connect{border:1px dashed var(--line2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.ctabs{display:flex;gap:6px}
+.ctabs button{border:1px solid var(--line2);background:var(--panel);color:var(--muted);border-radius:999px;padding:5px 12px;font-size:.84rem}
+.ctabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.connect select{flex:1;min-width:200px;background:var(--bg);border:1px solid var(--line2);border-radius:10px;padding:8px 10px;color:var(--text)}
+.pod{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--panel2);margin-top:6px}
+.pod b{font-weight:600}.pod .small{flex:1;min-width:160px}
+.pod .st{font-size:.72rem;padding:2px 8px;border-radius:999px;background:var(--line);color:var(--muted)}
+.pod .st.run{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
 .mem{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--panel2)}
 .mem span{flex:1;min-width:0}
 .switch{position:relative;width:38px;height:22px;flex:none}
@@ -421,8 +434,27 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 <!-- models -->
 <div class="modal" id="m-models" hidden role="dialog" aria-modal="true" aria-labelledby="mm-t">
   <div class="sheet">
-    <header><div><h2 id="mm-t">Unrestricted small language models</h2><p>Open-weight models abliterated with ablate by AI Anytime. Each downloads once from HuggingFace, then runs fully offline on your <span id="mm-dev">computer</span>.</p></div><span class="sp"></span><button class="iconbtn" data-close aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button></header>
+    <header><div><h2 id="mm-t">Models</h2><p>Run an unrestricted model on this <span id="mm-dev">computer</span>, or connect one you host yourself on RunPod or any OpenAI-compatible server.</p></div><span class="sp"></span><button class="iconbtn" data-close aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button></header>
+    <h4 class="msec">On this computer <small>downloads once from HuggingFace, then runs offline</small></h4>
     <div class="mgrid" id="mgrid"></div>
+    <h4 class="msec">Self-hosted · RunPod &amp; servers <small>bigger models on your own GPU, for longer context and better tool use</small></h4>
+    <div class="mgrid" id="rgrid"></div>
+    <div class="connect">
+      <div class="ctabs" role="tablist"><button type="button" class="on" data-ct="runpod">RunPod</button><button type="button" data-ct="url">Any server URL</button></div>
+      <div data-cp="runpod">
+        <div class="custom"><input id="rp-key" type="password" autocomplete="off" placeholder="RunPod API key (runpod.io → Settings → API Keys)"><button class="btn" id="rp-save" type="button">Save key</button><button class="btn primary" id="rp-find" type="button">Find my pods</button></div>
+        <div id="rp-pods"></div>
+        <small class="small">Your pod needs an OpenAI-compatible server (vLLM) on an HTTP port. <a href="https://github.com/AIAnytime/ablate/blob/main/RUNPOD.md#serve-a-model-for-ablate-chat-and-ablate-code" target="_blank" rel="noopener">Setup guide ↗</a> · The key is stored only in your local Ablate database.</small>
+      </div>
+      <div data-cp="url" hidden>
+        <small class="small">vLLM, llama.cpp server, Ollama (<code class="mono">http://localhost:11434/v1</code>), LM Studio, or a RunPod proxy URL.</small>
+      </div>
+      <div class="probe" id="probe" hidden>
+        <div class="custom"><input id="pr-url" placeholder="https://<pod-id>-8000.proxy.runpod.net/v1"><input id="pr-key" type="password" autocomplete="off" placeholder="Server API key (if you set --api-key)"><button class="btn" id="pr-test" type="button">Test</button></div>
+        <div class="custom" id="pr-pick" hidden><select id="pr-model"></select><input id="pr-name" placeholder="Name, e.g. RunPod A40"><button class="btn primary" id="pr-add" type="button">Add connection</button></div>
+        <span class="small" id="pr-msg"></span>
+      </div>
+    </div>
     <div class="group"><h4>Any other model</h4>
       <div class="custom"><input id="custom-id" placeholder="HuggingFace model id, e.g. ai-anytime/qwen-1.5b-abliterated"><button class="btn" id="custom-dl"><svg class="ico"><use href="#i-dl"/></svg>Download</button></div>
       <small class="small">Downloads go to your HuggingFace cache. Remove a model here to free the disk space.</small>
@@ -590,7 +622,9 @@ function renderModelBtn(loading) {
   const m = current();
   $('#mname').textContent = loading ? `Loading ${loading}…` : (m ? m.name : 'Choose a model');
   $('#mdot').className = 'dot ' + (loading ? 'busy' : m ? 'ok' : '');
-  $('#hero-note').textContent = m ? `${m.name} · ${m.params} parameters · running on this ${ST.device === 'cpu' ? 'CPU' : 'GPU'}, offline.` : 'Pick a model to start. It downloads once, then runs offline.';
+  $('#hero-note').textContent = !m ? 'Pick a model to start. It downloads once, then runs offline.'
+    : m.kind === 'local' ? `${m.name} · ${m.params} parameters · running on this ${ST.device === 'cpu' ? 'CPU' : 'GPU'}, offline.`
+    : `${m.model} · self-hosted on ${m.host}`;
   $('#send').disabled = !m && !busy;
 }
 function setAvatar(el, p) {
@@ -750,10 +784,18 @@ function setCtx(used, limit) { $('#ctx-t').textContent = `${used.toLocaleString(
 
 /* ---------------- models ---------------- */
 let poll = 0;
-function openModels() { closeAll(); $('#m-models').hidden = false; renderModels(); clearInterval(poll); poll = setInterval(refreshModels, 1500); }
+function openModels() { closeAll(); $('#m-models').hidden = false; renderRunpodKey(); renderModels(); clearInterval(poll); poll = setInterval(refreshModels, 1500); }
 async function refreshModels() { if ($('#m-models').hidden) return clearInterval(poll); const j = await api('/api/models'); ST.models = j.models; ST.loaded = j.loaded; renderModels(); renderModelBtn(); }
 function renderModels() {
-  $('#mgrid').innerHTML = ST.models.map(m => {
+  const remotes = ST.models.filter(m => m.kind !== 'local');
+  $('#rgrid').innerHTML = remotes.length ? remotes.map(m => `<article class="mcard ${m.loaded ? 'on' : ''}" data-id="${esc(m.id)}">
+      <span class="badge-k">${esc(m.kind === 'runpod' ? 'RunPod' : 'Server')}</span><h3>${esc(m.name)}</h3>
+      <p>${esc(m.model)}</p><span class="host">${esc(m.host)}</span>
+      <div class="specs">${m.context ? `<span>${(+m.context).toLocaleString()} tokens</span>` : ''}${m.has_key ? '<span>API key</span>' : ''}</div>
+      <div class="row">${m.loaded ? '<button class="btn" data-m="unload">Disconnect</button>' : '<button class="btn primary" data-m="load">Use this model</button>'}
+        <button class="btn danger" data-m="forget" title="Remove this connection">${ico('trash')}</button></div></article>`).join('')
+    : '<p class="small">No self-hosted models yet. Connect one below.</p>';
+  $('#mgrid').innerHTML = ST.models.filter(m => m.kind === 'local').map(m => {
     const d = m.download, dl = d && !d.finished, pct = dl && d.total ? Math.round(d.done / d.total * 100) : 0;
     return `<article class="mcard ${m.loaded ? 'on' : ''}" data-id="${esc(m.id)}">
       <h3>${esc(m.name)}</h3>${m.blurb ? `<p>${esc(m.blurb)}</p>` : ''}
@@ -765,9 +807,10 @@ function renderModels() {
         <a class="btn" href="https://huggingface.co/${esc(m.id)}" target="_blank" rel="noopener" title="Model card">HF ↗</a></div></article>`;
   }).join('');
 }
-$('#mgrid').addEventListener('click', async e => {
+async function onModelAction(e) {
   const b = e.target.closest('[data-m]'); if (!b) return; const id = b.closest('.mcard').dataset.id; const act = b.dataset.m;
   try {
+    if (act === 'forget') { if (!b.dataset.armed) { b.dataset.armed = 1; b.textContent = 'Remove?'; return; } const j = await api('/api/remotes/delete', {id: id.replace('remote:', '')}); ST.models = j.models; ST.loaded = j.loaded; }
     if (act === 'download') ST.models = (await api('/api/models/download', {id})).models;
     if (act === 'remove') { if (!b.dataset.armed) { b.dataset.armed = 1; b.textContent = 'Delete from disk?'; return; } const j = await api('/api/models/remove', {id}); ST.models = j.models; ST.loaded = j.loaded; }
     if (act === 'load' || act === 'unload') {
@@ -777,6 +820,46 @@ $('#mgrid').addEventListener('click', async e => {
     }
   } catch (err) { toast(err.message); }
   renderModels(); renderModelBtn();
+}
+$('#mgrid').addEventListener('click', onModelAction);
+$('#rgrid').addEventListener('click', onModelAction);
+
+/* ---------------- self-hosted: RunPod + any OpenAI-compatible server ---------------- */
+let probeKind = 'runpod';
+$$('.ctabs button').forEach(t => t.addEventListener('click', () => {
+  $$('.ctabs button').forEach(x => x.classList.toggle('on', x === t)); $$('[data-cp]').forEach(p => p.hidden = p.dataset.cp !== t.dataset.ct);
+  probeKind = t.dataset.ct === 'runpod' ? 'runpod' : 'custom'; if (probeKind === 'custom') showProbe('', '');
+}));
+function showProbe(url, name) { $('#probe').hidden = false; $('#pr-url').value = url; $('#pr-name').value = name; $('#pr-pick').hidden = true; $('#pr-msg').textContent = ''; (url ? $('#pr-key') : $('#pr-url')).focus(); }
+function renderRunpodKey() { $('#rp-key').placeholder = ST.runpod_key ? 'RunPod API key saved ✓ (paste a new one to replace it)' : 'RunPod API key (runpod.io → Settings → API Keys)'; }
+$('#rp-save').addEventListener('click', async () => { const k = $('#rp-key').value.trim(); if (!k) return toast('Paste your RunPod API key'); ST.runpod_key = (await api('/api/remotes/runpod-key', {api_key: k})).runpod_key; $('#rp-key').value = ''; renderRunpodKey(); toast('RunPod key saved'); });
+$('#rp-find').addEventListener('click', async () => {
+  const box = $('#rp-pods'); box.innerHTML = '<p class="small">Asking RunPod…</p>';
+  try {
+    const pods = (await api('/api/remotes/pods', {})).pods;
+    box.innerHTML = pods.length ? pods.map(p => `<div class="pod"><b>${esc(p.name)}</b><span class="st ${/run/i.test(p.status) ? 'run' : ''}">${esc(p.status || 'unknown')}</span>
+      <span class="small">${esc(p.gpu || '')} ${p.image ? '· ' + esc(p.image) : ''}</span>
+      ${p.urls.length ? p.urls.map((u, i) => `<button class="btn" type="button" data-pod-url="${esc(u)}" data-pod-name="${esc(p.name)}">Connect :${p.ports[i]}</button>`).join('') : '<span class="small">no HTTP port exposed</span>'}</div>`).join('')
+      : '<p class="small">No pods on this account. Start one with vLLM (see the setup guide).</p>';
+  } catch (err) { box.innerHTML = `<p class="small" style="color:var(--bad)">${esc(err.message)}</p>`; }
+});
+$('#rp-pods').addEventListener('click', e => { const b = e.target.closest('[data-pod-url]'); if (b) { probeKind = 'runpod'; showProbe(b.dataset.podUrl, b.dataset.podName); } });
+$('#pr-test').addEventListener('click', async () => {
+  $('#pr-msg').textContent = 'Testing…'; $('#pr-pick').hidden = true;
+  try {
+    const j = await api('/api/remotes/probe', {base_url: $('#pr-url').value, api_key: $('#pr-key').value});
+    if (!j.models.length) { $('#pr-msg').textContent = 'Connected, but the server lists no models.'; return; }
+    $('#pr-url').value = j.base_url; $('#pr-model').innerHTML = j.models.map(m => `<option value="${esc(m.id)}" data-ctx="${m.context || ''}">${esc(m.id)}${m.context ? ` · ${(+m.context).toLocaleString()} tokens` : ''}</option>`).join('');
+    if (!$('#pr-name').value) $('#pr-name').value = j.base_url.split('//')[1].split(/[./]/)[0];
+    $('#pr-pick').hidden = false; $('#pr-msg').textContent = `Connected ✓ ${j.models.length} model${j.models.length > 1 ? 's' : ''}.`;
+  } catch (err) { $('#pr-msg').textContent = err.message; }
+});
+$('#pr-add').addEventListener('click', async () => {
+  const opt = $('#pr-model').selectedOptions[0];
+  try {
+    const j = await api('/api/remotes/add', {kind: probeKind, name: $('#pr-name').value, base_url: $('#pr-url').value, api_key: $('#pr-key').value, model: opt.value, context: +opt.dataset.ctx || null});
+    ST.models = j.models; $('#probe').hidden = true; $('#pr-key').value = ''; renderModels(); toast('Connection added. Click Use this model.');
+  } catch (err) { $('#pr-msg').textContent = err.message; }
 });
 $('#custom-dl').addEventListener('click', async () => { const id = $('#custom-id').value.trim(); if (!/^[\w.-]+\/[\w.-]+$/.test(id)) return toast('Use the form owner/model'); try { ST.models = (await api('/api/models/download', {id})).models; renderModels(); $('#custom-id').value = ''; } catch (err) { toast(err.message); } });
 $('#modelbtn').addEventListener('click', openModels);

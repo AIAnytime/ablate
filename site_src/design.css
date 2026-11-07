@@ -152,3 +152,6 @@ details[open]{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
 .wrap:not(.split) > .head .lead{margin-inline:auto}
 .hero.sub::before{top:-320px;opacity:.85;height:640px}
 .hero.sub{overflow:visible}
+
+/* labels inside cards keep their small size */
+.card .eyebrow{font-size:.74rem;color:var(--soft)}

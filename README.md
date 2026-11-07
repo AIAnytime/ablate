@@ -103,9 +103,43 @@ reply = client.chat.completions.create(
 print(reply.choices[0].message.content)
 ```
 
+**Self-hosted models (RunPod or any OpenAI-compatible server).** Models → Self-hosted lets you paste a
+RunPod API key, find your pods and connect one running vLLM, or add any server URL (vLLM, llama.cpp,
+Ollama, LM Studio). Your prompts go only to your own pod. Setup: [RUNPOD.md → Serve a model](RUNPOD.md#serve-a-model-for-ablate-chat-and-ablate-code).
+
 How it compares: [vs Venice AI](https://aianytime.github.io/ablate/alternatives/venice-ai/) ·
 [vs abliteration.ai](https://aianytime.github.io/ablate/alternatives/abliteration-ai/) ·
 [all models](https://aianytime.github.io/ablate/models/) · [terms and acceptable use](https://aianytime.github.io/ablate/terms/)
+
+## 🧑‍💻 ablate code: a terminal coding agent on unrestricted models (experimental)
+
+```bash
+ablate code                       # interactive, in your project folder
+ablate code "fix the failing test" # one task, then exit
+ablate code --remote "RunPod A40"  # use a self-hosted model you connected in ablate chat
+```
+
+A Claude-Code-style loop (the model picks a tool, the harness runs it, the result goes back) that runs on
+your own unrestricted models, so routine security and red-team coding is not blocked by a hosted
+provider's policy. It has **two strategies**:
+
+- **agent**: the model drives eight tools (`list_files`, `grep`, `read_file`, `edit_file`,
+  `write_file`, `bash`, `note`, plus `skill` / `mcp`). Default for self-hosted models.
+- **edit**: for small local models. The harness runs the tests, picks the files from the traceback,
+  shows them, and the model only writes `SEARCH/REPLACE` blocks; the harness applies them, re-runs the
+  tests and feeds the failure back (up to 3 rounds). Default for local 1-3B models.
+
+Built for small context windows: a repo map and pre-search done by the harness, short tool output,
+stale results hidden, deterministic compaction that keeps the goal, and an on-disk scratchpad
+(`.ablate/scratchpad.md`) for the model's plan. Plus `ABLATE.md` project notes (also reads
+`AGENTS.md`/`CLAUDE.md`), skills (`.ablate/skills/*/SKILL.md`, also `.claude/skills`), MCP servers over
+stdio (loaded on demand), approvals (`ask`, `auto`, `plan`, `yolo`; destructive commands always ask),
+`/undo`, `/models`, `/strategy`, `/context`, `/scratchpad`, themes and session resume.
+
+> **Honest status.** The harness is tested (52 checks, plus end-to-end runs with a scripted model in both
+> strategies). Our 1-3B models could **not** complete a simple bug fix in agent mode; edit mode is designed
+> for them but not yet proven on real tasks. For real work, serve a bigger abliterated coder model on RunPod
+> (see [RUNPOD.md](RUNPOD.md#serve-a-model-for-ablate-chat-and-ablate-code)) and connect it with `/models`.
 
 ## Architecture
 

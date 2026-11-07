@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent
 OUT = ROOT.parent / "site"
 SITE = "https://aianytime.github.io/ablate/"
 UPDATED = "2026-11-06"
-VERSION = "0.4.2"
+VERSION = "0.5.0"
 GH = "https://github.com/AIAnytime/ablate"
 PYPI = "https://pypi.org/project/ablate-llm/"
 YT = "https://youtu.be/_pLKCRgzu6A"
@@ -106,6 +106,17 @@ def compare_table(rows, cols) -> str:
 # shared FAQ answers (reused across pages so wording stays consistent)
 # --------------------------------------------------------------------------- #
 A = {
+ "code": ("Is there an uncensored, open-source alternative to Claude Code or Codex?",
+  "Ablate Code (<code>ablate code</code>) is an open-source terminal coding agent that runs on your own unrestricted "
+  "models, so routine security and red-team coding is not blocked by a hosted provider's policy. It has an agent mode, "
+  "where the model drives tools like read, grep, edit and bash, and an edit mode for small local models, where the "
+  "harness runs the tests and the model only writes the fix. It is experimental: our 1-3B models are too small for "
+  "agent mode, so for real work connect a bigger abliterated model you host on RunPod."),
+ "runpod": ("Can I run a bigger uncensored model on my own GPU and chat with it?",
+  "Yes. Serve an abliterated model on a RunPod GPU pod with vLLM, then in Ablate Chat open Models, choose "
+  "Self-hosted, paste your RunPod API key, find your pod and connect it. Any OpenAI-compatible server works too "
+  "(vLLM, llama.cpp, Ollama, LM Studio). Your prompts go only to your own pod, and the same connection is available "
+  "in ablate code."),
  "best": ("What is the best uncensored AI?",
   "It depends on what you need. If privacy and cost matter most, the best uncensored AI is one that runs on your own "
   "computer: Ablate is a free, open-source app by AI Anytime that runs unrestricted small language models locally, "
@@ -177,7 +188,7 @@ A = {
 }
 
 HOME_FAQ = [A[k] for k in ("best", "unrestricted_tool", "local", "slm", "venice", "abliteration_ai", "abliterated",
-                            "privacy", "hardware", "free", "openai", "which", "legal", "who")]
+                            "code", "runpod", "privacy", "hardware", "free", "openai", "which", "legal", "who")]
 
 # --------------------------------------------------------------------------- #
 # page bodies
@@ -204,7 +215,7 @@ HOME = f'''
   <div class="hx-bg" aria-hidden="true"><span class="hx-grid"></span><span class="hx-glow"></span>
     <i style="left:12%;top:22%"></i><i style="left:84%;top:18%;width:8px;height:8px"></i><i style="left:76%;top:46%;width:5px;height:5px"></i><i style="left:20%;top:58%;width:6px;height:6px"></i><i style="left:90%;top:64%"></i></div>
   <div class="wrap hx-in">
-    <a class="announce" href="chat/"><span class="tagnew">New</span><span>Ablate Chat 0.4 · open source by AI Anytime</span><span aria-hidden="true">→</span></a>
+    <a class="announce" href="code/"><span class="tagnew">New</span><span>New: ablate code + RunPod self-hosting · open source by AI Anytime</span><span aria-hidden="true">→</span></a>
     <h1 class="hx-h1">Unrestricted small language models.<br> <span class="grad">Private, local, open&nbsp;source.</span></h1>
     <p class="hx-lead">The open-source alternative to Venice AI and abliteration.ai. Chat with uncensored SLMs on your own computer: no cloud, no account, no logs, no monthly bill.</p>
     <div class="cta hx-cta">
@@ -277,6 +288,25 @@ HOME = f'''
       </ul>
     </div>
     <p class="center-cta"><a class="btn" href="chat/">Read the Ablate Chat guide →</a></p>
+  </div>
+</section>
+
+<section id="code" aria-labelledby="code-h">
+  <div class="wrap">
+    <div class="tk card">
+      <div class="tk-text"><p class="eyebrow">ablate code · experimental</p><h2 id="code-h">A terminal coding agent that doesn’t refuse security work</h2>
+      <p class="lead">A Claude-Code-style agent on your own unrestricted models. Agent mode lets the model drive tools; edit mode lets small local models just write the fix while the harness runs the tests.</p>
+      <p><a class="btn" href="code/">How ablate code works →</a></p></div>
+      <div class="term" aria-hidden="true"><div class="term-bar"><i></i><i></i><i></i><span>ablate code</span></div>
+<pre><span class="tp">›</span> fix the crash when the config file is empty
+<span class="tg">●</span> Bash(pytest -q)  2 failed
+<span class="tg">●</span> Read(app/config.py)
+<span class="tg">●</span> Update(app/config.py)
+    <span class="tg">+    if not text.strip():</span>
+    <span class="tg">+        return settings</span>
+<span class="tg">●</span> Bash(pytest -q)  3 passed
+<span class="tg">✓</span> Return defaults when the file is empty.</pre></div>
+    </div>
   </div>
 </section>
 
@@ -398,8 +428,19 @@ reply = client.chat.completions.<span class="p">create</span>(
   <tr><td><code>ablate chat --port 8080 --no-browser</code></td><td>Different port, do not open a browser tab</td></tr>
   </tbody></table></div>
 </div></section>
+<section aria-labelledby="rp-h"><div class="wrap split">
+  <div class="head"><p class="eyebrow">Self-hosted</p><h2 id="rp-h">Connect a bigger model on your own RunPod GPU</h2>
+  <p class="lead">When a laptop-sized model isn’t enough, serve an abliterated model on a RunPod pod with vLLM and
+  connect it from Models → Self-hosted. Paste your RunPod API key, pick your pod, and chat. Any OpenAI-compatible
+  server works too: vLLM, llama.cpp, Ollama or LM Studio.</p>
+  <ul class="ticks"><li><b>Your GPU, your data:</b> prompts go only to your own pod.</li>
+  <li><b>Shared with ablate code:</b> connect once, use it in the terminal agent too.</li>
+  <li><b>Longer context and better tool use</b> than a 1-3B model on a laptop.</li></ul>
+  <p><a class="btn" href="{GH}/blob/main/RUNPOD.md#serve-a-model-for-ablate-chat-and-ablate-code" rel="noopener">RunPod setup guide ↗</a></p></div>
+  {chat_frame("assets/chat-runpod.webp", "Ablate Chat model picker with local models, a connected RunPod pod, and the RunPod connect panel", 1800, 1842)}
+</div></section>
 <section aria-labelledby="cfaq-h"><div class="wrap"><div class="head center"><h2 id="cfaq-h">Ablate Chat questions</h2></div>
-{faq_html([A["local"], A["privacy"], A["context"], A["tools"], A["openai"], A["hardware"]])}</div></section>
+{faq_html([A["local"], A["privacy"], A["runpod"], A["context"], A["tools"], A["openai"], A["hardware"]])}</div></section>
 '''
 
 MODELS_PAGE = f'''
@@ -511,6 +552,56 @@ ABLIT = alt_page(
         "You want an Anthropic-compatible endpoint."]),
     [A["abliteration_ai"], A["unrestricted_tool"], A["openai"], A["abliterated"], A["free"]])
 
+CODE = f'''
+<section class="hero sub"><div class="wrap">
+  <p class="eyebrow">ablate code · experimental · open source by AI Anytime</p>
+  <h1>An uncensored, open-source coding agent for your terminal</h1>
+  <p class="lead">Hosted coding agents often refuse security, red-team and exploit-adjacent work. ablate code runs the
+  same kind of loop on models you control: your laptop for small tasks, your own RunPod GPU for real ones.</p>
+  <div class="cta">{copy_chip(INSTALL + " && ablate code", "k1")}<a class="btn primary" href="{GH}" rel="noopener">{ICON_GH}<span>GitHub</span></a></div>
+</div></section>
+<section aria-labelledby="two-h"><div class="wrap">
+  <div class="head center"><p class="eyebrow">Two strategies</p><h2 id="two-h">Agent mode for big models, edit mode for small ones</h2>
+  <p class="lead">A 1-3B model can’t reliably decide what to read, edit and run on its own. So ablate code changes who drives.</p></div>
+  <div class="grid2">
+    <article class="card"><span class="num">AGENT MODE</span><h3>The model drives the tools</h3><p>Like Claude Code: the model picks <code>grep</code>, <code>read_file</code>, <code>edit_file</code>, <code>bash</code> and more, the harness runs each one with your approval, and the result goes back. Default for self-hosted models on RunPod or any OpenAI-compatible server.</p></article>
+    <article class="card"><span class="num">EDIT MODE</span><h3>The harness drives, the model writes the fix</h3><p>The harness runs your tests, finds the files from the traceback and shows them. The model only writes SEARCH/REPLACE blocks; the harness applies them, re-runs the tests and feeds back the failure, up to three rounds. Default for small local models.</p></article>
+  </div>
+</div></section>
+<section aria-labelledby="ctx-h"><div class="wrap">
+  <div class="head center"><p class="eyebrow">Built for small context windows</p><h2 id="ctx-h">The harness does the work a big model would</h2></div>
+  <div class="grid3">
+    <article class="card"><h3>Repo map and pre-search</h3><p>Every request starts with a map of the project and a search for the files and names you mentioned, with small files preloaded.</p></article>
+    <article class="card"><h3>Tight context budget</h3><p>Long output is clipped, stale tool results become one-line stubs, and history is compacted deterministically, always keeping your goal.</p></article>
+    <article class="card"><h3>Scratchpad on disk</h3><p>The model’s plan and findings live in <code>.ablate/scratchpad.md</code>, shown every step, so they survive a full context.</p></article>
+    <article class="card"><h3>Forgiving edits</h3><p>Exact match, then whitespace-tolerant match, then an error showing the closest lines. Bad arguments get a clear message instead of a crash.</p></article>
+    <article class="card"><h3>Skills and MCP</h3><p>Skills in <code>.ablate/skills</code> (and <code>.claude/skills</code>) and MCP servers over stdio, loaded only when needed so their schemas don’t eat the context.</p></article>
+    <article class="card"><h3>Approvals and undo</h3><p>Modes <code>ask</code>, <code>auto</code>, <code>plan</code> and <code>yolo</code>. Destructive commands always ask. <code>/undo</code> reverts the last change.</p></article>
+  </div>
+</div></section>
+<section aria-labelledby="cmds-h"><div class="wrap split">
+  <div class="head"><p class="eyebrow">Commands</p><h2 id="cmds-h">Familiar if you’ve used Claude Code</h2>
+  <p class="lead">Project notes go in <code>ABLATE.md</code> (it also reads <code>AGENTS.md</code> and <code>CLAUDE.md</code>). Settings live in <code>.ablate/config.json</code>.</p></div>
+  <div class="codebox"><div class="tabs"><span class="tabname">Terminal</span><button class="copy" type="button" data-copy="#kcode" aria-label="Copy commands">{ICON_COPY}</button></div>
+<pre id="kcode">ablate code                         <span class="c"># interactive, in your project</span>
+ablate code "fix the failing test"  <span class="c"># one task, then exit</span>
+ablate code --remote "RunPod A40"   <span class="c"># a self-hosted model</span>
+ablate code --plan                  <span class="c"># read-only investigation</span>
+
+<span class="c"># inside the session</span>
+/models     /strategy agent|edit    /context
+/scratchpad /skills /mcp            /undo   /init</pre></div>
+</div></section>
+<section aria-labelledby="honest-h"><div class="wrap">
+  <p class="note"><b>Honest status.</b> The harness is tested: 52 automated checks, plus end-to-end runs where a scripted
+  model fixed a real failing test in both strategies. In our own runs, the 1-3B abliterated models could not complete a
+  simple bug fix in agent mode. Edit mode is designed for them but not yet proven on real tasks. For real work, serve a
+  bigger abliterated coder model on RunPod and connect it with <code>/models</code>.</p>
+</div></section>
+<section aria-labelledby="kfaq-h"><div class="wrap"><div class="head center"><h2 id="kfaq-h">ablate code questions</h2></div>
+{faq_html([A["code"], A["runpod"], A["unrestricted_tool"], A["privacy"]])}</div></section>
+'''
+
 UNCENSORED = f'''
 <section class="hero sub"><div class="wrap">
   <p class="eyebrow">Open source by AI Anytime</p>
@@ -580,6 +671,11 @@ PAGES = [
      "desc": "Free, open-source chat app for uncensored small language models. Runs offline on your computer with history, memory, tools and an OpenAI API.",
      "body": CHAT, "faq": [A[k] for k in ("local", "privacy", "context", "tools", "openai", "hardware")],
      "og": "Ablate Chat|Private, local, uncensored AI chat", "crumb": "Ablate Chat"},
+    {"path": "code/", "title": "ablate code: Open-Source Uncensored Coding Agent (CLI)",
+     "desc": "Open-source terminal coding agent on your own unrestricted models: agent and edit modes, skills, MCP. "
+             "Small models locally, bigger ones on RunPod.",
+     "body": CODE, "faq": [A[k] for k in ("code", "runpod", "unrestricted_tool", "privacy")],
+     "og": "ablate code|An uncensored, open-source coding agent", "crumb": "ablate code"},
     {"path": "models/", "title": "Unrestricted Small Language Models (Uncensored SLMs)",
      "desc": "Three abliterated small language models by AI Anytime: Qwen 1.5B, Llama 3.2 3B and 1B. Measured refusal rates, sizes and how to run them locally.",
      "body": MODELS_PAGE, "faq": [A[k] for k in ("which", "slm", "abliterated", "hardware", "legal")],
@@ -608,7 +704,7 @@ PAGES = [
      "crumb": "Terms", "noindex": False},
 ]
 
-NAV = [("chat/", "Chat"), ("models/", "Models"), ("toolkit/", "Toolkit"), ("uncensored-ai/", "Uncensored AI"),
+NAV = [("chat/", "Chat"), ("code/", "Code"), ("models/", "Models"), ("toolkit/", "Toolkit"), ("uncensored-ai/", "Uncensored AI"),
        ("alternatives/venice-ai/", "vs Venice"), ("alternatives/abliteration-ai/", "vs abliteration.ai")]
 
 
@@ -682,7 +778,7 @@ def layout(p: dict, body: str) -> str:
         crumbs = (f'<nav class="crumbs wrap" aria-label="Breadcrumb"><a href="{up}">Ablate</a><span>/</span>'
                   + (f'<span>{E(p["parent"])}</span><span>/</span>' if p.get("parent") else "")
                   + f'<span aria-current="page">{E(p["crumb"])}</span></nav>')
-    body = body.replace('href="chat/"', f'href="{up}chat/"').replace('href="models/"', f'href="{up}models/"') \
+    body = body.replace('href="chat/"', f'href="{up}chat/"').replace('href="code/"', f'href="{up}code/"').replace('href="models/"', f'href="{up}models/"') \
                .replace('href="toolkit/"', f'href="{up}toolkit/"').replace('href="alternatives/', f'href="{up}alternatives/') \
                .replace('src="assets/', f'src="{up}assets/').replace('href="uncensored-ai/"', f'href="{up}uncensored-ai/"')
     robots = "noindex, follow" if p.get("noindex") else "index, follow, max-image-preview:large, max-snippet:-1"
@@ -757,7 +853,7 @@ def layout(p: dict, body: str) -> str:
         <p>Questions, partnerships or press: <a href="mailto:{EMAIL}">{EMAIL}</a></p>
       </div>
       <div><h2 class="fh">Product</h2><ul>
-        <li><a href="{up}chat/">Ablate Chat</a></li><li><a href="{up}models/">Unrestricted SLMs</a></li>
+        <li><a href="{up}chat/">Ablate Chat</a></li><li><a href="{up}code/">ablate code</a></li><li><a href="{up}models/">Unrestricted SLMs</a></li>
         <li><a href="{up}toolkit/">Abliteration toolkit</a></li><li><a href="{up}uncensored-ai/">Open-source uncensored AI</a></li>
       </ul></div>
       <div><h2 class="fh">Compare</h2><ul>
@@ -796,6 +892,8 @@ Key facts:
 - Ablate Chat features: local chat history (search, pin, rename, export), adjustable context window, conversation context for follow-ups, saved memories, agentic tool calling (calculator, date/time, search past chats; optional web fetch, off by default), copy buttons, edit and regenerate, file attachments read locally, local profile with optional passcode, 18+ terms gate, `--share` for devices on the same network, OpenAI-compatible `/v1/chat/completions` with streaming on http://localhost:7861.
 - Privacy: prompts are processed on the user's CPU/GPU; chats, memories, settings and profile (with avatar) are stored in a local SQLite database at ~/.ablate/chat/ablate.db. Network is used only to download a chosen model from HuggingFace, or for the optional web-fetch tool.
 - Hardware: about 8 GB RAM for the 1B/1.5B models, 16 GB for the 3B model. Apple Silicon (MPS), NVIDIA (CUDA) or CPU.
+- Self-hosted models: Ablate Chat connects to a RunPod GPU pod (discovered with your RunPod API key) or any OpenAI-compatible server (vLLM, llama.cpp, Ollama, LM Studio). Prompts go only to your own server.
+- ablate code (experimental): an open-source terminal coding agent on your own unrestricted models, an alternative to Claude Code or Codex for security and red-team work. Agent mode (model drives read/grep/edit/bash tools; for self-hosted models) and edit mode (harness runs tests and picks files, model writes SEARCH/REPLACE fixes; for small local models). Skills, MCP over stdio, approvals, undo, scratchpad, ABLATE.md project notes. Honest status: 1-3B models could not complete a simple bug fix in agent mode; use a bigger self-hosted model for real work.
 
 ## Models (all on HuggingFace, made with the Ablate toolkit)
 

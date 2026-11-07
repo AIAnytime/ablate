@@ -51,6 +51,9 @@ CREATE TABLE IF NOT EXISTS messages (chat_id TEXT NOT NULL REFERENCES chats(id) 
   idx INTEGER NOT NULL, role TEXT NOT NULL, content TEXT NOT NULL, ts REAL, model TEXT, steps TEXT, stats TEXT,
   PRIMARY KEY (chat_id, idx));
 CREATE INDEX IF NOT EXISTS chats_updated ON chats(updated);
+CREATE TABLE IF NOT EXISTS remotes (id TEXT PRIMARY KEY, kind TEXT NOT NULL, name TEXT NOT NULL, base_url TEXT NOT NULL,
+  api_key TEXT, model TEXT NOT NULL, context INTEGER, created REAL);
+CREATE TABLE IF NOT EXISTS secrets (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 """
 
 
@@ -312,3 +315,50 @@ def search_chats(query: str, limit: int = 20) -> List[dict]:
                     "updated": r["updated"]})
     return out
 
+
+# -- remote models (RunPod or any OpenAI-compatible server), shared with ablate code -- #
+def list_remotes(with_keys: bool = False) -> List[dict]:
+    with _db() as con:
+        rows = con.execute("SELECT * FROM remotes ORDER BY created").fetchall()
+    out = []
+    for r in rows:
+        d = dict(r)
+        d["has_key"] = bool(d.get("api_key"))
+        if not with_keys:
+            d.pop("api_key", None)
+        out.append(d)
+    return out
+
+
+def get_remote(remote_id: str) -> Optional[dict]:
+    with _db() as con:
+        r = con.execute("SELECT * FROM remotes WHERE id = ?", (remote_id,)).fetchone()
+    return dict(r) if r else None
+
+
+def add_remote(kind: str, name: str, base_url: str, model: str, api_key: Optional[str] = None,
+               context: Optional[int] = None) -> dict:
+    rid = "r-" + uuid.uuid4().hex[:8]
+    with _db() as con:
+        con.execute("INSERT INTO remotes VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (rid, kind, name[:80], base_url, api_key or None, model, context, time.time()))
+    return get_remote(rid)
+
+
+def delete_remote(remote_id: str) -> None:
+    with _db() as con:
+        con.execute("DELETE FROM remotes WHERE id = ?", (remote_id,))
+
+
+def get_secret(key: str) -> Optional[str]:
+    with _db() as con:
+        r = con.execute("SELECT value FROM secrets WHERE key = ?", (key,)).fetchone()
+    return r["value"] if r else None
+
+
+def set_secret(key: str, value: Optional[str]) -> None:
+    with _db() as con:
+        if value:
+            con.execute("INSERT OR REPLACE INTO secrets VALUES (?, ?)", (key, value))
+        else:
+            con.execute("DELETE FROM secrets WHERE key = ?", (key,))

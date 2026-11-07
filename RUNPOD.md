@@ -187,6 +187,50 @@ EOF
 
 ---
 
+## Serve a model for Ablate Chat and ablate code
+
+Small models run on your laptop. For longer context and better tool use, run an
+abliterated model on a RunPod GPU and connect to it. Your prompts go only to
+your own pod.
+
+**1. Create the pod** (Pods → Deploy):
+
+| Setting | Value |
+|---|---|
+| GPU | RTX 4090 (24 GB) for 1B–3B models; A40 / RTX A6000 (48 GB) for 7B |
+| Template | Custom: container image `vllm/vllm-openai:latest` |
+| Container Disk | 30 GB |
+| Expose HTTP ports | `8000` |
+| Container start command | see below |
+
+Container start command for Llama 3.2 3B (pick any long random string as the key):
+
+```
+--model ai-anytime/Llama-3.2-3B-Instruct-abliterated --host 0.0.0.0 --port 8000 --api-key CHANGE-ME-LONG-SECRET --max-model-len 16384 --enable-auto-tool-choice --tool-call-parser llama3_json
+```
+
+For the Qwen model use `--model ai-anytime/qwen-1.5b-abliterated --tool-call-parser hermes`.
+Wait until the pod's logs show `Application startup complete`.
+
+**2. Connect it in Ablate Chat:** Models → Self-hosted → RunPod → paste your RunPod
+API key (runpod.io → Settings → API Keys) → **Find my pods** → **Connect :8000** →
+enter the `--api-key` value → **Test** → **Add connection** → **Use this model**.
+(Or use the "Any server URL" tab with `https://<pod-id>-8000.proxy.runpod.net/v1`.)
+
+**3. Use it in ablate code:** connections are shared, so:
+
+```bash
+ablate code --remote "<connection name>"     # or type /models inside ablate code
+```
+
+Self-hosted models default to **agent mode** (the model drives the tools);
+local small models default to **edit mode** (the harness drives and the model
+writes the fix). Switch with `/strategy agent` or `/strategy edit`.
+
+**4. Stop the pod when you are done.** It bills by the hour while running.
+
+---
+
 ## Use a different model
 
 Set `MODEL` and `REPO` in front of the commands in Steps 5 and 6, for example:

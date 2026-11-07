@@ -239,6 +239,72 @@ class Engine:
 
 E = Engine()
 SESSIONS: Dict[str, float] = {}
+REMOTE: Dict[str, object] = {}   # {"id": remote id, "client": OpenAIClient} when a remote model is active
+
+
+# --------------------------------------------------------------------------- #
+# Active model: a local HuggingFace model in this process, or a remote server
+# --------------------------------------------------------------------------- #
+def active_id() -> Optional[str]:
+    return ("remote:" + str(REMOTE["id"])) if REMOTE else E.model_id
+
+
+def active_name() -> Optional[str]:
+    if REMOTE:
+        return REMOTE["client"].name
+    return next((m["name"] for m in MODELS if m["id"] == E.model_id), E.model_id)
+
+
+def use_remote(remote_id: str) -> None:
+    from ..remote import OpenAIClient
+    r = store.get_remote(remote_id)
+    if not r:
+        raise RuntimeError("That connection no longer exists.")
+    E.unload()  # free local memory: one model at a time
+    REMOTE.clear()
+    REMOTE.update(id=r["id"], client=OpenAIClient(r["base_url"], r["model"], r.get("api_key"), r.get("context"),
+                                                   name=f"{r['name']} · {r['model'].split('/')[-1]}"))
+
+
+def gen(messages: List[dict], schemas: Optional[List[dict]], opts: dict, on_text: Callable[[str], None]):
+    """Generate with whichever model is active. Returns (text, native tool calls or None, stats)."""
+    if REMOTE:
+        return REMOTE["client"].generate(messages, schemas, opts, on_text)
+    stats = E.stream(E.encode(messages, schemas), opts, on_text)
+    return stats["text"], None, stats
+
+
+def count(messages: List[dict], schemas: Optional[List[dict]] = None) -> int:
+    return REMOTE["client"].count(messages, schemas) if REMOTE else int(E.encode(messages, schemas).shape[1])
+
+
+def max_context() -> int:
+    return REMOTE["client"].context if REMOTE else E.max_context()
+
+
+def fit(system: str, history: List[dict], limit: int, reserve: int, schemas: Optional[List[dict]] = None):
+    """Drop the oldest turns until system + history + reply fit in ``limit`` tokens."""
+    kept, trimmed = list(history), 0
+    while True:
+        msgs = ([{"role": "system", "content": system}] if system else []) + kept
+        used = count(msgs, schemas)
+        if used + reserve <= limit or len(kept) <= 1:
+            return msgs, used, trimmed
+        kept.pop(0)
+        trimmed += 1
+        while kept and kept[0]["role"] != "user":  # never start mid-exchange
+            kept.pop(0)
+            trimmed += 1
+
+
+def tools_ok() -> bool:
+    return bool(REMOTE) or next((m.get("tools", True) for m in MODELS if m["id"] == E.model_id), True)
+
+
+def stop_generation() -> None:
+    E.stop.set()
+    if REMOTE:
+        REMOTE["client"].stop()
 
 
 # --------------------------------------------------------------------------- #
@@ -261,10 +327,10 @@ def _system_prompt(opts: dict, with_tools: bool) -> str:
 
 
 def chat_turn(body: dict, emit: Emit) -> None:
-    if E.model is None:
+    if E.model is None and not REMOTE:
         raise RuntimeError("Load a model first (top of the screen).")
     opts = {**store.settings(), **(body.get("settings") or {})}
-    chat = store.get_chat(body.get("chat_id") or "") or store.new_chat(E.model_id)
+    chat = store.get_chat(body.get("chat_id") or "") or store.new_chat(active_id())
     msgs = chat["messages"]
     if body.get("truncate_at") is not None:
         del msgs[int(body["truncate_at"]):]
@@ -277,20 +343,19 @@ def chat_turn(body: dict, emit: Emit) -> None:
     if chat["title"] == "New chat":
         first = str(body.get("message") or text).strip().splitlines()[0]
         chat["title"] = (first[:52] + "…") if len(first) > 52 else first
-    chat["model"] = E.model_id
+    chat["model"] = active_id()
     store.save_chat(chat)
     emit({"type": "meta", "chat_id": chat["id"], "title": chat["title"], "index": len(msgs) - 1})
 
     # Small models over-use tools, so only offer the tools this message plausibly needs.
-    tools_ok = next((m.get("tools", True) for m in MODELS if m["id"] == E.model_id), True)
     schemas = (tools.pick(str(body.get("message") or ""), bool(opts.get("network_tools")))
-               if opts.get("tools") and tools_ok else [])
+               if opts.get("tools") and tools_ok() else [])
     with_tools = bool(schemas)
-    limit = min(int(opts.get("context_tokens", 4096)), E.max_context())
+    limit = min(int(opts.get("context_tokens", 4096)), max_context())
     reserve = int(opts.get("max_new_tokens", 768))
     history = [{"role": m["role"], "content": m["content"]} for m in msgs]
-    convo, ids, trimmed = E.fit(_system_prompt(opts, with_tools), history, limit, reserve, schemas or None)
-    emit({"type": "context", "used": int(ids.shape[1]), "limit": limit, "trimmed": trimmed})
+    convo, used, trimmed = fit(_system_prompt(opts, with_tools), history, limit, reserve, schemas or None)
+    emit({"type": "context", "used": int(used), "limit": limit, "trimmed": trimmed})
 
     steps, stats, answer, seen = [], {}, "", set()
     for rnd in range(4):  # up to 3 tool calls; the last round never offers tools, so it must answer
@@ -310,10 +375,12 @@ def chat_turn(body: dict, emit: Emit) -> None:
             elif mode == "text":
                 emit({"type": "token", "t": piece})
 
-        if rnd and not offer:  # final round: same conversation, tools removed
-            ids = E.encode(convo)
-        stats = E.stream(ids, opts, on_text)
-        call = tools.parse_call(stats["text"]) if offer and mode != "text" else None
+        text, native, stats = gen(convo, schemas if offer else None, opts, on_text)
+        stats["text"] = text
+        if native:
+            call = next(({"name": c["name"], "arguments": c["arguments"]} for c in native if c["name"] in tools.TOOLS), None)
+        else:
+            call = tools.parse_call(text) if offer and mode != "text" else None
         key = call and json.dumps([call["name"], call["arguments"]], sort_keys=True)
         if call and key in seen:  # repeating itself: stop calling tools and answer
             with_tools = False
@@ -338,11 +405,10 @@ def chat_turn(body: dict, emit: Emit) -> None:
                 {"type": "function", "function": {"name": call["name"], "arguments": call["arguments"]}}]},
             {"role": "tool", "name": call["name"], "content": json.dumps(result, ensure_ascii=False)},
         ]
-        ids = E.encode(convo, schemas)
         if stats.get("stopped"):
             break
 
-    msgs.append({"role": "assistant", "content": answer, "ts": time.time(), "model": E.model_id,
+    msgs.append({"role": "assistant", "content": answer, "ts": time.time(), "model": active_id(),
                  "steps": steps, "stats": {k: stats.get(k) for k in ("tokens", "seconds", "tps", "stopped")}})
     store.save_chat(chat)
     emit({"type": "done", "stats": msgs[-1]["stats"], "index": len(msgs) - 1})
@@ -363,31 +429,33 @@ def _openai_messages(body: dict) -> List[dict]:
 
 def openai_completion(body: dict, emit_chunk: Optional[Emit]) -> dict:
     want = body.get("model")
-    if want and want != E.model_id and E.local_path(want):
+    if want and not REMOTE and want != E.model_id and E.local_path(want):
         E.load(want)
-    if E.model is None:
+    if E.model is None and not REMOTE:
         raise RuntimeError("No model is loaded. Open ablate chat and load one, or pass a downloaded model id.")
     opts = {"temperature": body.get("temperature", 0.7), "top_p": body.get("top_p", 0.9),
             "max_new_tokens": body.get("max_tokens") or body.get("max_completion_tokens") or 768,
             "repetition_penalty": 1.1}
-    ids = E.encode(_openai_messages(body))
+    msgs = _openai_messages(body)
+    prompt_tokens = count(msgs)
     cid = "chatcmpl-" + uuid.uuid4().hex[:24]
     created = int(time.time())
 
     def chunk(delta: dict, finish=None) -> dict:
-        return {"id": cid, "object": "chat.completion.chunk", "created": created, "model": E.model_id,
+        return {"id": cid, "object": "chat.completion.chunk", "created": created, "model": active_id(),
                 "choices": [{"index": 0, "delta": delta, "finish_reason": finish}]}
 
     if emit_chunk:
         emit_chunk(chunk({"role": "assistant", "content": ""}))
-    stats = E.stream(ids, opts, (lambda t: emit_chunk(chunk({"content": t}))) if emit_chunk else (lambda t: None))
+    text, _, stats = gen(msgs, None, opts, (lambda t: emit_chunk(chunk({"content": t}))) if emit_chunk else (lambda t: None))
+    stats["text"] = text
     if emit_chunk:
         emit_chunk(chunk({}, "stop"))
-    return {"id": cid, "object": "chat.completion", "created": created, "model": E.model_id,
+    return {"id": cid, "object": "chat.completion", "created": created, "model": active_id(),
             "choices": [{"index": 0, "message": {"role": "assistant", "content": stats["text"]},
                          "finish_reason": "stop"}],
-            "usage": {"prompt_tokens": int(ids.shape[1]), "completion_tokens": stats["tokens"],
-                      "total_tokens": int(ids.shape[1]) + stats["tokens"]}}
+            "usage": {"prompt_tokens": prompt_tokens, "completion_tokens": stats["tokens"],
+                      "total_tokens": prompt_tokens + stats["tokens"]}}
 
 
 # --------------------------------------------------------------------------- #
@@ -397,8 +465,13 @@ def models_state() -> List[dict]:
     out = []
     for m in MODELS + [{"id": r, "name": r.split("/")[-1], "custom": True} for r in E.downloads
                        if r not in [x["id"] for x in MODELS]]:
-        out.append({**m, "downloaded": bool(E.local_path(m["id"])), "loaded": E.model_id == m["id"],
-                    "download": E.download_status(m["id"])})
+        out.append({**m, "kind": "local", "downloaded": bool(E.local_path(m["id"])),
+                    "loaded": not REMOTE and E.model_id == m["id"], "download": E.download_status(m["id"])})
+    for r in store.list_remotes():
+        host = r["base_url"].split("//", 1)[-1].split("/", 1)[0]
+        out.append({"id": "remote:" + r["id"], "remote_id": r["id"], "kind": r["kind"], "name": r["name"],
+                    "model": r["model"], "host": host, "context": r.get("context"), "has_key": r["has_key"],
+                    "downloaded": True, "loaded": bool(REMOTE) and REMOTE["id"] == r["id"]})
     return out
 
 
@@ -520,13 +593,14 @@ class Handler(BaseHTTPRequestHandler):
             if url.path == "/api/state":
                 return self._json({
                     "profile": store.public_profile(), "settings": store.settings(), "memories": store.memories(),
-                    "models": models_state(), "loaded": E.model_id,
-                    "device": E.device or E.pick()[0], "max_context": E.max_context() if E.model else None,
+                    "models": models_state(), "loaded": active_id(), "loaded_name": active_name(),
+                    "device": "remote" if REMOTE else (E.device or E.pick()[0]),
+                    "max_context": max_context() if (E.model or REMOTE) else None,
                     "chats": store.list_chats(), "busy": E.lock.locked(), "local": self._local(),
-                    "tools_ok": next((m.get("tools", True) for m in MODELS if m["id"] == E.model_id), True),
+                    "tools_ok": tools_ok(), "runpod_key": bool(store.get_secret("runpod_api_key")),
                     "port": self.server.server_address[1]})
             if url.path == "/api/models":
-                return self._json({"models": models_state(), "loaded": E.model_id})
+                return self._json({"models": models_state(), "loaded": active_id()})
             if url.path == "/api/search":
                 q = (urllib.parse.parse_qs(url.query).get("q") or [""])[0]
                 return self._json({"results": store.search_chats(q) if q.strip() else []})
@@ -554,7 +628,8 @@ class Handler(BaseHTTPRequestHandler):
                 return self._auth(path, body)
             if not self._authed():
                 return self._json({"error": "sign in first"}, 401)
-            host_only = path in ("/api/models/download", "/api/models/remove", "/api/models/load")
+            host_only = path in ("/api/models/download", "/api/models/remove", "/api/models/load") or \
+                path.startswith("/api/remotes/")
             if host_only and not self._local():
                 return self._json({"error": "Only the computer running ablate chat can manage models."}, 403)
 
@@ -566,7 +641,7 @@ class Handler(BaseHTTPRequestHandler):
                 try:
                     chat_turn(body, emit)
                 except (BrokenPipeError, ConnectionResetError):
-                    E.stop.set()
+                    stop_generation()
                 except Exception as e:
                     traceback.print_exc()
                     try:
@@ -577,23 +652,31 @@ class Handler(BaseHTTPRequestHandler):
                     E.lock.release()
                 return
             if path == "/api/stop":
-                E.stop.set()
+                stop_generation()
                 return self._json({"ok": True})
             if path == "/api/models/download":
                 E.download(str(body["id"]).strip())
                 return self._json({"models": models_state()})
             if path == "/api/models/remove":
                 E.remove(str(body["id"]))
-                return self._json({"models": models_state(), "loaded": E.model_id})
+                return self._json({"models": models_state(), "loaded": active_id()})
             if path == "/api/models/load":
                 with E.lock:
-                    if body.get("id"):
-                        E.load(str(body["id"]))
+                    mid = str(body.get("id") or "")
+                    if mid.startswith("remote:"):
+                        use_remote(mid.split(":", 1)[1])
+                    elif mid:
+                        REMOTE.clear()
+                        E.load(mid)
                     else:
+                        REMOTE.clear()
                         E.unload()
-                return self._json({"models": models_state(), "loaded": E.model_id,
-                                   "device": E.device, "max_context": E.max_context() if E.model else None,
-                                   "tools_ok": next((m.get("tools", True) for m in MODELS if m["id"] == E.model_id), True)})
+                return self._json({"models": models_state(), "loaded": active_id(), "loaded_name": active_name(),
+                                   "device": "remote" if REMOTE else E.device,
+                                   "max_context": max_context() if (E.model or REMOTE) else None,
+                                   "tools_ok": tools_ok()})
+            if path.startswith("/api/remotes/"):
+                return self._remotes(path, body)
             if path == "/api/settings":
                 return self._json({"settings": store.save_settings(body)})
             if path == "/api/memories":
@@ -621,6 +704,36 @@ class Handler(BaseHTTPRequestHandler):
                 self._json({"error": _explain(e)}, 500)
             except Exception:
                 pass
+
+    def _remotes(self, path: str, body: dict) -> None:
+        """RunPod and custom OpenAI-compatible connections (host machine only)."""
+        from .. import remote as R
+        if path == "/api/remotes/runpod-key":
+            store.set_secret("runpod_api_key", str(body.get("api_key") or "").strip() or None)
+            return self._json({"runpod_key": bool(store.get_secret("runpod_api_key"))})
+        if path == "/api/remotes/pods":
+            key = store.get_secret("runpod_api_key")
+            if not key:
+                return self._json({"error": "Add your RunPod API key first."}, 400)
+            return self._json({"pods": R.runpod_pods(key)})
+        if path == "/api/remotes/probe":
+            return self._json({"models": R.probe(str(body.get("base_url", "")), body.get("api_key") or None),
+                               "base_url": R.normalize(str(body.get("base_url", "")))})
+        if path == "/api/remotes/add":
+            base = R.normalize(str(body.get("base_url", "")))
+            model = str(body.get("model") or "").strip()
+            if not model:
+                return self._json({"error": "Pick a model."}, 400)
+            r = store.add_remote(str(body.get("kind") or "custom"), str(body.get("name") or base.split("//")[-1].split("/")[0]),
+                                 base, model, body.get("api_key") or None, body.get("context") or None)
+            return self._json({"remote": {k: v for k, v in r.items() if k != "api_key"}, "models": models_state()})
+        if path == "/api/remotes/delete":
+            rid = str(body.get("id", ""))
+            if REMOTE and REMOTE.get("id") == rid:
+                REMOTE.clear()
+            store.delete_remote(rid)
+            return self._json({"models": models_state(), "loaded": active_id()})
+        return self._json({"error": "not found"}, 404)
 
     def _auth(self, path: str, body: dict) -> None:
         cookie = lambda tok: {"Set-Cookie": f"ablate_chat={tok}; HttpOnly; SameSite=Strict; Path=/"}
@@ -678,7 +791,7 @@ class Handler(BaseHTTPRequestHandler):
             try:
                 openai_completion(body, sse)
             except (BrokenPipeError, ConnectionResetError):
-                E.stop.set()
+                stop_generation()
                 return
             except Exception as e:
                 sse({"error": {"message": _explain(e)}})
