@@ -11,28 +11,33 @@ MODE    = os.environ.get("MODE", "subspace")      # "subspace" (stronger) or "si
 NDIRS   = int(os.environ.get("NDIRS", "4"))       # directions in the subspace
 TRIALS  = int(os.environ.get("TRIALS", "30"))     # Optuna trials
 PUSH    = os.environ.get("PUSH", "1") == "1"      # 0 = dry run, no upload
-TOKENS  = 64
+NTRAIN  = int(os.environ.get("NTRAIN", "128"))    # prompts per pile used to find the refusal direction
+NEVAL   = int(os.environ.get("NEVAL", "48"))      # held-out prompts per pile used to score each trial
+KL      = float(os.environ.get("KL", "0.5"))      # weight on KL drift: lower = favour fewer refusals over fidelity
+TOKENS  = int(os.environ.get("TOKENS", "64"))     # reply length judged for refusals
 t0 = time.time()
 log = lambda *a: print(f"[{time.time()-t0:5.0f}s]", *a, flush=True)
 
 abl = Ablator(MODEL)
 log("loaded", MODEL, "on", abl.lm.device, abl.lm.dtype)
 
-harmful  = _load_source("advbench", "harmful", 96, 0)
-harmless = _load_source("alpaca", "harmless", 96, 0)
-h_train, h_eval = data.split(harmful, 64, 32, 0)
-s_train, s_eval = data.split(harmless, 64, 32, 0)
+harmful  = _load_source("advbench", "harmful", NTRAIN + NEVAL, 0)
+harmless = _load_source("alpaca", "harmless", NTRAIN + NEVAL, 0)
+h_train, h_eval = data.split(harmful, NTRAIN, NEVAL, 0)
+s_train, s_eval = data.split(harmless, NTRAIN, NEVAL, 0)
+log(f"data: {len(h_train)} + {len(s_train)} training prompts, {len(h_eval)} + {len(s_eval)} held out · KL weight {KL}")
 
 base = refusal_rate(abl.lm.generate(h_eval, max_new_tokens=TOKENS))
-log(f"BASELINE refusal rate on 32 held-out harmful prompts: {base:.2f}")
+log(f"BASELINE refusal rate on {len(h_eval)} held-out harmful prompts: {base:.2f}")
 
 if MODE == "subspace":
     abl.extract_subspace(harmful=h_train, harmless=s_train, n_directions=NDIRS)
-    res = abl.search_subspace(harmful_eval=h_eval, benign_eval=s_eval, n_trials=TRIALS, max_new_tokens=TOKENS)
+    res = abl.search_subspace(harmful_eval=h_eval, benign_eval=s_eval, n_trials=TRIALS, kl_weight=KL,
+                              max_new_tokens=TOKENS)
     method = f"rank-{res.config.n_directions} subspace ablation (baked)"
 else:
     abl.extract(harmful=h_train, harmless=s_train)
-    res = abl.search(harmful_eval=h_eval, benign_eval=s_eval, n_trials=TRIALS, max_new_tokens=TOKENS)
+    res = abl.search(harmful_eval=h_eval, benign_eval=s_eval, n_trials=TRIALS, kl_weight=KL, max_new_tokens=TOKENS)
     method = "single-direction ablation (baked)"
 log("BEST CONFIG", res.config.to_dict())
 log("AFTER", abl.last_metrics)
@@ -60,10 +65,10 @@ json.dump({"model": MODEL, "repo": REPO, "config": res.config.to_dict(), "metric
 
 if PUSH:
     notes = ("## How this was made\n\n"
-             f"Refusal {'subspace' if MODE == 'subspace' else 'direction'} extracted from 64 AdvBench prompts vs 64 "
-             f"Alpaca prompts; configuration chosen by a {TRIALS}-trial Optuna search scored on refusals plus KL "
-             "drift; evaluated on 32 held-out prompts of each kind with a keyword refusal judge (which misses soft "
-             "refusals). Run on a single RunPod GPU.\n\n")
+             f"Refusal {'subspace' if MODE == 'subspace' else 'direction'} extracted from {len(h_train)} AdvBench "
+             f"prompts vs {len(s_train)} Alpaca prompts; configuration chosen by a {TRIALS}-trial Optuna search scored "
+             f"on refusals plus {KL} x KL drift; evaluated on {len(h_eval)} held-out prompts of each kind with a "
+             "keyword refusal judge (which misses soft refusals). Run on a single RunPod GPU.\n\n")
     url = push_to_hub(abl.lm.model, abl.lm.tokenizer, REPO, base_model=MODEL, method=method,
                       config=res.config.to_dict(), metrics=metrics, private=True, extra_notes=notes)
     log("PUSHED (private):", url)

@@ -87,12 +87,25 @@ means Step 0.1 is not done yet.
 curl -fsSL https://raw.githubusercontent.com/AIAnytime/ablate/main/examples/runpod_abliterate.py -o /root/abliterate.py && wc -l /root/abliterate.py
 ```
 
-You should see `70 /root/abliterate.py`. The script lives in the repo at
+You should see `75 /root/abliterate.py`. The script lives in the repo at
 [`examples/runpod_abliterate.py`](examples/runpod_abliterate.py) if you want to
 read it first. (Pasting long blocks into RunPod's web terminal can cut them off
 halfway, which is why this step downloads the file instead.)
 
 ---
+
+**Settings** (environment variables, all optional):
+
+| Variable | Default | What it does |
+|---|---|---|
+| `MODEL` / `REPO` | Llama 3.2 3B / `ai-anytime/…-abliterated` | Model to abliterate and where to push it |
+| `MODE` | `subspace` | `subspace` removes several refusal directions; `single` removes one |
+| `NDIRS` | `4` | Directions the subspace search may use (try `6` for stubborn models) |
+| `TRIALS` | `30` | Optuna trials (more = better configs, longer run) |
+| `NTRAIN` / `NEVAL` | `128` / `48` | Prompts per pile to find the direction / to score each trial |
+| `KL` | `0.5` | Weight on drift from the original model. Lower favours fewer refusals; higher favours fidelity |
+| `TOKENS` | `64` | Reply length judged for refusals |
+| `PUSH` | `1` | `0` = dry run, nothing uploaded |
 
 ## Step 5 — Dry run, no upload (about 5 min)
 
